@@ -1,4 +1,5 @@
 from env import Cartpole
+from fly import Fly
 
 import torch
 import torch.nn as nn
@@ -9,9 +10,32 @@ from torch.distributions import MultivariateNormal
 
 # define network architecture here
 class Net(nn.Module):
-    def __init__(self, num_obs=4, num_act=1):
+    def __init__(self, num_obs=42*2, num_act=18):
         super(Net, self).__init__()
         # we use a shared backbone for both actor and critic
+        """"
+        self.shared_net = nn.Sequential(
+            nn.Linear(num_obs, 512),
+            nn.ELU(),
+            nn.Linear(512, 256),
+            nn.ELU(),
+        )
+
+        # mean and variance for Actor Network
+        self.to_mean = nn.Sequential(
+            nn.Linear(256,128), #it was 256 before 
+            nn.ELU(),
+            nn.Linear(128, num_act),
+            nn.ELU()
+        )
+
+        # value for Critic Network
+        self.to_value = nn.Sequential(
+            nn.Linear(256, 128), #it was 256 before 
+            nn.ELU(),
+            nn.Linear(128, 1)
+        )
+        """
         self.shared_net = nn.Sequential(
             nn.Linear(num_obs, 256),
             nn.LeakyReLU(),
@@ -50,18 +74,20 @@ class PPO:
         self.args = args
 
         # initialise parameters
-        self.env = Cartpole(args)
+        self.env = Fly(args)
 
         self.epoch = 5
-        self.lr = 3e-4
+        self.lr = 0.001 
         self.gamma = 0.99
         self.lmbda = 0.95
-        self.clip = 0.3
-        self.rollout_size = 128
-        self.chunk_size = 32
-        self.mini_chunk_size = self.rollout_size // self.chunk_size
-        self.mini_batch_size = self.args.num_envs * self.mini_chunk_size
-        self.num_eval_freq = 100
+        self.clip = 0.2
+        self.mini_batch_size = 12288  #24576 #(4096*6)
+        self.chunk_size = 5 # Aucune idée a quoi set was 32
+        self.mini_chunk_size = self.mini_batch_size // self.args.num_envs
+        self.rollout_size = self.mini_chunk_size * self.chunk_size
+        #self.rollout_size = 128 #Quand est-ce que ça train 
+         
+        self.num_eval_freq = 100 #Print tout les combien de step 
 
         self.data = []
         self.score = 0
@@ -115,6 +141,7 @@ class PPO:
         data = self.make_data()
 
         for i in range(self.epoch):
+            print("Epoch: ", i)
             for mini_batch in data:
                 obs, action, old_log_prob, target, advantage = mini_batch
 
@@ -140,6 +167,7 @@ class PPO:
     def run(self):
         # collect data
         obs = self.env.obs_buf.clone()
+        end = self.env.end
 
         with torch.no_grad():
             mu = self.net.pi(obs)
@@ -151,7 +179,6 @@ class PPO:
 
         self.env.step(action)
         next_obs, reward, done = self.env.obs_buf.clone(), self.env.reward_buf.clone(), self.env.reset_buf.clone()
-        self.env.reset()
 
         self.data.append((obs, action, reward, next_obs, log_prob, 1 - done))
 
@@ -161,6 +188,7 @@ class PPO:
 
         # training mode
         if len(self.data) == self.rollout_size:
+            print("Training")
             self.update()
 
         # evaluation mode
@@ -168,5 +196,25 @@ class PPO:
             print('Steps: {:04d} | Opt Step: {:04d} | Reward {:.04f} | Action Var {:.04f}'
                   .format(self.run_step, self.optim_step, self.score, self.action_var[0].item()))
             self.score = 0
-
+        # save if save is set to true 
+        if self.args.save and self.run_step % self.args.save_freq:
+            print("saving...")
+            self.save(str(self.run_step))
+            print("saved!")
         self.run_step += 1
+        return end
+    
+    def save(self, endofname = ""):
+        #Saves the weights in a dedicated file 
+        if(not self.args.save):
+            return 
+        
+        path = self.args.path + endofname + ".pth"
+
+        torch.save(self.net.state_dict(), path)
+
+
+
+
+
+      

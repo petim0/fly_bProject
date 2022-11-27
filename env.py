@@ -37,6 +37,7 @@ class Cartpole:
         self.reset_dist = 3.0  # when to reset
         self.max_push_effort = 400.0  # the range of force applied to the cartpole
         self.max_episode_length = 500  # maximum episode length
+        self.render_count = 0
 
         # allocate buffers
         self.obs_buf = torch.zeros((self.args.num_envs, self.num_obs), device=self.args.sim_device)
@@ -120,7 +121,9 @@ class Cartpole:
         # get dof state tensor (of cartpole)
         _dof_states = self.gym.acquire_dof_state_tensor(self.sim)
         dof_states = gymtorch.wrap_tensor(_dof_states)
+        print(dof_states.size())
         dof_states = dof_states.view(self.args.num_envs, self.num_obs)
+        print(dof_states.size())
         return dof_states
 
     def get_obs(self, env_ids=None):
@@ -132,11 +135,16 @@ class Cartpole:
         self.obs_buf[env_ids] = self.dof_states[env_ids]
 
     def get_reward(self):
-        self.reward_buf[:], self.reset_buf[:] = compute_cartpole_reward(self.dof_states,
-                                                                        self.reset_dist,
-                                                                        self.reset_buf,
-                                                                        self.progress_buf,
-                                                                        self.max_episode_length)
+        # retrieve environment observations from buffer
+        pole_angle = self.obs_buf[:, 2]
+        pole_vel = self.obs_buf[:, 3]
+        cart_vel = self.obs_buf[:, 1]
+        cart_pos = self.obs_buf[:, 0]
+
+        self.reward_buf[:], self.reset_buf[:] = compute_cartpole_reward(
+            pole_angle, pole_vel, cart_vel, cart_pos,
+            self.reset_dist, self.reset_buf, self.progress_buf, self.max_episode_length
+        )
 
     def reset(self):
         env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)
@@ -182,6 +190,7 @@ class Cartpole:
 
     def step(self, actions):
         # apply action
+        print(actions.size())
         actions_tensor = torch.zeros(self.args.num_envs * self.num_dof, device=self.args.sim_device)
         actions_tensor[::self.num_dof] = actions.squeeze(-1) * self.max_push_effort
         forces = gymtorch.unwrap_tensor(actions_tensor)
@@ -189,8 +198,10 @@ class Cartpole:
 
         # simulate and render
         self.simulate()
-        if not self.args.headless:
-            self.render()
+        if not self.args.headless :
+            self.render_count+=1
+            if self.render_count % 20 == 0:
+                self.render()
 
         # reset environments if required
         self.progress_buf += 1
@@ -201,11 +212,9 @@ class Cartpole:
 
 # define reward function using JIT
 @torch.jit.script
-def compute_cartpole_reward(obs_buf, reset_dist, reset_buf, progress_buf, max_episode_length):
-    # type: (Tensor, float, Tensor, Tensor, float) -> Tuple[Tensor, Tensor]
-
-    # retrieve each state from observation buffer
-    cart_pos, cart_vel, pole_angle, pole_vel = torch.split(obs_buf, [1, 1, 1, 1], dim=1)
+def compute_cartpole_reward(pole_angle, pole_vel, cart_vel, cart_pos,
+                            reset_dist, reset_buf, progress_buf, max_episode_length):
+    # type: (Tensor, Tensor, Tensor, Tensor, float, Tensor, Tensor, float) -> Tuple[Tensor, Tensor]
 
     # reward is combo of angle deviated from upright, velocity of cart, and velocity of pole moving
     reward = 1.0 - pole_angle * pole_angle - 0.01 * torch.abs(cart_vel) - 0.005 * torch.abs(pole_vel)
@@ -213,7 +222,9 @@ def compute_cartpole_reward(obs_buf, reset_dist, reset_buf, progress_buf, max_ep
     # adjust reward for reset agents
     reward = torch.where(torch.abs(cart_pos) > reset_dist, torch.ones_like(reward) * -2.0, reward)
     reward = torch.where(torch.abs(pole_angle) > np.pi / 2, torch.ones_like(reward) * -2.0, reward)
+
     reset = torch.where(torch.abs(cart_pos) > reset_dist, torch.ones_like(reset_buf), reset_buf)
     reset = torch.where(torch.abs(pole_angle) > np.pi / 2, torch.ones_like(reset_buf), reset)
     reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset)
-    return reward[:, 0], reset[:, 0]
+
+    return reward, reset

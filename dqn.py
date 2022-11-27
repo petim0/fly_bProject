@@ -1,4 +1,5 @@
 from env import Cartpole
+from fly import Fly
 from replay import ReplayBuffer
 
 import torch.distributions
@@ -13,7 +14,7 @@ import torch.nn.functional as F
 
 # define network architecture
 class Net(nn.Module):
-    def __init__(self, num_obs=4, num_act=2):
+    def __init__(self, num_obs=42*2, num_act=18):
         super(Net, self).__init__()
         self.net = nn.Sequential(
             nn.Linear(num_obs, 256),
@@ -39,10 +40,10 @@ class DQN:
         self.args = args
 
         # initialise parameters
-        self.env = Cartpole(args)
+        self.env = Fly(args)
         self.replay = ReplayBuffer(num_envs=args.num_envs)
 
-        self.act_space = 2  # we discretise the action space into multiple bins (should be at least 2)
+        self.act_space = 18  # we discretise the action space into multiple bins (should be at least 2)
         self.discount = 0.99
         self.mini_batch_size = 128
         self.batch_size = self.args.num_envs * self.mini_batch_size
@@ -83,6 +84,8 @@ class DQN:
         soft_update(self.q, self.q_target, self.tau)
         return loss
 
+
+    #### Fuck, that is no good and that is not well implemented to have more than 1 action ! To change ? Maybe PPO is better ? See PPO 
     def act(self, obs, epsilon=0.0):
         coin = torch.rand(self.args.num_envs, device=self.args.sim_device) < epsilon
 
@@ -106,6 +109,7 @@ class DQN:
         next_obs, reward, done = self.env.obs_buf.clone(), self.env.reward_buf.clone(), self.env.reset_buf.clone()
         self.env.reset()
 
+        # What happends If I have too much envs ? means that he will train on new sim for a long time ? good bad ? (like the sim didn't have the time to make errors do good stuff)
         self.replay.push(obs, action, reward, next_obs, 1 - done)
 
         # training mode
