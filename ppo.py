@@ -95,6 +95,9 @@ class PPO:
         self.optim_step = 0
 
         self.net = Net(self.env.num_obs, self.env.num_act).to(args.sim_device)
+        # Load the weights if specified
+        if self.args.load:
+            self.net.load_state_dict(torch.load(self.args.load_path))
         self.action_var = torch.full((self.env.num_act,), 0.1).to(args.sim_device)
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
 
@@ -190,17 +193,18 @@ class PPO:
         if len(self.data) == self.rollout_size:
             print("Training")
             self.update()
+            # save sometimes
+            if self.args.save and self.optim_step % self.args.save_freq == 0 and self.optim_step != 0:
+                print("saving...")
+                self.save(str(self.optim_step))
+                print("saved!")
 
         # evaluation mode
         if self.run_step % self.num_eval_freq == 0:
             print('Steps: {:04d} | Opt Step: {:04d} | Reward {:.04f} | Action Var {:.04f}'
                   .format(self.run_step, self.optim_step, self.score, self.action_var[0].item()))
             self.score = 0
-        # save if save is set to true 
-        if self.args.save and self.run_step % self.args.save_freq:
-            print("saving...")
-            self.save(str(self.run_step))
-            print("saved!")
+
         self.run_step += 1
         return end
     

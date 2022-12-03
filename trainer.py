@@ -20,6 +20,8 @@ parser.add_argument('--method', default='dqn', type=str)
 parser.add_argument('--save', type=bool, default=False)
 parser.add_argument('--path', type=str, default="saved")
 parser.add_argument('--save_freq', type=int, default=20000)
+parser.add_argument('--load', type=bool, default=False)
+parser.add_argument('--load_path', type=str, default=None)
 
 args = parser.parse_args()
 args.headless = False

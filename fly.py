@@ -5,6 +5,7 @@ from isaacgym.torch_utils import *
 import sys
 import torch
 import yaml
+import torchgeometry as tgm
 
 class Fly:
     def __init__(self, args):
@@ -47,8 +48,11 @@ class Fly:
         self.reward_buf = torch.zeros(self.args.num_envs, device=self.args.sim_device)
         self.reset_buf = torch.ones(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
         self.progress_buf = torch.zeros(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
+        
         # Distance that a fly ha made since the last reset
         self.distance = torch.zeros(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
+        #Time it has spend too close to the ground
+        self.timer_down = torch.zeros(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
 
         # acquire gym interface
         self.gym = gymapi.acquire_gym()
@@ -73,7 +77,7 @@ class Fly:
         #It is always 13: 3 floats for position, 4 floats for quaternion, 3 floats for linear velocity, and 3 floats for angular velocity.
         self.old_position = torch.zeros((self.args.num_envs, 3), device=self.args.sim_device)
         self.root_positions = self.root_tensor.view(self.args.num_envs, 13)[:, 0:3] 
-        self.root_orientations = self.root_tensor.view(self.args.num_envs, 13)[:, 3:7]
+        self.root_orientations = self.root_tensor.view(self.args.num_envs, 13)[:, 3:7] #THOSE ORIENTATION ARE NOT ADDING UP TO ONE !!
         self.root_linvels = self.root_tensor.view(self.args.num_envs, 13)[:, 7:10]
         self.root_angvels = self.root_tensor.view(self.args.num_envs, 13)[:, 10:13]
         
@@ -233,7 +237,7 @@ class Fly:
             env_ids = torch.arange(self.args.num_envs, device=self.args.sim_device)
 
         self.gym.refresh_actor_root_state_tensor(self.sim)
-        self.gym.refresh_dof_state_tensor(self.sim) #GIVES NAN FOR UNKNOWN REASONS
+        self.gym.refresh_dof_state_tensor(self.sim) 
         
         #This is not used 
         self.obs_buf[env_ids] = self.dof_states[env_ids]
@@ -250,10 +254,23 @@ class Fly:
         # retrieve environment observations from buffer
         nb_of_sim_step = self.progress_buf
         nb_of_sim_step[nb_of_sim_step==0] = 1
-    
 
-        self.reward_buf[:], self.reset_buf[:] = compute_fly_reward(nb_of_sim_step, self.origin_pos, 
-            self.root_positions, self.reset_buf, self.max_episode_length)
+        #test_quat = tgm.quaternion_to_angle_axis(torch.tensor([1, 0, 0 ,0],  device=self.args.sim_device))
+        #test_quat2 = tgm.quaternion_to_angle_axis(torch.tensor([1, 0, 0 ,0], device=self.args.sim_device))
+        #test_gymap = gymapi.Quat.from_axis_angle(gymapi.Vec3(1, 0, 0),0).to_euler_zyx()
+        #print(test_gymap)
+        #rot = torch.tensor([np.pi, 0.0, 0.0], device=self.args.sim_device)
+        #rot2 = torch.tensor([0.0, np.pi, 0.0], device=self.args.sim_device)
+        #rotations_not_quat = tgm.quaternion_to_angle_axis(self.root_orientations)
+        #print(self.root_orientations)
+        #print(rotations_not_quat)
+        #print(rotations_not_quat[1] > np.pi/2, rotations_not_quat[1] < -np.pi/2)
+        #print(rotations_not_quat[0] > np.pi/2,  rotations_not_quat[0] < -np.pi/2)
+
+        self.reward_buf[:], self.reset_buf[:], self.timer_down[:] = compute_fly_reward(nb_of_sim_step, self.timer_down, self.origin_pos, 
+            self.root_positions, self.reset_buf, self.max_episode_length, 250)
+        
+        print(self.timer_down)
 
         self.old_position = self.root_positions
     
@@ -272,14 +289,15 @@ class Fly:
         env_ids_int32 = env_ids.to(dtype=torch.int32)
 
 
-        #self.root_tensor[env_ids, :] = self.origin_root_tensor[env_ids, :] this line is useless
+        self.root_tensor[env_ids, :] = self.origin_root_tensor[env_ids, :] 
         #print("Root tensor before setting", self.origin_root_tensor.size(), self.origin_root_tensor) 
 
         # Reset desired environments
         #Try destoying the actor and recreate one 
         #Try position controller. <- maybe the better option 
-        setted = self.gym.set_actor_root_state_tensor(self.sim, #THIS LINE IS PROBLEMATIC, apparently when we reset the buffers become NAN at the next refresh_dof_state_tensor
-                                               gymtorch.unwrap_tensor(self.origin_root_tensor))
+        self.gym.set_actor_root_state_tensor_indexed(self.sim,
+                                                     gymtorch.unwrap_tensor(self.root_tensor),
+                                                     gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
         setted1 = self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_states),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
@@ -289,6 +307,7 @@ class Fly:
         # clear up desired buffer states
         self.reset_buf[env_ids] = 0
         self.progress_buf[env_ids] = 0
+        self.timer_down[env_ids] = 0
         self.distance[env_ids] = 0
     
         #YOU CANNOT GET_OBS HERE 
@@ -386,21 +405,23 @@ class Fly:
 # define reward function using JIT
 # Aucune idée si ça marche  
 @torch.jit.script
-def compute_fly_reward(time, origin_pos, pos, reset_buf, max_episode_length):
-    # type: (Tensor, Tensor, Tensor, Tensor, float) -> Tuple[Tensor, Tensor]
-    #print("############################")
-    #print(pos[...,0])
-    #print(origin_pos[...,0])
+def compute_fly_reward(time, timer_down, origin_pos, pos, reset_buf, max_episode_length, max_time_down):
+    # type: (Tensor, Tensor, Tensor, Tensor, Tensor, float, float) -> Tuple[Tensor, Tensor, Tensor]
+    
+
     #We only want progress in the X axis 
-    #delta_dist = torch.pow(torch.sum(torch.pow((new_pos - old_pos), 2), 1), 0.5) #pow puts all values to 0 apparently 
     dist_x = pos[...,0] - origin_pos[...,0]
-    #print(delta_dist.size())
-    #print(dist_x)
+    
+    
     reward = dist_x / time 
 
+    timer_down[pos[..., 2]< 1] += 1
+    
     # adjust reward for reset agents
     reward = torch.where(time > max_episode_length, torch.ones_like(reward) * -2.0, reward)
 
     reset = torch.where(time > max_episode_length, torch.ones_like(reset_buf), reset_buf)
+    reset = torch.where(timer_down > max_time_down, torch.ones_like(reset), reset)
+    #reset = torch.where(rotation < rot or rotation < rot2 or rotation < rot3 , torch.ones_like(reset), reset)
     
-    return reward, reset 
+    return reward, reset, timer_down
