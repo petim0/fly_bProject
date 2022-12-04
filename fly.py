@@ -38,6 +38,27 @@ class Fly:
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
+        self.joints_limits = {
+            "joint_LHCoxa_roll" : {'lower': 0.6012615998580322, 'upper': 4.120341207989709}, 
+            "joint_RHCoxa_roll": {'lower': -4.120341207989709, 'upper': -0.6012615998580322}, 
+            "joint_LHFemur": {'lower': -5.553724929606129, 'upper': 1.6139985085925022}, 
+            "joint_RHFemur": {'lower': -5.553724929606129, 'upper': 1.6139985085925022}, 
+            "joint_LHTibia": {'lower': -3.8187837662418334, 'upper': 6.979499524663906}, 
+            "joint_RHTibia": {'lower': -3.8187837662418334, 'upper': 6.979499524663906},
+            "joint_LMCoxa_roll": {'lower': -0.1644733111051202, 'upper': 3.843949339634286}, 
+            "joint_RMCoxa_roll": {'lower': -3.843949339634286, 'upper': 0.1644733111051202}, 
+            "joint_LMFemur": {'lower': -3.8856558255692613, 'upper': 0.2503410005690172}, 
+            "joint_RMFemur": {'lower': -3.8856558255692613, 'upper': 0.2503410005690172}, 
+            "joint_LMTibia": {'lower': -2.5514814160669523, 'upper': 5.025832418893524}, 
+            "joint_RMTibia": {'lower': -2.5514814160669523, 'upper': 5.025832418893524},
+            "joint_LFCoxa": {'lower': -1.2282643976845713, 'upper': 1.4495346989023457}, 
+            "joint_RFCoxa": {'lower': -1.2282643976845713, 'upper': 1.4495346989023457}, 
+            "joint_LFFemur": {'lower': -4.986930927481532, 'upper': 1.4560609499793291}, 
+            "joint_RFFemur": {'lower': -4.986930927481532, 'upper': 1.4560609499793291}, 
+            "joint_LFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363},
+            "joint_RFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363}
+        }
+
         self.plane_static_friction = 1.0
         self.plane_dynamic_friction = 1.0
         self.restitution = 0.0 #not used 
@@ -69,7 +90,7 @@ class Fly:
         #print("Nb of base positions: ", len(self.joints_92dof)) #92
 
         # initialise envs and state tensors
-        self.envs, self.num_dof, self.dof_indexes, self.initial_dofs, self.initial_dofs_one  = self.create_envs()
+        self.envs, self.num_dof, self.dof_indexes, self.initial_dofs, self.initial_dofs_one, self.translation, self.multiplication  = self.create_envs()
         self.dof_states, self.root_tensor = self.get_states_tensor()
         self.dof_pos = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 1]
@@ -165,15 +186,31 @@ class Fly:
 
         # Find the indexes we want to modify, these indexes are relative to the sim 0 and 42*num_envs
         # It should have a size num_action*num_envs
+        # We also calculate the translation and multiplication factor we want to apply 
         dof_indexes = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.long, device=self.args.sim_device)
+        dof_translation = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
+        dof_multiplication = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
+        #maxU = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
         j = 0
         for i in range(self.args.num_envs):
             for name in self.names:
                 dof_indexes[j] = self.gym.find_actor_dof_index(envs[i], actors[i], name, gymapi.DOMAIN_SIM)
+                dof_translation[j] = self.find_trans(self.joints_limits[name]["lower"], self.joints_limits[name]["upper"])
+                dof_multiplication[j] = self.find_mult(self.joints_limits[name]["lower"], self.joints_limits[name]["upper"])
+                #maxU[j] = self.joints_limits[name]["upper"]
                 j+=1
         #print("Dof_indexes: ", dof_indexes.size(), "Should be: ",  self.num_act*self.args.num_envs)
 
+
         dof_indexes, indexosef = torch.sort(dof_indexes, 0)
+        indexosef = indexosef.squeeze(-1)        
+        dof_translation = dof_translation[indexosef]
+        dof_multiplication = dof_multiplication[indexosef]
+        #maxU = maxU[indexosef]
+        
+        #print(dof_indexes.size(), dof_translation.size(), dof_multiplication.size(), maxU.size())
+        #test = torch.full((self.num_act * self.args.num_envs, 1), 1, dtype=torch.long, device=self.args.sim_device)
+        #print((torch.mul(test, dof_multiplication) + dof_translation)[34], maxU[34])
 
         print("Setting initial dof position")
 
@@ -188,7 +225,15 @@ class Fly:
         #Initial_dof for just one fly, useful in the reset 
         initial_dofs_one = initial_dofs[:num_dof]        
         
-        return envs, num_dof, dof_indexes, initial_dofs, initial_dofs_one
+        return envs, num_dof, dof_indexes, initial_dofs, initial_dofs_one, dof_translation, dof_multiplication
+
+    #find the translation to apply to transform a value between [-1 1] to [lower upper]
+    def find_trans(self, lower: float, upper: float):
+        return (upper+lower)/2.0 
+
+    def find_mult(self, lower: float, upper: float):
+        return (upper-lower)/2.0
+
 
     def create_viewer(self):
         # create viewer for debugging (looking at the center of environment)
@@ -270,8 +315,6 @@ class Fly:
         self.reward_buf[:], self.reset_buf[:], self.timer_down[:] = compute_fly_reward(nb_of_sim_step, self.timer_down, self.origin_pos, 
             self.root_positions, self.reset_buf, self.max_episode_length, 250)
         
-        print(self.timer_down)
-
         self.old_position = self.root_positions
     
     ## Can be made better  
@@ -298,7 +341,7 @@ class Fly:
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_tensor),
                                                      gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
-        setted1 = self.gym.set_dof_state_tensor_indexed(self.sim,
+        self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_states),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
         
@@ -366,7 +409,7 @@ class Fly:
         ##actions_tensor = torch.zeros(self.args.num_envs * self.num_dof, device=self.args.sim_device)
         ##actions_tensor[::self.num_dof] = actions.squeeze(-1) * self.max_push_effort
         actions_tensor = torch.clone(self.initial_dofs).detach()
-        actions = actions.view(self.args.num_envs * self.num_act, 1)
+        actions = (actions.view(self.args.num_envs * self.num_act, 1) * self.multiplication) + self.translation
         #print("actions: ", actions_tensor)
         # print(self.dof_indexes.size())
         # print(actions_tensor.size())
@@ -403,7 +446,6 @@ class Fly:
 
 
 # define reward function using JIT
-# Aucune idée si ça marche  
 @torch.jit.script
 def compute_fly_reward(time, timer_down, origin_pos, pos, reset_buf, max_episode_length, max_time_down):
     # type: (Tensor, Tensor, Tensor, Tensor, Tensor, float, float) -> Tuple[Tensor, Tensor, Tensor]
