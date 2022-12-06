@@ -10,7 +10,7 @@ from torch.distributions import MultivariateNormal
 
 # define network architecture here
 class Net(nn.Module):
-    def __init__(self, num_obs=42*2, num_act=18):
+    def __init__(self, num_obs=114, num_act=18):
         super(Net, self).__init__()
         # we use a shared backbone for both actor and critic
         """"

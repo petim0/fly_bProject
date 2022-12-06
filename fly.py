@@ -1,6 +1,7 @@
 from isaacgym import gymapi
 from isaacgym import gymtorch
 from isaacgym.torch_utils import *
+from isaacgymenvs.utils.torch_jit_utils import *
 
 import sys
 import torch
@@ -11,12 +12,13 @@ class Fly:
     def __init__(self, args):
         self.args = args
         self.end = False
-
+        self.dt = 1 / 1000.
+        self.up_axis_idx = 2 # index of up axis: Y=1, Z=2
         # configure sim (gravity is pointing down)
         sim_params = gymapi.SimParams()
         sim_params.up_axis = gymapi.UP_AXIS_Z
         sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*1000) #should be *1000
-        sim_params.dt = 1 / 1000.
+        sim_params.dt = self.dt
         sim_params.substeps = 2
         sim_params.use_gpu_pipeline = True
 
@@ -29,7 +31,7 @@ class Fly:
         sim_params.physx.use_gpu = True
         self.i = 0
         # task-specific parameters
-        self.num_obs = 42*2  # 42 dofs * (pos, velocity)
+        self.num_obs = 114  # See compute_fly_observations
         self.num_act = 18 #(3 DoFs * 6 legs)
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
         self.max_episode_length = 500  # maximum episode length
@@ -61,10 +63,19 @@ class Fly:
 
         self.plane_static_friction = 1.0
         self.plane_dynamic_friction = 1.0
-        self.restitution = 0.0 #not used 
 
+        #Constants for the reward function, taken from ant
+        self.dof_vel_scale = 0.2
+        self.heading_weight = 0.5
+        self.up_weight = 0.1
+        self.actions_cost_scale = 0.005
+        self.energy_cost_scale = 0.05
+        self.joints_at_limit_cost_scale = 0.1
+        self.death_cost = -2.0
+        self.termination_height = 0.8 #PEUT être TROP petit !!
 
         # allocate buffers
+        #obs_buf size will have to change TODO 
         self.obs_buf = torch.zeros((self.args.num_envs, self.num_obs), device=self.args.sim_device) #Observation given to the NN
         self.reward_buf = torch.zeros(self.args.num_envs, device=self.args.sim_device)
         self.reset_buf = torch.ones(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
@@ -106,19 +117,33 @@ class Fly:
         self.origin_root_tensor = torch.zeros((self.args.num_envs, 13), device=self.args.sim_device) #self.root_tensor.clone() ne marchera pas 
         #psk on le fait avant de lancer la simulation
         self.origin_root_tensor[:,2] = 3
-        self.origin_root_tensor[:,6] = 1 #the last quaterion should be one... idk why 
-        print("ORIGINAL z", self.origin_root_tensor)
+        self.origin_root_tensor[:,6] = 1 #the last quaterion should be one
         self.origin_root_tensor_one = self.origin_root_tensor[0]
-        #print(self.origin_root_tensor.size(), self.origin_root_tensor_one.size())
 
         # generate viewer for visualisation
         self.viewer = self.create_viewer()
+
+
+        #Initialise other values for reward and obs buffer 
+        self.potentials = to_torch([-1000./self.dt], device=self.args.sim_device).repeat(self.args.num_envs)
+        self.prev_potentials = self.potentials.clone()
+        self.up_vec = to_torch(get_axis_params(1., self.up_axis_idx), device=self.args.sim_device).repeat((self.args.num_envs, 1))
+        self.heading_vec = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1))
+
+        self.inv_start_rot = quat_conjugate(self.start_rotation).repeat((self.args.num_envs, 1))
+
+        self.basis_vec0 = self.heading_vec.clone()
+        self.basis_vec1 = self.up_vec.clone()
+
+        self.targets = to_torch([1000, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1))
+        self.target_dirs = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1))
 
         
         # step simulation to initialise tensor buffers
         self.gym.prepare_sim(self.sim)
         
         #self.reset() #Ne Peux pas être là !
+        ## First reset to start on smth frseh, This has to be modified, it is ugly
         env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)
         self.dof_pos[env_ids, :] = self.initial_dofs_one[..., 0]
         self.dof_vel[env_ids, :] = self.initial_dofs_one[..., 1]
@@ -134,7 +159,6 @@ class Fly:
     def create_envs(self):
         # add ground plane
         plane_params = gymapi.PlaneParams()
-        # TODO: define
         plane_params.static_friction = self.plane_static_friction
         plane_params.dynamic_friction = self.plane_dynamic_friction
         plane_params.normal = gymapi.Vec3(0, 0, 1) # z-Up
@@ -159,6 +183,7 @@ class Fly:
         # define fly pose
         pose = gymapi.Transform()
         pose.p.z = 2.5   # generate the fly 3m from the ground
+        self.start_rotation = torch.tensor([pose.r.x, pose.r.y, pose.r.z, pose.r.w], device=self.args.sim_device)
         #pose.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(1, 0, 0), np.pi / 8) # No rotation needed 
 
 
@@ -182,15 +207,33 @@ class Fly:
             
             envs.append(env)
             actors.append(fly)
-        #try reseting the actor now
+
+        self.dof_limits_lower = []
+        self.dof_limits_upper = []
+        dof_prop = self.gym.get_actor_dof_properties(envs[0], actors[0])
+        for j in range(num_dof):
+            if dof_prop['lower'][j] > dof_prop['upper'][j]:
+                self.dof_limits_lower.append(dof_prop['upper'][j])
+                self.dof_limits_upper.append(dof_prop['lower'][j])
+            else:
+                self.dof_limits_lower.append(dof_prop['lower'][j])
+                self.dof_limits_upper.append(dof_prop['upper'][j])
+        
+        self.dof_limits_lower = to_torch(self.dof_limits_lower, device=self.args.sim_device)
+        self.dof_limits_upper = to_torch(self.dof_limits_upper, device=self.args.sim_device)
+
+
 
         # Find the indexes we want to modify, these indexes are relative to the sim 0 and 42*num_envs
         # It should have a size num_action*num_envs
-        # We also calculate the translation and multiplication factor we want to apply 
+        # We also calculate the translation and multiplication factor we want to apply, this could be done without hardcoding 
+        # the values in a dictionnary using get_actor_dof_properties() !! Don't have the time to change 
+
         dof_indexes = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.long, device=self.args.sim_device)
         dof_translation = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
         dof_multiplication = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
         #maxU = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
+
         j = 0
         for i in range(self.args.num_envs):
             for name in self.names:
@@ -199,18 +242,12 @@ class Fly:
                 dof_multiplication[j] = self.find_mult(self.joints_limits[name]["lower"], self.joints_limits[name]["upper"])
                 #maxU[j] = self.joints_limits[name]["upper"]
                 j+=1
-        #print("Dof_indexes: ", dof_indexes.size(), "Should be: ",  self.num_act*self.args.num_envs)
-
 
         dof_indexes, indexosef = torch.sort(dof_indexes, 0)
         indexosef = indexosef.squeeze(-1)        
         dof_translation = dof_translation[indexosef]
         dof_multiplication = dof_multiplication[indexosef]
         #maxU = maxU[indexosef]
-        
-        #print(dof_indexes.size(), dof_translation.size(), dof_multiplication.size(), maxU.size())
-        #test = torch.full((self.num_act * self.args.num_envs, 1), 1, dtype=torch.long, device=self.args.sim_device)
-        #print((torch.mul(test, dof_multiplication) + dof_translation)[34], maxU[34])
 
         print("Setting initial dof position")
 
@@ -265,7 +302,7 @@ class Fly:
         # get dof state tensor of All the flys
         _dof_states = self.gym.acquire_dof_state_tensor(self.sim)
         dof_states = gymtorch.wrap_tensor(_dof_states)
-        dof_states = dof_states.view(self.args.num_envs, self.num_obs)
+        dof_states = dof_states.view(self.args.num_envs, self.num_dof*2)
 
         # acquire root state tensor descriptor
         _root_tensor = self.gym.acquire_actor_root_state_tensor(self.sim)
@@ -276,24 +313,17 @@ class Fly:
 
         return dof_states, root_tensor
 
-    def get_obs(self, env_ids=None):
-        # get state observation from each environment id
-        if env_ids is None:
-            env_ids = torch.arange(self.args.num_envs, device=self.args.sim_device)
-
+    def get_obs(self):
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_dof_state_tensor(self.sim) 
         
-        #This is not used 
-        self.obs_buf[env_ids] = self.dof_states[env_ids]
-
-        #self.i+=1 
-        #print("bababababbababas", self.i ,self.dof_states.size(), self.dof_states)
-        #self.i+=1 
-        #print("hahahah", self.i ,self.root_tensor.size(), self.root_tensor)
-
-        # Could do smth like that if needed
-        # self.obs_buf_root[env_ids] = self.root_tensor[env_ids]
+        ## NEW TODO
+        self.obs_buf[:], self.potentials[:], self.prev_potentials[:], self.up_vec[:], self.heading_vec[:] = compute_fly_observations(
+            self.obs_buf, self.root_tensor, self.targets, self.potentials,
+            self.inv_start_rot, self.dof_pos, self.dof_vel,
+            self.dof_limits_lower, self.dof_limits_upper, self.dof_vel_scale, 
+            self.actions.view(self.args.num_envs, -1), self.dt,
+            self.basis_vec0, self.basis_vec1, self.up_axis_idx)
 
     def get_reward(self):
         # retrieve environment observations from buffer
@@ -324,7 +354,6 @@ class Fly:
         if len(env_ids) == 0:
             return False
 
-        print("resting, everything for now I guess because..")
         # initial dof [{pos1, vel1},{pos2, vel2},....,{posn,veln}]
         # Can be done differently, we could not pass by these dof_pos, dof_vel, and do smth like self.dof_state[env_ids, :] = smth I'll see later If I have the courage to change that
         self.dof_pos[env_ids, :] = self.initial_dofs_one[..., 0]
@@ -333,11 +362,8 @@ class Fly:
 
 
         self.root_tensor[env_ids, :] = self.origin_root_tensor[env_ids, :] 
-        #print("Root tensor before setting", self.origin_root_tensor.size(), self.origin_root_tensor) 
 
-        # Reset desired environments
-        #Try destoying the actor and recreate one 
-        #Try position controller. <- maybe the better option 
+        # Reset desired environments 
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_tensor),
                                                      gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
@@ -345,8 +371,6 @@ class Fly:
                                               gymtorch.unwrap_tensor(self.dof_states),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
         
-        #print(setted1, setted)
-
         # clear up desired buffer states
         self.reset_buf[env_ids] = 0
         self.progress_buf[env_ids] = 0
@@ -410,6 +434,8 @@ class Fly:
         ##actions_tensor[::self.num_dof] = actions.squeeze(-1) * self.max_push_effort
         actions_tensor = torch.clone(self.initial_dofs).detach()
         actions = (actions.view(self.args.num_envs * self.num_act, 1) * self.multiplication) + self.translation
+        self.actions = actions.clone()
+        
         #print("actions: ", actions_tensor)
         # print(self.dof_indexes.size())
         # print(actions_tensor.size())
@@ -440,8 +466,6 @@ class Fly:
         #You cannot get obs if you reset 
         self.get_obs()        
         self.progress_buf += 1
-        if (self.progress_buf[0] > self.max_episode_length):
-            print("Should be reseting soon")
         self.get_reward()
 
 
@@ -456,14 +480,99 @@ def compute_fly_reward(time, timer_down, origin_pos, pos, reset_buf, max_episode
     
     
     reward = dist_x / time 
+    reward += pos[..., 2]
 
     timer_down[pos[..., 2]< 1] += 1
     
     # adjust reward for reset agents
     reward = torch.where(time > max_episode_length, torch.ones_like(reward) * -2.0, reward)
+    reward = torch.where(timer_down > max_time_down, torch.ones_like(reward) * -2.0, reward)
 
     reset = torch.where(time > max_episode_length, torch.ones_like(reset_buf), reset_buf)
     reset = torch.where(timer_down > max_time_down, torch.ones_like(reset), reset)
     #reset = torch.where(rotation < rot or rotation < rot2 or rotation < rot3 , torch.ones_like(reset), reset)
     
     return reward, reset, timer_down
+
+@torch.jit.script
+def compute_fly_reward2(
+    obs_buf,
+    reset_buf,
+    progress_buf,
+    actions,
+    up_weight,
+    heading_weight,
+    potentials,
+    prev_potentials,
+    actions_cost_scale,
+    energy_cost_scale,
+    joints_at_limit_cost_scale,
+    termination_height,
+    death_cost,
+    max_episode_length
+):
+    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float) -> Tuple[Tensor, Tensor]
+
+    # reward from direction headed
+    heading_weight_tensor = torch.ones_like(obs_buf[:, 11]) * heading_weight
+    heading_reward = torch.where(obs_buf[:, 11] > 0.8, heading_weight_tensor, heading_weight * obs_buf[:, 11] / 0.8)
+
+    # aligning up axis of ant and environment
+    up_reward = torch.zeros_like(heading_reward)
+    up_reward = torch.where(obs_buf[:, 10] > 0.93, up_reward + up_weight, up_reward)
+
+    # energy penalty for movement
+    actions_cost = torch.sum(actions ** 2, dim=-1)
+    electricity_cost = torch.sum(torch.abs(actions * obs_buf[:, 20:28]), dim=-1)
+    dof_at_limit_cost = torch.sum(obs_buf[:, 12:20] > 0.99, dim=-1)
+
+    # reward for duration of staying alive
+    alive_reward = torch.ones_like(potentials) * 0.5
+    progress_reward = potentials - prev_potentials
+
+    total_reward = progress_reward + alive_reward + up_reward + heading_reward - \
+        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale
+
+    # adjust reward for fallen agents
+    total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)
+
+    # reset agents
+    reset = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(reset_buf), reset_buf)
+    reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset)
+
+    return total_reward, reset
+
+
+@torch.jit.script
+def compute_fly_observations(obs_buf, root_states, targets, potentials,
+                             inv_start_rot, dof_pos, dof_vel,
+                             dof_limits_lower, dof_limits_upper, dof_vel_scale, actions, dt,
+                             basis_vec0, basis_vec1, up_axis_idx):
+    # type: (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, float, Tensor, float, Tensor, Tensor, int) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]
+
+    torso_position = root_states[:, 0:3]
+    torso_rotation = root_states[:, 3:7]
+    velocity = root_states[:, 7:10]
+    ang_velocity = root_states[:, 10:13]
+
+    to_target = targets - torso_position
+    to_target[:, 2] = 0.0
+
+    prev_potentials_new = potentials.clone()
+    potentials = -torch.norm(to_target, p=2, dim=-1) / dt
+
+    torso_quat, up_proj, heading_proj, up_vec, heading_vec = compute_heading_and_up(
+        torso_rotation, inv_start_rot, to_target, basis_vec0, basis_vec1, 2)
+
+    vel_loc, angvel_loc, roll, pitch, yaw, angle_to_target = compute_rot(
+        torso_quat, velocity, ang_velocity, targets, torso_position)
+
+    dof_pos_scaled = unscale(dof_pos, dof_limits_lower, dof_limits_upper)
+
+    # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_dofs(42), num_dofs(42), num_actions(18)
+    obs = torch.cat((torso_position[:, up_axis_idx].view(-1, 1), vel_loc, angvel_loc,
+                     yaw.unsqueeze(-1), roll.unsqueeze(-1), angle_to_target.unsqueeze(-1),
+                     up_proj.unsqueeze(-1), heading_proj.unsqueeze(-1), dof_pos_scaled,
+                     dof_vel * dof_vel_scale, actions), dim=-1)
+
+    return obs, potentials, prev_potentials_new, up_vec, heading_vec
