@@ -97,6 +97,7 @@ class PPO:
         self.net = Net(self.env.num_obs, self.env.num_act).to(args.sim_device)
         # Load the weights if specified
         if self.args.load:
+            print("loaded from: ", str(self.args.load_path))
             self.net.load_state_dict(torch.load(self.args.load_path))
         self.action_var = torch.full((self.env.num_act,), 0.1).to(args.sim_device)
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
@@ -134,7 +135,7 @@ class PPO:
 
             advantage = torch.stack(advantage_lst)
             log_prob = torch.stack(log_prob_lst)
-
+            print("obs: ", len(obs), "action", len(action), "log_prob", len(log_prob), "target", len(target), "advantage", len(advantage))
             mini_batch = (obs, action, log_prob, target, advantage)
             data.append(mini_batch)
         return data

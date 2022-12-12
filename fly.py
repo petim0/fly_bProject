@@ -33,13 +33,19 @@ class Fly:
         # task-specific parameters
         self.num_obs = 114  # See compute_fly_observations
         self.num_act = 18 #(3 DoFs * 6 legs)
+        self.starting_height = 2.2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
-        self.max_episode_length = 500  # maximum episode length
+        self.max_episode_length = 1000  # maximum episode length
         self.render_count = 0
         self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
+        #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll",
+        #            "joint_LMCoxa_roll", "joint_RMCoxa_roll",
+        #            "joint_LFCoxa", "joint_RFCoxa"]
+        #self.names = ["joint_LFFemur"]
+
         self.joints_limits = {
             "joint_LHCoxa_roll" : {'lower': 0.6012615998580322, 'upper': 4.120341207989709}, 
             "joint_RHCoxa_roll": {'lower': -4.120341207989709, 'upper': -0.6012615998580322}, 
@@ -101,13 +107,13 @@ class Fly:
         #print("Nb of base positions: ", len(self.joints_92dof)) #92
 
         # initialise envs and state tensors
-        self.envs, self.num_dof, self.dof_indexes, self.initial_dofs, self.initial_dofs_one, self.translation, self.multiplication  = self.create_envs()
+        self.envs, self.num_dof, self.action_indexes, self.action_indexes_one, self.initial_dofs, self.initial_dofs_one, self.translation, self.multiplication, self.dof_limits_lower, self.dof_limits_upper  = self.create_envs()
         self.dof_states, self.root_tensor = self.get_states_tensor()
         self.dof_pos = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 1]
 
         #It is always 13: 3 floats for position, 4 floats for quaternion, 3 floats for linear velocity, and 3 floats for angular velocity.
-        self.old_position = torch.zeros((self.args.num_envs, 3), device=self.args.sim_device)
+        #self.old_position = torch.zeros((self.args.num_envs, 3), device=self.args.sim_device)
         self.root_positions = self.root_tensor.view(self.args.num_envs, 13)[:, 0:3] 
         self.root_orientations = self.root_tensor.view(self.args.num_envs, 13)[:, 3:7] #THOSE ORIENTATION ARE NOT ADDING UP TO ONE !!
         self.root_linvels = self.root_tensor.view(self.args.num_envs, 13)[:, 7:10]
@@ -116,7 +122,7 @@ class Fly:
         self.origin_pos = torch.zeros((self.args.num_envs, 3), device=self.args.sim_device)
         self.origin_root_tensor = torch.zeros((self.args.num_envs, 13), device=self.args.sim_device) #self.root_tensor.clone() ne marchera pas 
         #psk on le fait avant de lancer la simulation
-        self.origin_root_tensor[:,2] = 3
+        self.origin_root_tensor[:,2] = self.starting_height
         self.origin_root_tensor[:,6] = 1 #the last quaterion should be one
         self.origin_root_tensor_one = self.origin_root_tensor[0]
 
@@ -135,8 +141,8 @@ class Fly:
         self.basis_vec0 = self.heading_vec.clone()
         self.basis_vec1 = self.up_vec.clone()
 
-        self.targets = to_torch([1000, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1))
-        self.target_dirs = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1))
+        self.targets = to_torch([1000, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1)) #was [1000, 0, 0]
+        self.target_dirs = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1)) #was [1, 0, 0]
 
         
         # step simulation to initialise tensor buffers
@@ -182,7 +188,7 @@ class Fly:
         # print("Dof_names: ", self.joints_42dof)
         # define fly pose
         pose = gymapi.Transform()
-        pose.p.z = 2.5   # generate the fly 3m from the ground
+        pose.p.z = self.starting_height   # generate the fly 3m from the ground
         self.start_rotation = torch.tensor([pose.r.x, pose.r.y, pose.r.z, pose.r.w], device=self.args.sim_device)
         #pose.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(1, 0, 0), np.pi / 8) # No rotation needed 
 
@@ -190,7 +196,7 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(10000)
+        dof_props['stiffness'].fill(1000000)
         dof_props['damping'].fill(50)
 
         # generate environments
@@ -208,19 +214,19 @@ class Fly:
             envs.append(env)
             actors.append(fly)
 
-        self.dof_limits_lower = []
-        self.dof_limits_upper = []
+        dof_limits_lower = []
+        dof_limits_upper = []
         dof_prop = self.gym.get_actor_dof_properties(envs[0], actors[0])
         for j in range(num_dof):
             if dof_prop['lower'][j] > dof_prop['upper'][j]:
-                self.dof_limits_lower.append(dof_prop['upper'][j])
-                self.dof_limits_upper.append(dof_prop['lower'][j])
+                dof_limits_lower.append(dof_prop['upper'][j])
+                dof_limits_upper.append(dof_prop['lower'][j])
             else:
-                self.dof_limits_lower.append(dof_prop['lower'][j])
-                self.dof_limits_upper.append(dof_prop['upper'][j])
+                dof_limits_lower.append(dof_prop['lower'][j])
+                dof_limits_upper.append(dof_prop['upper'][j])
         
-        self.dof_limits_lower = to_torch(self.dof_limits_lower, device=self.args.sim_device)
-        self.dof_limits_upper = to_torch(self.dof_limits_upper, device=self.args.sim_device)
+        dof_limits_lower = to_torch(dof_limits_lower, device=self.args.sim_device)
+        dof_limits_upper = to_torch(dof_limits_upper, device=self.args.sim_device)
 
 
 
@@ -229,25 +235,35 @@ class Fly:
         # We also calculate the translation and multiplication factor we want to apply, this could be done without hardcoding 
         # the values in a dictionnary using get_actor_dof_properties() !! Don't have the time to change 
 
-        dof_indexes = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.long, device=self.args.sim_device)
+        action_indexes = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.long, device=self.args.sim_device)
         dof_translation = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
         dof_multiplication = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
         #maxU = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
 
+        #lower = []
         j = 0
         for i in range(self.args.num_envs):
             for name in self.names:
-                dof_indexes[j] = self.gym.find_actor_dof_index(envs[i], actors[i], name, gymapi.DOMAIN_SIM)
+                action_indexes[j] = self.gym.find_actor_dof_index(envs[i], actors[i], name, gymapi.DOMAIN_SIM)
+                #lower.append(self.joints_limits[name]["lower"])
                 dof_translation[j] = self.find_trans(self.joints_limits[name]["lower"], self.joints_limits[name]["upper"])
                 dof_multiplication[j] = self.find_mult(self.joints_limits[name]["lower"], self.joints_limits[name]["upper"])
                 #maxU[j] = self.joints_limits[name]["upper"]
                 j+=1
+        #lower = to_torch(lower, device=self.args.sim_device)
+        action_indexes, indexosef = torch.sort(action_indexes, 0)
 
-        dof_indexes, indexosef = torch.sort(dof_indexes, 0)
+        #action_indexes for just one fly (indexes relative to the env) 
+        action_indexes_one = action_indexes[0:self.num_act]
+
         indexosef = indexosef.squeeze(-1)        
         dof_translation = dof_translation[indexosef]
         dof_multiplication = dof_multiplication[indexosef]
         #maxU = maxU[indexosef]
+
+        #It's the same thing ! But the second one is easier, I'll change it when I have some time !
+        #print(lower[indexosef][0:self.num_act])
+        #print(self.dof_limits_lower[action_indexes_one])
 
         print("Setting initial dof position")
 
@@ -262,7 +278,7 @@ class Fly:
         #Initial_dof for just one fly, useful in the reset 
         initial_dofs_one = initial_dofs[:num_dof]        
         
-        return envs, num_dof, dof_indexes, initial_dofs, initial_dofs_one, dof_translation, dof_multiplication
+        return envs, num_dof, action_indexes, action_indexes_one, initial_dofs, initial_dofs_one, dof_translation, dof_multiplication, dof_limits_lower, dof_limits_upper
 
     #find the translation to apply to transform a value between [-1 1] to [lower upper]
     def find_trans(self, lower: float, upper: float):
@@ -317,7 +333,6 @@ class Fly:
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_dof_state_tensor(self.sim) 
         
-        ## NEW TODO
         self.obs_buf[:], self.potentials[:], self.prev_potentials[:], self.up_vec[:], self.heading_vec[:] = compute_fly_observations(
             self.obs_buf, self.root_tensor, self.targets, self.potentials,
             self.inv_start_rot, self.dof_pos, self.dof_vel,
@@ -342,10 +357,31 @@ class Fly:
         #print(rotations_not_quat[1] > np.pi/2, rotations_not_quat[1] < -np.pi/2)
         #print(rotations_not_quat[0] > np.pi/2,  rotations_not_quat[0] < -np.pi/2)
 
-        self.reward_buf[:], self.reset_buf[:], self.timer_down[:] = compute_fly_reward(nb_of_sim_step, self.timer_down, self.origin_pos, 
-            self.root_positions, self.reset_buf, self.max_episode_length, 250)
+        #self.reward_buf[:], self.reset_buf[:], self.timer_down[:] = compute_fly_reward(nb_of_sim_step, self.timer_down, self.origin_pos, 
+            #self.root_positions, self.reset_buf, self.max_episode_length, 250)
+
+        self.reward_buf[:], self.reset_buf[:] = compute_fly_reward2(
+            self.obs_buf,
+            self.reset_buf,
+            self.progress_buf,
+            self.actions.view(self.args.num_envs, -1),
+            self.up_weight,
+            self.heading_weight,
+            self.potentials,
+            self.prev_potentials,
+            self.actions_cost_scale,
+            self.energy_cost_scale,
+            self.joints_at_limit_cost_scale,
+            self.termination_height,
+            self.death_cost,
+            self.max_episode_length, 
+            self.action_indexes_one, 
+            self.dof_limits_lower,
+            self.dof_limits_upper,
+            self.args.num_envs
+        )
         
-        self.old_position = self.root_positions
+        #self.old_position = self.root_positions
     
     ## Can be made better  
     def reset(self):
@@ -437,13 +473,13 @@ class Fly:
         self.actions = actions.clone()
         
         #print("actions: ", actions_tensor)
-        # print(self.dof_indexes.size())
+        # print(self.action_indexes.size())
         # print(actions_tensor.size())
         # print(actions_tensor[..., 0].size())
-        # print(actions_tensor[..., 0][self.dof_indexes].size())
+        # print(actions_tensor[..., 0][self.action_indexes].size())
         # print(actions.size())
         #Replaces in the mask the values of the actions
-        actions_tensor[..., 0][self.dof_indexes] = actions
+        actions_tensor[..., 0][self.action_indexes] = actions
         
         #We only want position !! No velocity 
         actions_pos_only = actions_tensor[...,0].contiguous()
@@ -509,9 +545,13 @@ def compute_fly_reward2(
     joints_at_limit_cost_scale,
     termination_height,
     death_cost,
-    max_episode_length
+    max_episode_length, 
+    action_indicies_one,
+    upper_limit_of_actions, 
+    lower_limit_of_actions, 
+    num_env
 ):
-    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float) -> Tuple[Tensor, Tensor]
+    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, Tensor, Tensor, Tensor, int) -> Tuple[Tensor, Tensor]
 
     # reward from direction headed
     heading_weight_tensor = torch.ones_like(obs_buf[:, 11]) * heading_weight
@@ -519,12 +559,16 @@ def compute_fly_reward2(
 
     # aligning up axis of ant and environment
     up_reward = torch.zeros_like(heading_reward)
-    up_reward = torch.where(obs_buf[:, 10] > 0.93, up_reward + up_weight, up_reward)
+    up_reward = torch.where(obs_buf[:, 10] > 1.5, up_reward + up_weight, up_reward)
 
     # energy penalty for movement
     actions_cost = torch.sum(actions ** 2, dim=-1)
-    electricity_cost = torch.sum(torch.abs(actions * obs_buf[:, 20:28]), dim=-1)
-    dof_at_limit_cost = torch.sum(obs_buf[:, 12:20] > 0.99, dim=-1)
+    #Plus la diff de mouvement est grande plus ça coute  
+    electricity_cost = torch.sum(torch.abs(actions - obs_buf[:, 96:114]), dim=-1)
+    #Be at the the extremities costs  A CHANGER ET RAJOUTER SELF.LIMIT..[action_index_one]
+    #print(obs_buf[:, 96:114].size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)).size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((10, 1)))
+    dof_at_limit_cost = torch.sum(obs_buf[:, 96:114] > upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
+    dof_at_limit_cost += torch.sum(obs_buf[:, 96:114] < lower_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
 
     # reward for duration of staying alive
     alive_reward = torch.ones_like(potentials) * 0.5
@@ -568,7 +612,8 @@ def compute_fly_observations(obs_buf, root_states, targets, potentials,
         torso_quat, velocity, ang_velocity, targets, torso_position)
 
     dof_pos_scaled = unscale(dof_pos, dof_limits_lower, dof_limits_upper)
-
+    
+    # ATTENTION DOF POSITION ET ACTION EST UNE Répétition du coup ici 
     # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_dofs(42), num_dofs(42), num_actions(18)
     obs = torch.cat((torso_position[:, up_axis_idx].view(-1, 1), vel_loc, angvel_loc,
                      yaw.unsqueeze(-1), roll.unsqueeze(-1), angle_to_target.unsqueeze(-1),
