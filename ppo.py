@@ -81,10 +81,12 @@ class PPO:
         self.gamma = 0.99
         self.lmbda = 0.95
         self.clip = 0.2
-        self.mini_batch_size = 12288  #24576 #(4096*6)
+        self.mini_batch_size = 200  #24576 #(4096*6)
         self.chunk_size = 5 # Aucune idée a quoi set was 32
         self.mini_chunk_size = self.mini_batch_size // self.args.num_envs
+        print("mini_chunk_size: ", self.mini_chunk_size)
         self.rollout_size = self.mini_chunk_size * self.chunk_size
+        print("rollout_size: ", self.rollout_size)
         #self.rollout_size = 128 #Quand est-ce que ça train 
          
         self.num_eval_freq = 100 #Print tout les combien de step 
@@ -135,7 +137,8 @@ class PPO:
 
             advantage = torch.stack(advantage_lst)
             log_prob = torch.stack(log_prob_lst)
-            print("obs: ", len(obs), "action", len(action), "log_prob", len(log_prob), "target", len(target), "advantage", len(advantage))
+            #1228 <- mini_chunk_size * 10 <- num_env pour tous
+            print("obs: ", len(obs), "*" , len(obs[0]), "action", len(action), "*" , len(action[0]), "log_prob", len(log_prob), "*",len(log_prob[0]), "target", len(target), "*", len(target[0]), "advantage", len(advantage), "*",len(advantage[0]))
             mini_batch = (obs, action, log_prob, target, advantage)
             data.append(mini_batch)
         return data
@@ -171,7 +174,7 @@ class PPO:
     def run(self):
         # collect data
         obs = self.env.obs_buf.clone()
-        end = self.env.end
+        end = self.env.end #See if we need to stop 
 
         with torch.no_grad():
             mu = self.net.pi(obs)
@@ -182,6 +185,7 @@ class PPO:
             action = action.clip(-1, 1)
 
         self.env.step(action)
+        #[num_envs, 114]
         next_obs, reward, done = self.env.obs_buf.clone(), self.env.reward_buf.clone(), self.env.reset_buf.clone()
 
         self.data.append((obs, action, reward, next_obs, log_prob, 1 - done))

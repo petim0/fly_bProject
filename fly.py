@@ -128,8 +128,7 @@ class Fly:
 
         # generate viewer for visualisation
         self.viewer = self.create_viewer()
-
-
+        
         #Initialise other values for reward and obs buffer 
         self.potentials = to_torch([-1000./self.dt], device=self.args.sim_device).repeat(self.args.num_envs)
         self.prev_potentials = self.potentials.clone()
@@ -446,16 +445,20 @@ class Fly:
                 self.gym.fetch_results(self.sim, True)
 
             # step graphics
+            print("Pre-fucked")
             if self.enable_viewer_sync:
                 self.gym.step_graphics(self.sim)
+                print("Post-fucked")
                 self.gym.draw_viewer(self.viewer, self.sim, True)
-
+                print("Post-fucked2")
                 # Wait for dt to elapse in real time.
                 # This synchronizes the physics simulation with the rendering rate.
                 self.gym.sync_frame_time(self.sim)
+                print("Post-fucked3")
 
             else:
                 self.gym.poll_viewer_events(self.viewer)
+       
 
     def exit(self):
         # close the simulator in a graceful way
@@ -614,7 +617,7 @@ def compute_fly_observations(obs_buf, root_states, targets, potentials,
     dof_pos_scaled = unscale(dof_pos, dof_limits_lower, dof_limits_upper)
     
     # ATTENTION DOF POSITION ET ACTION EST UNE Répétition du coup ici 
-    # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_dofs(42), num_dofs(42), num_actions(18)
+    # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_dofs(42), num_dofs(42), num_actions(18) = 114
     obs = torch.cat((torso_position[:, up_axis_idx].view(-1, 1), vel_loc, angvel_loc,
                      yaw.unsqueeze(-1), roll.unsqueeze(-1), angle_to_target.unsqueeze(-1),
                      up_proj.unsqueeze(-1), heading_proj.unsqueeze(-1), dof_pos_scaled,

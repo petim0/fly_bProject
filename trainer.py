@@ -24,7 +24,7 @@ parser.add_argument('--load', type=bool, default=False)
 parser.add_argument('--load_path', type=str, default=None)
 
 args = parser.parse_args()
-args.headless = False
+args.headless = True
 
 torch.manual_seed(0)
 random.seed(0)
