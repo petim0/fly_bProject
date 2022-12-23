@@ -10,6 +10,7 @@ import torchgeometry as tgm
 
 class Fly:
     def __init__(self, args):
+        #TODO CHAGER LA VITESS MAX DE CHAQUE JOINT !!!
         self.args = args
         self.end = False
         self.dt = 1 / 1000.
@@ -445,16 +446,12 @@ class Fly:
                 self.gym.fetch_results(self.sim, True)
 
             # step graphics
-            print("Pre-fucked")
             if self.enable_viewer_sync:
                 self.gym.step_graphics(self.sim)
-                print("Post-fucked")
                 self.gym.draw_viewer(self.viewer, self.sim, True)
-                print("Post-fucked2")
                 # Wait for dt to elapse in real time.
                 # This synchronizes the physics simulation with the rendering rate.
                 self.gym.sync_frame_time(self.sim)
-                print("Post-fucked3")
 
             else:
                 self.gym.poll_viewer_events(self.viewer)

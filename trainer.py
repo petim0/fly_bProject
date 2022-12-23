@@ -5,7 +5,7 @@ from ppo_discrete import PPO_Discrete
 import torch
 import random
 import argparse
-
+import cProfile
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', default=None, type=str)
@@ -24,7 +24,7 @@ parser.add_argument('--load', type=bool, default=False)
 parser.add_argument('--load_path', type=str, default=None)
 
 args = parser.parse_args()
-args.headless = True
+args.headless = False
 
 torch.manual_seed(0)
 random.seed(0)
@@ -36,8 +36,11 @@ elif args.method == 'ppo_d':
 elif args.method == 'dqn':
     policy = DQN(args)
 
-end = False
-while not end:
-    end = policy.run()
+def main():
+    end = False
+    while not end:
+        end = policy.run()
 
+if __name__ == '__main__':
+    main()
 policy.save()

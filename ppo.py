@@ -1,6 +1,8 @@
 from env import Cartpole
 from fly import Fly
 
+
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -75,23 +77,35 @@ class PPO:
 
         # initialise parameters
         self.env = Fly(args)
-
+        self.num_obs = 114 # number of observations
+        self.num_acts = 18 # number of actions
+        self.num_rewa = 1 # number of reward
         self.epoch = 5
         self.lr = 0.001 
         self.gamma = 0.99
         self.lmbda = 0.95
         self.clip = 0.2
-        self.mini_batch_size = 200  #24576 #(4096*6)
-        self.chunk_size = 5 # Aucune idée a quoi set was 32
+        self.mini_batch_size = 12288  #24576 #(4096*6)
+        self.chuck_number = 5 # Nombre de mini_chunk dans un rollout je crois 
         self.mini_chunk_size = self.mini_batch_size // self.args.num_envs
         print("mini_chunk_size: ", self.mini_chunk_size)
-        self.rollout_size = self.mini_chunk_size * self.chunk_size
+        self.rollout_size = self.mini_chunk_size * self.chuck_number
         print("rollout_size: ", self.rollout_size)
         #self.rollout_size = 128 #Quand est-ce que ça train 
          
         self.num_eval_freq = 100 #Print tout les combien de step 
 
-        self.data = []
+
+        #index, we call it mini_batch because it returns all the obs, reward etc of all the envs. Not the same mini_batch as self.mini_batch_size
+        self.mini_batch_number = 0
+        self.all_obs = torch.zeros((self.rollout_size, self.args.num_envs, self.num_obs), device=self.args.sim_device)
+        self.all_acts = torch.zeros((self.rollout_size, self.args.num_envs, self.num_acts), device=self.args.sim_device)
+        self.all_next_obs = torch.zeros((self.rollout_size, self.args.num_envs, self.num_obs), device=self.args.sim_device)
+        self.all_reward = torch.zeros((self.rollout_size, self.args.num_envs, self.num_rewa), device=self.args.sim_device)
+        self.all_done = torch.zeros((self.rollout_size, self.args.num_envs, 1), device=self.args.sim_device)
+        self.all_log_prob = torch.zeros((self.rollout_size, self.args.num_envs), device=self.args.sim_device)
+        self.all_advantage = torch.zeros((self.rollout_size, self.args.num_envs, 1), device=self.args.sim_device)
+
         self.score = 0
         self.run_step = 0
         self.optim_step = 0
@@ -105,64 +119,57 @@ class PPO:
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
 
     def make_data(self):
-        # organise data and make batch
-        data = []
-        for _ in range(self.chunk_size):
-            obs_lst, a_lst, r_lst, next_obs_lst, log_prob_lst, done_lst = [], [], [], [], [], []
-            for _ in range(self.mini_chunk_size):
-                rollout = self.data.pop()
-                obs, action, reward, next_obs, log_prob, done = rollout
+        #obs: 20 (mini_chunk_size) * 10 (num_env) * 114 (self.num_obs)
+        #a_lst : 20 (mini_chunk_size) * 10 (num_env) * 18 (num_actions)
+        #next_obs: 20 (mini_chunk_size) * 10 (num_env) * 114 (self.num_obs)
+        #r_lst: 20 (mini_chunk_size) * 10 (num_env) * 1 (self.num_rewa)
+        #done_lst: 20 (mini_chunk_size) * 10 (num_env) * 1 (1 int for done or not done)
+        #log_prob = 20 (mini_chunk_size) * 10 (num_env)
 
-                obs_lst.append(obs)
-                a_lst.append(action)
-                r_lst.append(reward.unsqueeze(-1))
-                next_obs_lst.append(next_obs)
-                log_prob_lst.append(log_prob)
-                done_lst.append(done.unsqueeze(-1))
+        #print("obs_lst: ", len(obs_lst), "*" , len(obs_lst[0]), "*", len(obs_lst[0][0]))
+        #print("action", len(a_lst), "*" , len(a_lst[0]), "*", len(a_lst[0][0]))
+        #print("obs_lst: ", len(r_lst), "*" , len(r_lst[0]), "*", len(r_lst[0][0]))
+        #print("obs_lst: ", len(done_lst), "*" , len(done_lst[0]), "*", len(done_lst[0][0]))
+        #print("self.all_log_prob", len(self.all_log_prob), "*" , len(self.all_log_prob[0]))
 
-            obs, action, reward, next_obs, done = \
-                torch.stack(obs_lst), torch.stack(a_lst), torch.stack(r_lst), torch.stack(next_obs_lst), torch.stack(done_lst)
+        # compute reward-to-go (target)
+        with torch.no_grad():
+            target = self.all_reward + self.gamma * self.net.v(self.all_next_obs) * self.all_done
+            delta = target - self.net.v(self.all_obs)
 
-            # compute reward-to-go (target)
-            with torch.no_grad():
-                target = reward + self.gamma * self.net.v(next_obs) * done
-                delta = target - self.net.v(obs)
+        #print("delta: ", len(delta), "*" , len(delta[0]), "*", len(delta[0][0]))
+        # compute advantage
+       
+        advantage = 0.0
+        i = self.rollout_size-1
+        for delta_t in reversed(delta):
+            advantage = self.gamma * self.lmbda * advantage + delta_t
+            self.all_advantage[i] = advantage
+            i-=1
 
-            # compute advantage
-            advantage_lst = []
-            advantage = 0.0
-            for delta_t in reversed(delta):
-                advantage = self.gamma * self.lmbda * advantage + delta_t
-                advantage_lst.insert(0, advantage)
-
-            advantage = torch.stack(advantage_lst)
-            log_prob = torch.stack(log_prob_lst)
-            #1228 <- mini_chunk_size * 10 <- num_env pour tous
-            print("obs: ", len(obs), "*" , len(obs[0]), "action", len(action), "*" , len(action[0]), "log_prob", len(log_prob), "*",len(log_prob[0]), "target", len(target), "*", len(target[0]), "advantage", len(advantage), "*",len(advantage[0]))
-            mini_batch = (obs, action, log_prob, target, advantage)
-            data.append(mini_batch)
-        return data
+        return self.all_obs, self.all_acts, self.all_log_prob, target,  self.all_advantage
 
     def update(self):
         # update actor and critic network
-        data = self.make_data()
-
+        obs, action, old_log_prob, target, advantage = self.make_data()
+        
         for i in range(self.epoch):
             print("Epoch: ", i)
-            for mini_batch in data:
-                obs, action, old_log_prob, target, advantage = mini_batch
-
-                mu = self.net.pi(obs)
+            k = 0
+            for j in range(self.mini_chunk_size, self.rollout_size, self.mini_chunk_size):
+                #mc stands for mini chunk
+                obs_mc, action_mc, old_log_prob_mc, target_mc, advantage_mc = obs[k:j], action[k:j], old_log_prob[k:j], target[k:j], advantage[k:j]
+                mu = self.net.pi(obs_mc)
                 cov_mat = torch.diag(self.action_var)
-                dist = MultivariateNormal(mu, cov_mat)
-                log_prob = dist.log_prob(action)
+                #dist = MultivariateNormal(mu, cov_mat) #THIS IS SLOW AS FUCK
+                scale_tril = torch.cholesky(cov_mat) #But this is speeeed 
+                dist = MultivariateNormal(mu, scale_tril=scale_tril)
+                log_prob = dist.log_prob(action_mc)
 
-                ratio = torch.exp(log_prob - old_log_prob).unsqueeze(-1)
-
-                surr1 = ratio * advantage
-                surr2 = torch.clamp(ratio, 1 - self.clip, 1 + self.clip) * advantage
-
-                loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(self.net.v(obs), target)
+                ratio = torch.exp(log_prob - old_log_prob_mc).unsqueeze(-1)
+                surr1 = ratio * advantage_mc
+                surr2 = torch.clamp(ratio, 1 - self.clip, 1 + self.clip) * advantage_mc
+                loss = -torch.min(surr1, surr2) + F.smooth_l1_loss(self.net.v(obs_mc), target_mc)
 
                 self.optim.zero_grad()
                 loss.mean().backward()
@@ -170,10 +177,11 @@ class PPO:
                 self.optim.step()
 
                 self.optim_step += 1
+                k = j
 
     def run(self):
         # collect data
-        obs = self.env.obs_buf.clone()
+        obs = self.env.obs_buf.clone() #NEED TO CLONE HERE ?? TODO 
         end = self.env.end #See if we need to stop 
 
         with torch.no_grad():
@@ -181,29 +189,36 @@ class PPO:
             cov_mat = torch.diag(self.action_var)
             dist = MultivariateNormal(mu, cov_mat)
             action = dist.sample()
-            log_prob = dist.log_prob(action)
-            action = action.clip(-1, 1)
+            self.all_log_prob[self.mini_batch_number] = dist.log_prob(action) #This is a tensor 
+            action = action.clip(-1, 1) #MMMMM what is this doing ? 
 
         self.env.step(action)
-        #[num_envs, 114]
-        next_obs, reward, done = self.env.obs_buf.clone(), self.env.reward_buf.clone(), self.env.reset_buf.clone()
+    
+        
+        self.all_obs[self.mini_batch_number] = obs
+        self.all_acts[self.mini_batch_number] = action
+        self.all_next_obs[self.mini_batch_number] = self.env.obs_buf
+        self.all_reward[self.mini_batch_number] = self.env.reward_buf.unsqueeze(-1)
+        self.all_done = (1 - self.env.reset_buf).unsqueeze(-1)
+        
 
-        self.data.append((obs, action, reward, next_obs, log_prob, 1 - done))
-
-        self.score += torch.mean(reward.float()).item() / self.num_eval_freq
+        self.score += torch.mean(self.all_reward[self.mini_batch_number].float()).item() / self.num_eval_freq #IS THIS A TENSOR ?? 
 
         self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00002)
 
         # training mode
-        if len(self.data) == self.rollout_size:
+        # +1 because we start at 0
+        if self.mini_batch_number+1 == self.rollout_size:
             print("Training")
             self.update()
+            self.mini_batch_number = 0
             # save sometimes
             if self.args.save and self.optim_step % self.args.save_freq == 0 and self.optim_step != 0:
                 print("saving...")
                 self.save(str(self.optim_step))
                 print("saved!")
-
+        else:
+            self.mini_batch_number += 1
         # evaluation mode
         if self.run_step % self.num_eval_freq == 0:
             print('Steps: {:04d} | Opt Step: {:04d} | Reward {:.04f} | Action Var {:.04f}'
@@ -211,6 +226,10 @@ class PPO:
             self.score = 0
 
         self.run_step += 1
+        ##TODO
+        if(self.run_step > 7000):
+            end = True
+
         return end
     
     def save(self, endofname = ""):
