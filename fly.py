@@ -201,7 +201,7 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(1000000)
+        dof_props['stiffness'].fill(10000) #This cannot be over a certain value idk what ... At least lower than 1000000 
         dof_props['damping'].fill(50)
         #dof_props['velocity'].fill(100)
         
