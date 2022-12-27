@@ -80,6 +80,7 @@ class Fly:
         self.joints_at_limit_cost_scale = 0.1
         self.death_cost = -2.0
         self.termination_height = 0.8 #PEUT être TROP petit !!
+        self.termination_height_up = 5 #A jouer avec 
 
         # allocate buffers
         #obs_buf size will have to change TODO 
@@ -109,6 +110,7 @@ class Fly:
 
         # initialise envs and state tensors
         self.envs, self.num_dof, self.action_indexes, self.action_indexes_one, self.initial_dofs, self.initial_dofs_one, self.translation, self.multiplication, self.dof_limits_lower, self.dof_limits_upper  = self.create_envs()
+        print(self.initial_dofs_one)
         self.dof_states, self.root_tensor = self.get_states_tensor()
         self.dof_pos = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 1]
@@ -161,6 +163,9 @@ class Fly:
         self.reset_buf[env_ids] = 0
         self.progress_buf[env_ids] = 0
         self.distance[env_ids] = 0
+
+        print("velocity", self.PROP["velocity"][0])
+        print("effort", self.PROP["effort"][0])
         
     def create_envs(self):
         # add ground plane
@@ -198,7 +203,9 @@ class Fly:
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
         dof_props['stiffness'].fill(1000000)
         dof_props['damping'].fill(50)
-
+        #dof_props['velocity'].fill(100)
+        
+        self.PROP = dof_props
         # generate environments
         envs = []
         actors = []
@@ -214,6 +221,7 @@ class Fly:
             envs.append(env)
             actors.append(fly)
 
+        
         dof_limits_lower = []
         dof_limits_upper = []
         dof_prop = self.gym.get_actor_dof_properties(envs[0], actors[0])
@@ -373,6 +381,7 @@ class Fly:
             self.energy_cost_scale,
             self.joints_at_limit_cost_scale,
             self.termination_height,
+            self.termination_height_up,
             self.death_cost,
             self.max_episode_length, 
             self.action_indexes_one, 
@@ -394,8 +403,8 @@ class Fly:
         # Can be done differently, we could not pass by these dof_pos, dof_vel, and do smth like self.dof_state[env_ids, :] = smth I'll see later If I have the courage to change that
         self.dof_pos[env_ids, :] = self.initial_dofs_one[..., 0]
         self.dof_vel[env_ids, :] = self.initial_dofs_one[..., 1]
+        
         env_ids_int32 = env_ids.to(dtype=torch.int32)
-
 
         self.root_tensor[env_ids, :] = self.origin_root_tensor[env_ids, :] 
 
@@ -403,10 +412,10 @@ class Fly:
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_tensor),
                                                      gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
+        print(len(self.dof_states), len(self.dof_states[0]), self.dof_states[0])
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_states),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
-        
         # clear up desired buffer states
         self.reset_buf[env_ids] = 0
         self.progress_buf[env_ids] = 0
@@ -544,6 +553,7 @@ def compute_fly_reward2(
     energy_cost_scale,
     joints_at_limit_cost_scale,
     termination_height,
+    termination_height_up,
     death_cost,
     max_episode_length, 
     action_indicies_one,
@@ -551,7 +561,7 @@ def compute_fly_reward2(
     lower_limit_of_actions, 
     num_env
 ):
-    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, Tensor, Tensor, Tensor, int) -> Tuple[Tensor, Tensor]
+    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, float, Tensor, Tensor, Tensor, int) -> Tuple[Tensor, Tensor]
 
     # reward from direction headed
     heading_weight_tensor = torch.ones_like(obs_buf[:, 11]) * heading_weight
@@ -579,9 +589,11 @@ def compute_fly_reward2(
 
     # adjust reward for fallen agents
     total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)
+    total_reward = torch.where(obs_buf[:, 0] > termination_height_up, torch.ones_like(total_reward) * death_cost, total_reward)
 
     # reset agents
     reset = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(reset_buf), reset_buf)
+    reset = torch.where(obs_buf[:, 0] > termination_height_up, torch.ones_like(reset_buf), reset)
     reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset)
 
     return total_reward, reset

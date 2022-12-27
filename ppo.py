@@ -154,7 +154,7 @@ class PPO:
         obs, action, old_log_prob, target, advantage = self.make_data()
         
         for i in range(self.epoch):
-            print("Epoch: ", i)
+            #print("Epoch: ", i)
             k = 0
             for j in range(self.mini_chunk_size, self.rollout_size, self.mini_chunk_size):
                 #mc stands for mini chunk
@@ -226,9 +226,6 @@ class PPO:
             self.score = 0
 
         self.run_step += 1
-        ##TODO
-        if(self.run_step > 7000):
-            end = True
 
         return end
     
