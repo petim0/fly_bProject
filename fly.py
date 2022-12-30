@@ -14,12 +14,12 @@ class Fly:
         #TODO CHAGER LA VITESS MAX DE CHAQUE JOINT !!!
         self.args = args
         self.end = False
-        self.dt = 1 / 1000.
+        self.dt = 1 / 500 #was 1000.
         self.up_axis_idx = 2 # index of up axis: Y=1, Z=2
         # configure sim (gravity is pointing down)
         sim_params = gymapi.SimParams()
         sim_params.up_axis = gymapi.UP_AXIS_Z
-        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*100) #should be *1000
+        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*10) #should be *1000
         sim_params.dt = self.dt
         sim_params.substeps = 2
         sim_params.use_gpu_pipeline = True
@@ -33,8 +33,8 @@ class Fly:
         sim_params.physx.use_gpu = True
         self.i = 0
         # task-specific parameters
-        self.num_obs = 114  # See compute_fly_observations
-        self.num_act = 18 #(3 DoFs * 6 legs)
+        self.num_act = 6 #(3 DoFs * 6 legs)
+        self.num_obs = 97 + self.num_act  # See compute_fly_observations
         self.starting_height = 2.2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
         self.max_episode_length = 1000  # maximum episode length
@@ -43,6 +43,10 @@ class Fly:
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
+
+        self.names = ["joint_LHTibia", "joint_RHTibia",
+                     "joint_LMTibia", "joint_RMTibia",
+                    "joint_LFTibia", "joint_RFTibia"]
         #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll",
         #            "joint_LMCoxa_roll", "joint_RMCoxa_roll",
         #            "joint_LFCoxa", "joint_RFCoxa"]
@@ -69,8 +73,8 @@ class Fly:
             "joint_RFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363}
         }
 
-        self.plane_static_friction = 1.0
-        self.plane_dynamic_friction = 1.0
+        self.plane_static_friction = 10.0
+        self.plane_dynamic_friction = 10000.0
 
         #Constants for the reward function, taken from ant
         self.dof_vel_scale = 0.2
@@ -129,6 +133,8 @@ class Fly:
         self.origin_root_tensor[:,6] = 1 #the last quaterion should be one
         self.origin_root_tensor_one = self.origin_root_tensor[0]
 
+        self.origin_orientations = self.origin_root_tensor.view(self.args.num_envs, 13)[:, 3:7]
+
         # generate viewer for visualisation
         self.viewer = self.create_viewer()
 
@@ -170,12 +176,13 @@ class Fly:
         self.progress_buf[env_ids] = 0
         self.distance[env_ids] = 0
 
+
         #Stuff I have to init after starting the simulation
         print("velocity", self.PROP["velocity"][0])
         print("effort", self.PROP["effort"][0])
         print("stiffness", self.PROP["stiffness"][0])
         print("damping", self.PROP["damping"][0])
-        print("ROOT Orientation", self.root_orientations[0])
+        print("Limit", self.PROP["hasLimits"])
 
         
     def create_envs(self):
@@ -212,7 +219,7 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(100000) #This cannot be over a certain value idk what ... At least lower than 1000000 
+        dof_props['stiffness'].fill(10000) #This cannot be over a certain value idk what ... At least lower than 1000000 
         dof_props['damping'].fill(50)
         #dof_props['velocity'].fill(100)
         dof_props['effort'].fill(3.4e+38)
@@ -327,7 +334,9 @@ class Fly:
                 viewer, gymapi.KEY_R, "Reset_everyone")
             self.gym.subscribe_viewer_keyboard_event(
                 viewer, gymapi.KEY_E, "End_simulation")
-
+            self.gym.subscribe_viewer_keyboard_event(
+                viewer, gymapi.KEY_P, "print")     
+            
         cam_pos = gymapi.Vec3(30, 0.0, 10)
         cam_target = gymapi.Vec3(-1, 0, 0)
         self.gym.viewer_camera_look_at(viewer, self.envs[self.args.num_envs // 2], cam_pos, cam_target)
@@ -397,9 +406,10 @@ class Fly:
             self.death_cost,
             self.max_episode_length, 
             self.action_indexes_one, 
-            self.dof_limits_lower,
             self.dof_limits_upper,
-            self.args.num_envs
+            self.dof_limits_lower,
+            self.args.num_envs,
+            self.root_orientations
         )
         
         #self.old_position = self.root_positions
@@ -460,6 +470,16 @@ class Fly:
                 elif evt.action == "End_simulation" and evt.value > 0:
                     print("We end the simulation !!!")
                     self.end = True
+                elif evt.action == "print" and evt.value > 0:
+                    #orient_reward = torch.zeros_like(self.obs_buf[:, 11])
+                    #orient_reward = torch.where(torch.square(self.root_orientations[:, 2])  + torch.square(self.root_orientations[:, 3]) > 0.92, orient_reward + self.heading_weight, orient_reward)
+                    #print("Orientation Reward: ", orient_reward)
+                    #print("Actions", self.actions[0:self.num_act])
+                    #print("potential", self.potentials[0], self.prev_potentials[0]
+                    dof_at_limit_cost = torch.sum(self.obs_buf[:, 96:102] > self.dof_limits_lower[self.action_indexes_one].squeeze(-1).repeat((self.args.num_envs, 1)) * 0.9, dim=-1)
+                    dof_at_limit_cost += torch.sum(self.obs_buf[:, 96:102] < self.dof_limits_upper[self.action_indexes_one].squeeze(-1).repeat((self.args.num_envs, 1)) * 0.9, dim=-1)
+                    print("dof_at_limit_cost", dof_at_limit_cost)
+                    
 
             # fetch results
             if self.args.sim_device != 'cpu':
@@ -629,9 +649,10 @@ def compute_fly_reward2(
     action_indicies_one,
     upper_limit_of_actions, 
     lower_limit_of_actions, 
-    num_env
+    num_env,
+    orientation, 
 ):
-    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, float, Tensor, Tensor, Tensor, int) -> Tuple[Tensor, Tensor]
+    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, float, Tensor, Tensor, Tensor, int, Tensor) -> Tuple[Tensor, Tensor]
 
     # reward from direction headed
     heading_weight_tensor = torch.ones_like(obs_buf[:, 11]) * heading_weight
@@ -641,21 +662,28 @@ def compute_fly_reward2(
     up_reward = torch.zeros_like(heading_reward)
     up_reward = torch.where(obs_buf[:, 10] > 1.3, up_reward + up_weight, up_reward)
 
+    # Aligned with origin orientation 
+    # put heading_weigth there just because I think orientation should be as important as heading
+    # works because base orientation is 1 + 0i + 0j + 0k and to be on the same plane reel^2 + k^2 should be = 1
+    orient_reward = torch.zeros_like(up_reward)
+    orient_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) > 0.92, orient_reward + heading_weight, orient_reward)
+
     # energy penalty for movement
     actions_cost = torch.sum(actions ** 2, dim=-1)
     #Plus la diff de mouvement est grande plus ça coute  
-    electricity_cost = torch.sum(torch.abs(actions - obs_buf[:, 96:114]), dim=-1)
-    #Be at the the extremities costs  A CHANGER ET RAJOUTER SELF.LIMIT..[action_index_one]
+    electricity_cost = torch.sum(torch.abs(actions - obs_buf[:, 96:102]), dim=-1)
+   
+    #Be at the the extremities costs  
     #print(obs_buf[:, 96:114].size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)).size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((10, 1)))
-    dof_at_limit_cost = torch.sum(obs_buf[:, 96:114] > upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
-    dof_at_limit_cost += torch.sum(obs_buf[:, 96:114] < lower_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
+    dof_at_limit_cost = torch.sum(obs_buf[:, 96:102] > upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
+    dof_at_limit_cost += torch.sum(obs_buf[:, 96:102] < lower_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
 
     # reward for duration of staying alive
     alive_reward = torch.ones_like(potentials) * 0.5
     progress_reward = potentials - prev_potentials
 
     total_reward = progress_reward + alive_reward + up_reward + heading_reward - \
-        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale
+        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
 
     # adjust reward for fallen agents
     total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)
@@ -696,10 +724,10 @@ def compute_fly_observations(obs_buf, root_states, targets, potentials,
     dof_pos_scaled = unscale(dof_pos, dof_limits_lower, dof_limits_upper)
     
     # ATTENTION DOF POSITION ET ACTION EST UNE Répétition du coup ici 
-    # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_dofs(42), num_dofs(42), num_actions(18) = 114
+    # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_dofs(42), num_dofs(42), num_actions(18), 1 = 115
     obs = torch.cat((torso_position[:, up_axis_idx].view(-1, 1), vel_loc, angvel_loc,
                      yaw.unsqueeze(-1), roll.unsqueeze(-1), angle_to_target.unsqueeze(-1),
                      up_proj.unsqueeze(-1), heading_proj.unsqueeze(-1), dof_pos_scaled,
-                     dof_vel * dof_vel_scale, actions), dim=-1)
+                     dof_vel * dof_vel_scale, actions, pitch.unsqueeze(-1)), dim=-1)
 
     return obs, potentials, prev_potentials_new, up_vec, heading_vec

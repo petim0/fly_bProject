@@ -12,7 +12,7 @@ from torch.distributions import MultivariateNormal
 
 # define network architecture here
 class Net(nn.Module):
-    def __init__(self, num_obs=114, num_act=18):
+    def __init__(self, num_obs=115, num_act=18):
         super(Net, self).__init__()
         # we use a shared backbone for both actor and critic
         """"
@@ -77,15 +77,15 @@ class PPO:
 
         # initialise parameters
         self.env = Fly(args)
-        self.num_obs = 114 # number of observations
-        self.num_acts = 18 # number of actions
+        self.num_obs = 103 # number of observations
+        self.num_acts = 6 # number of actions
         self.num_rewa = 1 # number of reward
         self.epoch = 5
         self.lr = 0.001 
         self.gamma = 0.99
         self.lmbda = 0.95
         self.clip = 0.2
-        self.mini_batch_size = 12288  #24576 #(4096*6)
+        self.mini_batch_size = 24576  #24576 #(4096*6)
         self.chuck_number = 5 # Nombre de mini_chunk dans un rollout je crois 
         self.mini_chunk_size = self.mini_batch_size // self.args.num_envs
         print("mini_chunk_size: ", self.mini_chunk_size)
