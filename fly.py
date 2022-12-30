@@ -7,6 +7,7 @@ import sys
 import torch
 import yaml
 import torchgeometry as tgm
+import os
 
 class Fly:
     def __init__(self, args):
@@ -18,7 +19,7 @@ class Fly:
         # configure sim (gravity is pointing down)
         sim_params = gymapi.SimParams()
         sim_params.up_axis = gymapi.UP_AXIS_Z
-        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*1000) #should be *1000
+        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*100) #should be *1000
         sim_params.dt = self.dt
         sim_params.substeps = 2
         sim_params.use_gpu_pipeline = True
@@ -110,7 +111,6 @@ class Fly:
 
         # initialise envs and state tensors
         self.envs, self.num_dof, self.action_indexes, self.action_indexes_one, self.initial_dofs, self.initial_dofs_one, self.translation, self.multiplication, self.dof_limits_lower, self.dof_limits_upper  = self.create_envs()
-        print(self.initial_dofs_one)
         self.dof_states, self.root_tensor = self.get_states_tensor()
         self.dof_pos = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 1]
@@ -131,6 +131,12 @@ class Fly:
 
         # generate viewer for visualisation
         self.viewer = self.create_viewer()
+
+        cameras_initial_pos = gymapi.Vec3(30, 0.0, 10)
+        if self.args.record:
+            self.record_dir_name = self.args.record_dir_name
+            self.time_steps_per_recorded_frame = self.args.time_steps_per_recorded_frame
+            self.camera, self.record_root_dir, self.record_command = self.set_up_recording(cameras_initial_pos, self.pose)
         
         #Initialise other values for reward and obs buffer 
         self.potentials = to_torch([-1000./self.dt], device=self.args.sim_device).repeat(self.args.num_envs)
@@ -138,7 +144,7 @@ class Fly:
         self.up_vec = to_torch(get_axis_params(1., self.up_axis_idx), device=self.args.sim_device).repeat((self.args.num_envs, 1))
         self.heading_vec = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1))
 
-        self.inv_start_rot = quat_conjugate(self.start_rotation).repeat((self.args.num_envs, 1))
+        self.inv_start_rot = quat_conjugate(self.origin_orientation).repeat((self.args.num_envs, 1))
 
         self.basis_vec0 = self.heading_vec.clone()
         self.basis_vec1 = self.up_vec.clone()
@@ -164,8 +170,13 @@ class Fly:
         self.progress_buf[env_ids] = 0
         self.distance[env_ids] = 0
 
+        #Stuff I have to init after starting the simulation
         print("velocity", self.PROP["velocity"][0])
         print("effort", self.PROP["effort"][0])
+        print("stiffness", self.PROP["stiffness"][0])
+        print("damping", self.PROP["damping"][0])
+        print("ROOT Orientation", self.root_orientations[0])
+
         
     def create_envs(self):
         # add ground plane
@@ -194,16 +205,17 @@ class Fly:
         # define fly pose
         pose = gymapi.Transform()
         pose.p.z = self.starting_height   # generate the fly 3m from the ground
-        self.start_rotation = torch.tensor([pose.r.x, pose.r.y, pose.r.z, pose.r.w], device=self.args.sim_device)
+        self.origin_orientation = torch.tensor([pose.r.x, pose.r.y, pose.r.z, pose.r.w], device=self.args.sim_device)
         #pose.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(1, 0, 0), np.pi / 8) # No rotation needed 
-
+        self.pose = pose #Degeu TODO 
 
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(10000) #This cannot be over a certain value idk what ... At least lower than 1000000 
+        dof_props['stiffness'].fill(100000) #This cannot be over a certain value idk what ... At least lower than 1000000 
         dof_props['damping'].fill(50)
         #dof_props['velocity'].fill(100)
+        dof_props['effort'].fill(3.4e+38)
         
         self.PROP = dof_props
         # generate environments
@@ -412,7 +424,6 @@ class Fly:
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_tensor),
                                                      gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
-        print(len(self.dof_states), len(self.dof_states[0]), self.dof_states[0])
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_states),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
@@ -464,13 +475,66 @@ class Fly:
 
             else:
                 self.gym.poll_viewer_events(self.viewer)
+
+    # returns (camera, record_root_dir, record_command)
+    def set_up_recording(self, cameras_initial_pos, cameras_look_at_pos):
+
+        recorded_real_frame_rate = 1.0 / (self.time_steps_per_recorded_frame * self.dt)
+        if not recorded_real_frame_rate.is_integer():
+            print(f"Warning: simulation recording real frame rate is not an integer ({recorded_real_frame_rate:.2f}), script will not be able to make a video out of the recorded frames")
+
+        # create camera
+        camera = self.gym.create_camera_sensor(self.envs[0], gymapi.CameraProperties())
+        self.gym.set_camera_location(camera, self.envs[0], cameras_initial_pos, gymapi.Vec3(-1, 0, 0)) #TODO 
+
+        # set up directories
+        root = "recordings"
+        # create directory if it doesn't exist yet
+        if not os.path.exists(root):
+            os.mkdir(root)
+        assert not os.path.exists(f'{root}/{self.record_dir_name}'), "You are trying to record the simulation but the directory name of your recording is in conflict with a previously saved recording."
+        os.mkdir(f'{root}/{self.record_dir_name}')
+        print(f"Will record the simulation in {root}/{self.record_dir_name} with real frame rate {recorded_real_frame_rate:.2f}")
+
+        # generate command
+        command = f'ffmpeg -r {int(recorded_real_frame_rate)} -start_number 0 -i {root}/{self.record_dir_name}/%d.png -vcodec libx264 -crf 18 -pix_fmt yuv420p -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -y {root}/{self.record_dir_name}/video_{int(recorded_real_frame_rate)}fps.mp4'
+        print("Command to create video manually (if simulation crashes): ")
+        print(command)
+        if not recorded_real_frame_rate.is_integer():
+            print("Warning: note that this command will not generate a video that runs at real speed given that the command frame rate was rounded")
+        return camera, root, command
        
+    def generate_video(self):
+        recorded_real_frame_rate = 1.0 / (self.time_steps_per_recorded_frame * self.dt)
+
+        if not recorded_real_frame_rate.is_integer():
+            print(f"Warning: recording frame rate is not an integer ({recorded_real_frame_rate:.2f}), the script will not create a video")
+            return
+
+        print("Generating video from recorded frames...")
+        if os.system(self.record_command) != 0:
+            print("Error while creating the video")
+            return
+        print("Done")
+        if os.system(f'rm ./{self.record_root_dir}/{self.record_dir_name}/*.png') != 0:
+            print("Error while trying to remove the recorded frames")
+            return
+        print("Removed all recorded frames")
+    
+    def record_frame(self, t_idx):
+        self.gym.render_all_camera_sensors(self.sim)
+        filename = f'{self.record_root_dir}/{self.record_dir_name}/{t_idx // self.time_steps_per_recorded_frame}.png'
+        self.gym.write_camera_image_to_file(self.sim, self.envs[0], self.camera, gymapi.IMAGE_COLOR, filename)
 
     def exit(self):
         # close the simulator in a graceful way
+        if self.args.record:
+            self.generate_video()  
+
         if not self.args.headless:
             self.gym.destroy_viewer(self.viewer)
         self.gym.destroy_sim(self.sim)
+        
     
     def step(self, actions):
         # apply action
@@ -502,12 +566,18 @@ class Fly:
 
         # simulate and render
         self.simulate()
-
+        
         if not self.args.headless :
-            self.render_count+=1
             if self.render_count % 1 == 0:
                 self.render()
         
+        render_camera = self.args.record and (self.render_count % self.time_steps_per_recorded_frame == 0)
+        if render_camera:
+            # update camera and save file
+            self.record_frame(self.render_count)
+
+        self.render_count+=1
+
         #You cannot get obs if you reset 
         self.get_obs()        
         self.progress_buf += 1
@@ -569,7 +639,7 @@ def compute_fly_reward2(
 
     # aligning up axis of ant and environment
     up_reward = torch.zeros_like(heading_reward)
-    up_reward = torch.where(obs_buf[:, 10] > 1.5, up_reward + up_weight, up_reward)
+    up_reward = torch.where(obs_buf[:, 10] > 1.3, up_reward + up_weight, up_reward)
 
     # energy penalty for movement
     actions_cost = torch.sum(actions ** 2, dim=-1)
