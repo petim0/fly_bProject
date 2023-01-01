@@ -27,13 +27,13 @@ class Fly:
         # set simulation parameters (we use PhysX engine by default, these parameters are from the example file)
         ### I should maybe change these params, see doc here file:///Users/petimo/Desktop/IsaacGym_Preview_4_Package/isaacgym/docs/api/python/struct_py.html#isaacgym.gymapi.PhysXParams
         sim_params.physx.num_position_iterations = 4
-        sim_params.physx.num_velocity_iterations = 0
+        sim_params.physx.num_velocity_iterations = 1
         sim_params.physx.rest_offset = 0.001
         sim_params.physx.contact_offset = 0.02
         sim_params.physx.use_gpu = True
         self.i = 0
         # task-specific parameters
-        self.num_act = 17 #(3 DoFs * 6 legs)
+        self.num_act = 6 #(3 DoFs * 6 legs)
         self.num_obs = 97 + self.num_act  # See compute_fly_observations
         self.starting_height = 2.2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
@@ -43,9 +43,17 @@ class Fly:
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
-        self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
-                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
-                     "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
+        #Only middle legs with 2 dofs
+        self.names = ["joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia"]
+        
+        #All Coxa
+        #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", 
+         #          "joint_LMCoxa_roll", "joint_RMCoxa_roll",
+          #           "joint_LFCoxa", "joint_RFCoxa"]
+
+        #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
+         #            "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMTibia", "joint_RMTibia",
+          #           "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
         #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
          #            "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
@@ -78,8 +86,8 @@ class Fly:
             "joint_RFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363}
         }
 
-        self.plane_static_friction = 100.0
-        self.plane_dynamic_friction = 1.0
+        self.plane_static_friction = 5.0
+        self.plane_dynamic_friction = 5.0
 
         #Constants for the reward function, taken from ant
         self.dof_vel_scale = 0.2
@@ -89,7 +97,7 @@ class Fly:
         self.energy_cost_scale = 0.05
         self.joints_at_limit_cost_scale = 0.1
         self.death_cost = -2.0
-        self.termination_height = 1 #PEUT être TROP petit !!
+        self.termination_height = 0.8 #PEUT être TROP petit !!
         self.termination_height_up = 5 #A jouer avec 
 
         # allocate buffers
@@ -224,10 +232,11 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(4) #This cannot be over a certain value idk what ... At least lower than 1000000 
+        dof_props['stiffness'].fill(6) #This cannot be over a certain value idk what ... At least lower than 1000000 
         dof_props['damping'].fill(0.1)
         dof_props['velocity'].fill(50)
         dof_props['effort'].fill(3.4e+38)
+
         
         self.PROP = dof_props
         # generate environments
@@ -649,10 +658,10 @@ def compute_fly_reward2(
     up_reward = torch.where(obs_buf[:, 10] > 1.3, up_reward + up_weight, up_reward)
 
     # Aligned with origin orientation 
-    # put heading_weigth there just because I think orientation should be as important as heading
+    # put up_weight there just because I think orientation should be as important as beeing up
     # works because base orientation is 1 + 0i + 0j + 0k and to be on the same plane reel^2 + k^2 should be = 1
     orient_reward = torch.zeros_like(up_reward)
-    orient_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) > 0.92, orient_reward + heading_weight, orient_reward)
+    orient_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) > 0.92, orient_reward + up_weight, orient_reward)
 
     # energy penalty for movement
     actions_cost = torch.sum(actions ** 2, dim=-1)
@@ -668,17 +677,22 @@ def compute_fly_reward2(
     alive_reward = torch.ones_like(potentials) * 0.5
     progress_reward = potentials - prev_potentials
 
-    total_reward = progress_reward * 3 + alive_reward + up_reward + heading_reward - \
-        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
+    #total_reward = progress_reward * 3 + alive_reward + up_reward + heading_reward - \
+     #   actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
+
+    total_reward = progress_reward * 3 + heading_reward - actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost 
 
     # adjust reward for fallen agents
     total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)
     total_reward = torch.where(obs_buf[:, 0] > termination_height_up, torch.ones_like(total_reward) * death_cost, total_reward)
+    total_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) < 0.5, torch.ones_like(total_reward) * death_cost, total_reward)
 
     # reset agents
     reset = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(reset_buf), reset_buf)
     reset = torch.where(obs_buf[:, 0] > termination_height_up, torch.ones_like(reset_buf), reset)
     reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset)
+    reset = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) < 0.5, torch.ones_like(reset_buf), reset)
+
 
     return total_reward, reset
 

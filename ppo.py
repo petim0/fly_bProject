@@ -17,6 +17,29 @@ class Net(nn.Module):
         # we use a shared backbone for both actor and critic
         
         self.shared_net = nn.Sequential(
+            nn.Linear(num_obs, 256),
+            nn.ELU(),
+            nn.Linear(256, 128),
+            nn.ELU(),
+        )
+
+        # mean and variance for Actor Network
+        self.to_mean = nn.Sequential(
+            nn.Linear(128,64), #it was 256 before 
+            nn.ELU(),
+            nn.Linear(64, num_act),
+            nn.ELU()
+        )
+
+        # value for Critic Network
+        self.to_value = nn.Sequential(
+            nn.Linear(128, 64), #it was 256 before 
+            nn.ELU(),
+            nn.Linear(64, 1)
+        )
+
+        """
+        self.shared_net = nn.Sequential(
             nn.Linear(num_obs, 512),
             nn.ELU(),
             nn.Linear(512, 256),
@@ -37,6 +60,7 @@ class Net(nn.Module):
             nn.ELU(),
             nn.Linear(128, 1)
         )
+        """
         """
         self.shared_net = nn.Sequential(
             nn.Linear(num_obs, 256),
@@ -78,7 +102,7 @@ class PPO:
 
         # initialise parameters
         self.env = Fly(args)
-        self.num_acts = 17 # number of actions
+        self.num_acts = 6 # number of actions
         self.num_obs = 97+self.num_acts # number of observations
         self.num_rewa = 1 # number of reward
         self.epoch = 5
@@ -87,12 +111,11 @@ class PPO:
         self.lmbda = 0.95
         self.clip = 0.2
         self.mini_batch_size = 12288 #24576 #(4096*6)
-        self.chuck_number = 5 # Nombre de mini_chunk dans un rollout je crois 
+        self.chuck_number = 16 # Nombre de mini_chunk dans un rollout je crois 
         self.mini_chunk_size = self.mini_batch_size // self.args.num_envs
         print("mini_chunk_size: ", self.mini_chunk_size)
-        self.rollout_size = self.mini_chunk_size * self.chuck_number
+        self.rollout_size = self.mini_chunk_size * self.chuck_number #Quand est-ce que ça train 
         print("rollout_size: ", self.rollout_size)
-        #self.rollout_size = 128 #Quand est-ce que ça train 
          
         self.num_eval_freq = 100 #Print tout les combien de step 
 

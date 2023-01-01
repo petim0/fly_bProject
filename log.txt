@@ -1,0 +1,67 @@
+nohup: ignoring input
+Importing module 'gym_37' (/home/achard/isaacgym/python/isaacgym/_bindings/linux-x86_64/gym_37.so)
+Setting GYM_USD_PLUG_INFO_PATH to /home/achard/isaacgym/python/isaacgym/_bindings/linux-x86_64/usd/plugInfo.json
+PyTorch version 1.8.1
+Device count 2
+/home/achard/isaacgym/python/isaacgym/_bindings/src/gymtorch
+Using /home/achard/.cache/torch_extensions as PyTorch extensions root...
+Emitting ninja build file /home/achard/.cache/torch_extensions/gymtorch/build.ninja...
+Building extension module gymtorch...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+ninja: no work to do.
+Loading extension module gymtorch...
+Not connected to PVD
++++ Using GPU PhysX
+Physics Engine: PhysX
+Physics Device: cuda:0
+GPU Pipeline: enabled
+Creating 500 environments.
+Setting initial dof position
+velocity 50.0
+effort 3.4e+38
+stiffness 6.0
+damping 0.1
+mini_chunk_size:  24
+rollout_size:  384
+Steps: 0000 | Opt Step: 0000 | Reward -0.2416 | Action Var 0.1000
+We reset everyone !
+Steps: 0100 | Opt Step: 0000 | Reward 0.9398 | Action Var 0.0980
+Steps: 0200 | Opt Step: 0000 | Reward 0.7145 | Action Var 0.0960
+Steps: 0300 | Opt Step: 0000 | Reward 0.5047 | Action Var 0.0940
+Training
+Steps: 0400 | Opt Step: 0075 | Reward 0.5501 | Action Var 0.0920
+Steps: 0500 | Opt Step: 0075 | Reward 0.5413 | Action Var 0.0900
+Steps: 0600 | Opt Step: 0075 | Reward 0.3884 | Action Var 0.0880
+Steps: 0700 | Opt Step: 0075 | Reward 0.5332 | Action Var 0.0860
+Training
+Steps: 0800 | Opt Step: 0150 | Reward 0.3802 | Action Var 0.0840
+Steps: 0900 | Opt Step: 0150 | Reward 0.4837 | Action Var 0.0820
+Steps: 1000 | Opt Step: 0150 | Reward 0.4010 | Action Var 0.0800
+Steps: 1100 | Opt Step: 0150 | Reward -1.0119 | Action Var 0.0780
+Training
+Steps: 1200 | Opt Step: 0225 | Reward 0.6572 | Action Var 0.0760
+Steps: 1300 | Opt Step: 0225 | Reward 0.5176 | Action Var 0.0740
+Steps: 1400 | Opt Step: 0225 | Reward 0.4803 | Action Var 0.0720
+Steps: 1500 | Opt Step: 0225 | Reward 0.3738 | Action Var 0.0700
+Training
+saving...
+saved!
+Steps: 1600 | Opt Step: 0300 | Reward 0.5083 | Action Var 0.0680
+Steps: 1700 | Opt Step: 0300 | Reward 0.5457 | Action Var 0.0660
+Steps: 1800 | Opt Step: 0300 | Reward 0.4519 | Action Var 0.0640
+Steps: 1900 | Opt Step: 0300 | Reward 0.4749 | Action Var 0.0620
+Training
+Steps: 2000 | Opt Step: 0375 | Reward 0.4798 | Action Var 0.0600
+Steps: 2100 | Opt Step: 0375 | Reward -0.8399 | Action Var 0.0580
+Steps: 2200 | Opt Step: 0375 | Reward 0.4851 | Action Var 0.0560
+Steps: 2300 | Opt Step: 0375 | Reward 0.4630 | Action Var 0.0540
+Training
+Steps: 2400 | Opt Step: 0450 | Reward 0.5891 | Action Var 0.0520
+Steps: 2500 | Opt Step: 0450 | Reward 0.5228 | Action Var 0.0500
+Steps: 2600 | Opt Step: 0450 | Reward 0.4107 | Action Var 0.0480
+Training
+Steps: 2700 | Opt Step: 0525 | Reward 0.4358 | Action Var 0.0460
+Steps: 2800 | Opt Step: 0525 | Reward 0.5096 | Action Var 0.0440
+We reset everyone !
+Steps: 2900 | Opt Step: 0525 | Reward -2.1520 | Action Var 0.0420
+We end the simulation !!!
