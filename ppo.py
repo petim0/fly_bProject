@@ -12,10 +12,10 @@ from torch.distributions import MultivariateNormal
 
 # define network architecture here
 class Net(nn.Module):
-    def __init__(self, num_obs=115, num_act=18):
+    def __init__(self, num_obs, num_act):
         super(Net, self).__init__()
         # we use a shared backbone for both actor and critic
-        """"
+        
         self.shared_net = nn.Sequential(
             nn.Linear(num_obs, 512),
             nn.ELU(),
@@ -59,6 +59,7 @@ class Net(nn.Module):
             nn.LeakyReLU(),
             nn.Linear(256, 1),
         )
+        """
 
     def pi(self, x):
         x = self.shared_net(x)
@@ -77,15 +78,15 @@ class PPO:
 
         # initialise parameters
         self.env = Fly(args)
-        self.num_obs = 115 # number of observations
-        self.num_acts = 18 # number of actions
+        self.num_acts = 17 # number of actions
+        self.num_obs = 97+self.num_acts # number of observations
         self.num_rewa = 1 # number of reward
         self.epoch = 5
         self.lr = 0.001 
         self.gamma = 0.99
         self.lmbda = 0.95
         self.clip = 0.2
-        self.mini_batch_size = 24576  #24576 #(4096*6)
+        self.mini_batch_size = 12288 #24576 #(4096*6)
         self.chuck_number = 5 # Nombre de mini_chunk dans un rollout je crois 
         self.mini_chunk_size = self.mini_batch_size // self.args.num_envs
         print("mini_chunk_size: ", self.mini_chunk_size)
@@ -115,6 +116,7 @@ class PPO:
         if self.args.load:
             print("loaded from: ", str(self.args.load_path))
             self.net.load_state_dict(torch.load(self.args.load_path))
+
         self.action_var = torch.full((self.env.num_act,), 0.1).to(args.sim_device)
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
 
@@ -207,7 +209,6 @@ class PPO:
         self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00002)
 
         # training mode
-        # +1 because we start at 0
         if self.mini_batch_number+1 == self.rollout_size:
             print("Training")
             self.update()

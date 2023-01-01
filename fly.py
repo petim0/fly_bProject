@@ -14,7 +14,7 @@ class Fly:
         #TODO CHAGER LA VITESS MAX DE CHAQUE JOINT !!!
         self.args = args
         self.end = False
-        self.dt = 1 / 200 #was 1000.
+        self.dt = 1 / 60 #was 1000.
         self.up_axis_idx = 2 # index of up axis: Y=1, Z=2
         # configure sim (gravity is pointing down)
         sim_params = gymapi.SimParams()
@@ -33,7 +33,7 @@ class Fly:
         sim_params.physx.use_gpu = True
         self.i = 0
         # task-specific parameters
-        self.num_act = 18 #(3 DoFs * 6 legs)
+        self.num_act = 17 #(3 DoFs * 6 legs)
         self.num_obs = 97 + self.num_act  # See compute_fly_observations
         self.starting_height = 2.2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
@@ -43,7 +43,12 @@ class Fly:
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
-
+        self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
+                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
+                     "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
+        
+        #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
+         #            "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         #self.names = ["joint_LHTibia", "joint_RHTibia",
          #            "joint_LMTibia", "joint_RMTibia",
           #          "joint_LFTibia", "joint_RFTibia"]
@@ -73,8 +78,8 @@ class Fly:
             "joint_RFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363}
         }
 
-        self.plane_static_friction = 1.0
-        self.plane_dynamic_friction = 10000000.0
+        self.plane_static_friction = 100.0
+        self.plane_dynamic_friction = 1.0
 
         #Constants for the reward function, taken from ant
         self.dof_vel_scale = 0.2
@@ -84,7 +89,7 @@ class Fly:
         self.energy_cost_scale = 0.05
         self.joints_at_limit_cost_scale = 0.1
         self.death_cost = -2.0
-        self.termination_height = 0.8 #PEUT être TROP petit !!
+        self.termination_height = 1 #PEUT être TROP petit !!
         self.termination_height_up = 5 #A jouer avec 
 
         # allocate buffers
@@ -182,7 +187,6 @@ class Fly:
         print("effort", self.PROP["effort"][0])
         print("stiffness", self.PROP["stiffness"][0])
         print("damping", self.PROP["damping"][0])
-        print("Limit", self.PROP["hasLimits"])
 
         
     def create_envs(self):
@@ -190,6 +194,7 @@ class Fly:
         plane_params = gymapi.PlaneParams()
         plane_params.static_friction = self.plane_static_friction
         plane_params.dynamic_friction = self.plane_dynamic_friction
+        plane_params.restitution = 0.0
         plane_params.normal = gymapi.Vec3(0, 0, 1) # z-Up
         self.gym.add_ground(self.sim, plane_params)
 
@@ -219,9 +224,9 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(3000) #This cannot be over a certain value idk what ... At least lower than 1000000 
-        dof_props['damping'].fill(50)
-        dof_props['velocity'].fill(100)
+        dof_props['stiffness'].fill(4) #This cannot be over a certain value idk what ... At least lower than 1000000 
+        dof_props['damping'].fill(0.1)
+        dof_props['velocity'].fill(50)
         dof_props['effort'].fill(3.4e+38)
         
         self.PROP = dof_props
@@ -291,6 +296,10 @@ class Fly:
         #It's the same thing ! But the second one is easier, I'll change it when I have some time !
         #print(lower[indexosef][0:self.num_act])
         #print(self.dof_limits_lower[action_indexes_one])
+
+        self.left_leg_indicies = [self.gym.find_actor_dof_index(envs[i], actors[i], "joint_LMCoxa_roll", gymapi.DOMAIN_ENV), 
+                                self.gym.find_actor_dof_index(envs[i], actors[i], "joint_LMFemur", gymapi.DOMAIN_ENV),
+                                self.gym.find_actor_dof_index(envs[i], actors[i], "joint_LMTibia", gymapi.DOMAIN_ENV)]
 
         print("Setting initial dof position")
 
@@ -374,18 +383,6 @@ class Fly:
         nb_of_sim_step = self.progress_buf
         nb_of_sim_step[nb_of_sim_step==0] = 1
 
-        #test_quat = tgm.quaternion_to_angle_axis(torch.tensor([1, 0, 0 ,0],  device=self.args.sim_device))
-        #test_quat2 = tgm.quaternion_to_angle_axis(torch.tensor([1, 0, 0 ,0], device=self.args.sim_device))
-        #test_gymap = gymapi.Quat.from_axis_angle(gymapi.Vec3(1, 0, 0),0).to_euler_zyx()
-        #print(test_gymap)
-        #rot = torch.tensor([np.pi, 0.0, 0.0], device=self.args.sim_device)
-        #rot2 = torch.tensor([0.0, np.pi, 0.0], device=self.args.sim_device)
-        #rotations_not_quat = tgm.quaternion_to_angle_axis(self.root_orientations)
-        #print(self.root_orientations)
-        #print(rotations_not_quat)
-        #print(rotations_not_quat[1] > np.pi/2, rotations_not_quat[1] < -np.pi/2)
-        #print(rotations_not_quat[0] > np.pi/2,  rotations_not_quat[0] < -np.pi/2)
-
         #self.reward_buf[:], self.reset_buf[:], self.timer_down[:] = compute_fly_reward(nb_of_sim_step, self.timer_down, self.origin_pos, 
             #self.root_positions, self.reset_buf, self.max_episode_length, 250)
 
@@ -409,7 +406,8 @@ class Fly:
             self.dof_limits_upper,
             self.dof_limits_lower,
             self.args.num_envs,
-            self.root_orientations
+            self.root_orientations,
+            self.num_act
         )
         
         #self.old_position = self.root_positions
@@ -471,14 +469,7 @@ class Fly:
                     print("We end the simulation !!!")
                     self.end = True
                 elif evt.action == "print" and evt.value > 0:
-                    #orient_reward = torch.zeros_like(self.obs_buf[:, 11])
-                    #orient_reward = torch.where(torch.square(self.root_orientations[:, 2])  + torch.square(self.root_orientations[:, 3]) > 0.92, orient_reward + self.heading_weight, orient_reward)
-                    #print("Orientation Reward: ", orient_reward)
-                    #print("Actions", self.actions[0:self.num_act])
-                    #print("potential", self.potentials[0], self.prev_potentials[0]
-                    dof_at_limit_cost = torch.sum(self.obs_buf[:, 96:102] > self.dof_limits_lower[self.action_indexes_one].squeeze(-1).repeat((self.args.num_envs, 1)) * 0.9, dim=-1)
-                    dof_at_limit_cost += torch.sum(self.obs_buf[:, 96:102] < self.dof_limits_upper[self.action_indexes_one].squeeze(-1).repeat((self.args.num_envs, 1)) * 0.9, dim=-1)
-                    print("dof_at_limit_cost", dof_at_limit_cost)
+                    print(self.actions[self.left_leg_indicies])
                     
 
             # fetch results
@@ -644,9 +635,10 @@ def compute_fly_reward2(
     upper_limit_of_actions, 
     lower_limit_of_actions, 
     num_env,
-    orientation, 
+    orientation,
+    num_actions 
 ):
-    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, float, Tensor, Tensor, Tensor, int, Tensor) -> Tuple[Tensor, Tensor]
+    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, float, Tensor, Tensor, Tensor, int, Tensor, int) -> Tuple[Tensor, Tensor]
 
     # reward from direction headed
     heading_weight_tensor = torch.ones_like(obs_buf[:, 11]) * heading_weight
@@ -665,18 +657,18 @@ def compute_fly_reward2(
     # energy penalty for movement
     actions_cost = torch.sum(actions ** 2, dim=-1)
     #Plus la diff de mouvement est grande plus ça coute  
-    electricity_cost = torch.sum(torch.abs(actions - obs_buf[:, 96:114]), dim=-1)
+    electricity_cost = torch.sum(torch.abs(actions - obs_buf[:, 96:(96 + num_actions)]), dim=-1)
    
     #Be at the the extremities costs  
-    #print(obs_buf[:, 96:114].size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)).size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((10, 1)))
-    dof_at_limit_cost = torch.sum(obs_buf[:, 96:114] > upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
-    dof_at_limit_cost += torch.sum(obs_buf[:, 96:114] < lower_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
+    #print(obs_buf[:, 96:114].size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)).size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((10, 1))) 
+    dof_at_limit_cost = torch.sum(obs_buf[:, 96:(96 + num_actions)] > upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
+    dof_at_limit_cost += torch.sum(obs_buf[:, 96:(96 + num_actions)] < lower_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
 
     # reward for duration of staying alive
     alive_reward = torch.ones_like(potentials) * 0.5
     progress_reward = potentials - prev_potentials
 
-    total_reward = progress_reward + alive_reward + up_reward + heading_reward - \
+    total_reward = progress_reward * 3 + alive_reward + up_reward + heading_reward - \
         actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
 
     # adjust reward for fallen agents
