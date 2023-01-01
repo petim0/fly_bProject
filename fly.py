@@ -33,7 +33,7 @@ class Fly:
         sim_params.physx.use_gpu = True
         self.i = 0
         # task-specific parameters
-        self.num_act = 6 #(3 DoFs * 6 legs)
+        self.num_act = 18 #(3 DoFs * 6 legs)
         self.num_obs = 97 + self.num_act  # See compute_fly_observations
         self.starting_height = 2.2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
@@ -44,7 +44,7 @@ class Fly:
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
         #Only middle legs with 2 dofs
-        self.names = ["joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia"]
+        #self.names = ["joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia"]
         
         #All Coxa
         #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", 
@@ -86,8 +86,8 @@ class Fly:
             "joint_RFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363}
         }
 
-        self.plane_static_friction = 5.0
-        self.plane_dynamic_friction = 5.0
+        self.plane_static_friction = 1.0
+        self.plane_dynamic_friction = 1.0
 
         #Constants for the reward function, taken from ant
         self.dof_vel_scale = 0.2
@@ -232,10 +232,10 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(6) #This cannot be over a certain value idk what ... At least lower than 1000000 
+        dof_props['stiffness'].fill(5) #This cannot be over a certain value idk what ... At least lower than 1000000 
         dof_props['damping'].fill(0.1)
-        dof_props['velocity'].fill(50)
-        dof_props['effort'].fill(3.4e+38)
+        dof_props['velocity'].fill(1)
+        #dof_props['effort'].fill(3.4e+38)
 
         
         self.PROP = dof_props
