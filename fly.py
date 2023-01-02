@@ -34,10 +34,10 @@ class Fly:
         self.i = 0
         # task-specific parameters
         self.num_act = 18 #(3 DoFs * 6 legs)
-        self.num_obs = 97 + self.num_act  # See compute_fly_observations
+        self.num_obs = 13 + 3*self.num_act  # See compute_fly_observations
         self.starting_height = 2.2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
-        self.max_episode_length = 1000  # maximum episode length
+        self.max_episode_length = 1500  # maximum episode length
         self.render_count = 0
         self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
@@ -86,8 +86,8 @@ class Fly:
             "joint_RFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363}
         }
 
-        self.plane_static_friction = 1.0
-        self.plane_dynamic_friction = 1.0
+        self.plane_static_friction = 2.0
+        self.plane_dynamic_friction = 2.0
 
         #Constants for the reward function, taken from ant
         self.dof_vel_scale = 0.2
@@ -232,9 +232,9 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(5) #This cannot be over a certain value idk what ... At least lower than 1000000 
+        dof_props['stiffness'].fill(10) #This cannot be over a certain value idk what ... At least lower than 1000000 
         dof_props['damping'].fill(0.1)
-        dof_props['velocity'].fill(1)
+        dof_props['velocity'].fill(6)
         #dof_props['effort'].fill(3.4e+38)
 
         
@@ -385,7 +385,7 @@ class Fly:
             self.inv_start_rot, self.dof_pos, self.dof_vel,
             self.dof_limits_lower, self.dof_limits_upper, self.dof_vel_scale, 
             self.actions.view(self.args.num_envs, -1), self.dt,
-            self.basis_vec0, self.basis_vec1, self.up_axis_idx)
+            self.basis_vec0, self.basis_vec1, self.up_axis_idx, self.action_indexes_one)
 
     def get_reward(self):
         # retrieve environment observations from buffer
@@ -558,15 +558,18 @@ class Fly:
     
     def step(self, actions):
         # apply action
-        # Reçois un tenseur de la taille num_actions * num_envs du coup il faut le mettre correctement pour que ça fasse num_obs * num_envs
-        ##actions_tensor = torch.zeros(self.args.num_envs * self.num_dof, device=self.args.sim_device)
-        ##actions_tensor[::self.num_dof] = actions.squeeze(-1) * self.max_push_effort
+        #print("Action len", len(actions), len(actions[0]))
+        #print("dof_limits_lower[self.action_indexes_one] len", self.dof_limits_lower[self.action_indexes_one].view(1, -1).repeat(self.args.num_envs, 1))
         actions_tensor = torch.clone(self.initial_dofs).detach()
-        actions = (actions.view(self.args.num_envs * self.num_act, 1) * self.multiplication) + self.translation
-        self.actions = actions.clone()
+
+        actions_scaled = scale(actions, self.dof_limits_lower[self.action_indexes_one].view(1, -1).repeat(self.args.num_envs, 1)
+                                        , self.dof_limits_upper[self.action_indexes_one].view(1, -1).repeat(self.args.num_envs, 1))
+                      
+        actions_scaled = actions_scaled.view(self.args.num_envs * self.num_act, 1)
+        self.actions = actions_scaled.clone()
         
         #Replaces in the mask the values of the actions
-        actions_tensor[..., 0][self.action_indexes] = actions
+        actions_tensor[..., 0][self.action_indexes] = actions_scaled
         
         #We only want position !! No velocity 
         actions_pos_only = actions_tensor[...,0].contiguous()
@@ -666,21 +669,21 @@ def compute_fly_reward2(
     # energy penalty for movement
     actions_cost = torch.sum(actions ** 2, dim=-1)
     #Plus la diff de mouvement est grande plus ça coute  
-    electricity_cost = torch.sum(torch.abs(actions - obs_buf[:, 96:(96 + num_actions)]), dim=-1)
+    start = (12+2*num_actions)
+    electricity_cost = torch.sum(torch.abs(actions - obs_buf[:, start:(start + num_actions)]), dim=-1)
    
     #Be at the the extremities costs  
     #print(obs_buf[:, 96:114].size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)).size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((10, 1))) 
-    dof_at_limit_cost = torch.sum(obs_buf[:, 96:(96 + num_actions)] > upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
-    dof_at_limit_cost += torch.sum(obs_buf[:, 96:(96 + num_actions)] < lower_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
+    dof_at_limit_cost = torch.sum(obs_buf[:, start:(start + num_actions)] > upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
+    dof_at_limit_cost += torch.sum(obs_buf[:, start:(start + num_actions)] < lower_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
 
     # reward for duration of staying alive
     alive_reward = torch.ones_like(potentials) * 0.5
     progress_reward = potentials - prev_potentials
 
-    #total_reward = progress_reward * 3 + alive_reward + up_reward + heading_reward - \
-     #   actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
+    total_reward = progress_reward * 3 + alive_reward + up_reward + heading_reward - \
+        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
 
-    total_reward = progress_reward * 3 + heading_reward - actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost 
 
     # adjust reward for fallen agents
     total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)
@@ -701,8 +704,8 @@ def compute_fly_reward2(
 def compute_fly_observations(obs_buf, root_states, targets, potentials,
                              inv_start_rot, dof_pos, dof_vel,
                              dof_limits_lower, dof_limits_upper, dof_vel_scale, actions, dt,
-                             basis_vec0, basis_vec1, up_axis_idx):
-    # type: (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, float, Tensor, float, Tensor, Tensor, int) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]
+                             basis_vec0, basis_vec1, up_axis_idx, action_idx):
+    # type: (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, float, Tensor, float, Tensor, Tensor, int, Tensor) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]
 
     torso_position = root_states[:, 0:3]
     torso_rotation = root_states[:, 3:7]
@@ -725,9 +728,15 @@ def compute_fly_observations(obs_buf, root_states, targets, potentials,
     
     # ATTENTION DOF POSITION ET ACTION EST UNE Répétition du coup ici 
     # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_dofs(42), num_dofs(42), num_actions(18), 1 = 115
+    #obs = torch.cat((torso_position[:, up_axis_idx].view(-1, 1), vel_loc, angvel_loc,
+     #                yaw.unsqueeze(-1), roll.unsqueeze(-1), angle_to_target.unsqueeze(-1),
+      #               up_proj.unsqueeze(-1), heading_proj.unsqueeze(-1), dof_pos_scaled,
+       #              dof_vel * dof_vel_scale, actions, pitch.unsqueeze(-1)), dim=-1)
+
+    # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_action(18), num_action(18), num_actions(18), 1 = 67
     obs = torch.cat((torso_position[:, up_axis_idx].view(-1, 1), vel_loc, angvel_loc,
                      yaw.unsqueeze(-1), roll.unsqueeze(-1), angle_to_target.unsqueeze(-1),
-                     up_proj.unsqueeze(-1), heading_proj.unsqueeze(-1), dof_pos_scaled,
-                     dof_vel * dof_vel_scale, actions, pitch.unsqueeze(-1)), dim=-1)
+                     up_proj.unsqueeze(-1), heading_proj.unsqueeze(-1), dof_pos_scaled[:, action_idx].squeeze(-1),
+                     dof_vel[:, action_idx].squeeze(-1) * dof_vel_scale, actions, pitch.unsqueeze(-1)), dim=-1)
 
     return obs, potentials, prev_potentials_new, up_vec, heading_vec

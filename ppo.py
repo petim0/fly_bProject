@@ -15,7 +15,7 @@ class Net(nn.Module):
     def __init__(self, num_obs, num_act):
         super(Net, self).__init__()
         # we use a shared backbone for both actor and critic
-        
+        """"
         self.shared_net = nn.Sequential(
             nn.Linear(num_obs, 256),
             nn.ELU(),
@@ -60,7 +60,7 @@ class Net(nn.Module):
             nn.ELU(),
             nn.Linear(128, 1)
         )
-        """
+        
         """
         self.shared_net = nn.Sequential(
             nn.Linear(num_obs, 256),
@@ -103,14 +103,14 @@ class PPO:
         # initialise parameters
         self.env = Fly(args)
         self.num_acts = 18 # number of actions
-        self.num_obs = 97+self.num_acts # number of observations
+        self.num_obs = 13 + 3*self.num_acts # number of observations
         self.num_rewa = 1 # number of reward
         self.epoch = 5
         self.lr = 0.001 
         self.gamma = 0.99
         self.lmbda = 0.95
         self.clip = 0.2
-        self.mini_batch_size = 12288 #24576 #(4096*6)
+        self.mini_batch_size = 32768 #24576 #(4096*6)
         self.chuck_number = 16 # Nombre de mini_chunk dans un rollout je crois 
         self.mini_chunk_size = self.mini_batch_size // self.args.num_envs
         print("mini_chunk_size: ", self.mini_chunk_size)
@@ -212,7 +212,8 @@ class PPO:
         with torch.no_grad():
             mu = self.net.pi(obs)
             cov_mat = torch.diag(self.action_var)
-            dist = MultivariateNormal(mu, cov_mat)
+            scale_tril = torch.cholesky(cov_mat) 
+            dist = MultivariateNormal(mu, scale_tril=scale_tril)
             action = dist.sample()
             self.all_log_prob[self.mini_batch_number] = dist.log_prob(action) #This is a tensor 
             action = action.clip(-1, 1) #MMMMM what is this doing ? 
