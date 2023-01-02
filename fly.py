@@ -35,7 +35,7 @@ class Fly:
         # task-specific parameters
         self.num_act = 18 #(3 DoFs * 6 legs)
         self.num_obs = 13 + 3*self.num_act  # See compute_fly_observations
-        self.starting_height = 2.2
+        self.starting_height = 2.1
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
         self.max_episode_length = 1500  # maximum episode length
         self.render_count = 0
@@ -91,14 +91,14 @@ class Fly:
 
         #Constants for the reward function, taken from ant
         self.dof_vel_scale = 0.2
-        self.heading_weight = 0.5
+        self.heading_weight = 1
         self.up_weight = 0.1
         self.actions_cost_scale = 0.005
         self.energy_cost_scale = 0.05
         self.joints_at_limit_cost_scale = 0.1
         self.death_cost = -2.0
         self.termination_height = 0.8 #PEUT être TROP petit !!
-        self.termination_height_up = 5 #A jouer avec 
+        self.termination_height_up = 6 #A jouer avec 
 
         # allocate buffers
         #obs_buf size will have to change TODO 

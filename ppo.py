@@ -110,7 +110,7 @@ class PPO:
         self.gamma = 0.99
         self.lmbda = 0.95
         self.clip = 0.2
-        self.mini_batch_size = 32768 #24576 #(4096*6)
+        self.mini_batch_size = 40960 #24576 #(4096*6)
         self.chuck_number = 16 # Nombre de mini_chunk dans un rollout je crois 
         self.mini_chunk_size = self.mini_batch_size // self.args.num_envs
         print("mini_chunk_size: ", self.mini_chunk_size)
