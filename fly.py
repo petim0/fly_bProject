@@ -14,12 +14,12 @@ class Fly:
         #TODO CHAGER LA VITESS MAX DE CHAQUE JOINT !!!
         self.args = args
         self.end = False
-        self.dt = 1 / 60 #was 1000.
+        self.dt = 1 / 1000 #was 1000.
         self.up_axis_idx = 2 # index of up axis: X= 0, Y=1, Z=2
         # configure sim (gravity is pointing down)
         sim_params = gymapi.SimParams()
         sim_params.up_axis = gymapi.UP_AXIS_Z
-        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81) #should be *1000
+        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*1000) #should be *1000
         sim_params.dt = self.dt
         sim_params.substeps = 2
         sim_params.use_gpu_pipeline = True
@@ -35,7 +35,7 @@ class Fly:
         # task-specific parameters
         self.num_act = 18 #(3 DoFs * 6 legs)
         self.num_obs = 13 + 3*self.num_act  # See compute_fly_observations
-        self.starting_height = 2
+        self.starting_height = 2.2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
         self.max_episode_length = 1500  # maximum episode length
         self.render_count = 0
@@ -227,7 +227,7 @@ class Fly:
 
         # add cartpole asset
         asset_root = 'assets'
-        asset_file = 'nmf_no_limits.urdf'
+        asset_file = 'nmf_no_limits_8dof.urdf'
         asset_options = gymapi.AssetOptions() #get default options
         asset_options.fix_base_link = False
         fly_asset = self.gym.load_asset(self.sim, asset_root, asset_file, asset_options)
@@ -248,9 +248,9 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(6) #This cannot be over a certain value idk #6
+        dof_props['stiffness'].fill(1) #This cannot be over a certain value idk #6
         dof_props['damping'].fill(0.1)
-        dof_props['velocity'].fill(15) #entre 7-8 tester #11
+        dof_props['velocity'].fill(5) #entre 7-8 tester #11
 
         
         self.PROP = dof_props
@@ -332,7 +332,7 @@ class Fly:
         # We keep this initial_dof, we will use it later to only moove some dofs 
         initial_dofs = torch.full((num_dof*self.args.num_envs, 2), 0, dtype=torch.float32, device=self.args.sim_device) 
         for i in range(self.args.num_envs):
-            for joint_name in self.joints_42dof:
+            for joint_name in self.names:
                 joint_index = self.gym.find_actor_dof_index(envs[i], actors[i], joint_name, gymapi.DOMAIN_SIM)
                 initial_dofs[joint_index, 0] = self.initial_joints_dict.get(joint_name, 0) # defaults to 0 for unspecified joints
         
@@ -627,7 +627,7 @@ class Fly:
         self.actions = actions_scaled.clone()
         
         #Replaces in the mask the values of the actions
-        actions_tensor[..., 0][self.action_indexes] = actions_scaled
+        #actions_tensor[..., 0][self.action_indexes] = actions_scaled
         
         #We only want position !! No velocity 
         actions_pos_only = actions_tensor[...,0].contiguous()
