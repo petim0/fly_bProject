@@ -248,8 +248,7 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(1000) #This cannot be over a certain value idk #6
-        #dof_props['stiffness'][action_indexes_one] = 6
+        dof_props['stiffness'].fill(6) #This cannot be over a certain value idk #6
         dof_props['damping'].fill(0.1)
         dof_props['velocity'].fill(15) #entre 7-8 tester #11
 
@@ -628,7 +627,7 @@ class Fly:
         self.actions = actions_scaled.clone()
         
         #Replaces in the mask the values of the actions
-        #actions_tensor[..., 0][self.action_indexes] = actions_scaled
+        actions_tensor[..., 0][self.action_indexes] = actions_scaled
         
         #We only want position !! No velocity 
         actions_pos_only = actions_tensor[...,0].contiguous()
