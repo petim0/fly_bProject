@@ -35,7 +35,7 @@ class Fly:
         # task-specific parameters
         self.num_act = 18 #(3 DoFs * 6 legs)
         self.num_obs = 13 + 3*self.num_act  # See compute_fly_observations
-        self.starting_height = 2.2
+        self.starting_height = 2.1
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
         self.max_episode_length = 1500  # maximum episode length
         self.render_count = 0
@@ -188,6 +188,7 @@ class Fly:
         # step simulation to initialise tensor buffers
         self.gym.prepare_sim(self.sim)
         
+        """"
         #self.reset() #Ne Peux pas être là !
         ## First reset to start on smth frseh, This has to be modified, it is ugly
         env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)
@@ -201,6 +202,9 @@ class Fly:
         self.reset_buf[env_ids] = 0
         self.progress_buf[env_ids] = 0
         self.distance[env_ids] = 0
+        """
+
+        
 
 
         #Stuff I have to init after starting the simulation
@@ -248,11 +252,10 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(1) #This cannot be over a certain value idk #6
-        dof_props['damping'].fill(0.1)
-        dof_props['velocity'].fill(5) #entre 7-8 tester #11
+        dof_props['stiffness'].fill(4000) #This cannot be over a certain value idk #6 #5000
+        dof_props['damping'].fill(50)
+        #dof_props['velocity'].fill(5) #entre 7-8 tester #11
 
-        
         self.PROP = dof_props
         # generate environments
         envs = []
@@ -269,7 +272,6 @@ class Fly:
             envs.append(env)
             actors.append(fly)
 
-        
         dof_limits_lower = []
         dof_limits_upper = []
         dof_prop = self.gym.get_actor_dof_properties(envs[0], actors[0])
@@ -744,7 +746,7 @@ def compute_fly_reward2(
 
     #total_reward = progress_reward * 3 + alive_reward + up_reward + heading_reward - \
      #   actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
-    total_reward = alive_reward + up_reward * orient_reward - energy_cost_scale * electricity_cost 
+    total_reward = alive_reward + up_reward + orient_reward - energy_cost_scale * electricity_cost 
 
     # adjust reward for fallen agents
     total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)
