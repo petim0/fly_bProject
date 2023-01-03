@@ -15,7 +15,7 @@ class Fly:
         self.args = args
         self.end = False
         self.dt = 1 / 60 #was 1000.
-        self.up_axis_idx = 2 # index of up axis: Y=1, Z=2
+        self.up_axis_idx = 2 # index of up axis: X= 0, Y=1, Z=2
         # configure sim (gravity is pointing down)
         sim_params = gymapi.SimParams()
         sim_params.up_axis = gymapi.UP_AXIS_Z
@@ -35,7 +35,7 @@ class Fly:
         # task-specific parameters
         self.num_act = 18 #(3 DoFs * 6 legs)
         self.num_obs = 13 + 3*self.num_act  # See compute_fly_observations
-        self.starting_height = 2.1
+        self.starting_height = 2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
         self.max_episode_length = 1500  # maximum episode length
         self.render_count = 0
@@ -91,13 +91,13 @@ class Fly:
 
         #Constants for the reward function, taken from ant
         self.dof_vel_scale = 0.2
-        self.heading_weight = 1
-        self.up_weight = 0.1
+        self.heading_weight = 0.5
+        self.up_weight = 1
         self.actions_cost_scale = 0.005
         self.energy_cost_scale = 0.05
         self.joints_at_limit_cost_scale = 0.1
         self.death_cost = -2.0
-        self.termination_height = 0.8 #PEUT être TROP petit !!
+        self.termination_height = 1.1
         self.termination_height_up = 6 #A jouer avec 
 
         # allocate buffers
@@ -127,10 +127,23 @@ class Fly:
         #print("Nb of base positions: ", len(self.joints_92dof)) #92
 
         # initialise envs and state tensors
-        self.envs, self.num_dof, self.action_indexes, self.action_indexes_one, self.initial_dofs, self.initial_dofs_one, self.translation, self.multiplication, self.dof_limits_lower, self.dof_limits_upper  = self.create_envs()
-        self.dof_states, self.root_tensor = self.get_states_tensor()
+        self.envs, self.actors, self.num_dof, self.num_rigid_body, self.action_indexes, self.action_indexes_one, self.initial_dofs, self.initial_dofs_one, self.translation, self.multiplication, self.dof_limits_lower, self.dof_limits_upper  = self.create_envs()
+        self.dof_states, self.root_tensor, self.force_tensor = self.get_states_tensor()
         self.dof_pos = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 1]
+        
+
+        names_abdomen_parts = ["A1A2", "A3", "A4", "A5", "A6"]
+        index_abdomen = []
+        for i in range(self.args.num_envs):
+            for name in names_abdomen_parts:
+                index = self.gym.find_actor_rigid_body_index(self.envs[i], self.actors[i], name, gymapi.DOMAIN_SIM)
+                index_abdomen.append(index)
+
+        index_abdomen.sort()
+        self.index_abdomen_sim = to_torch(index_abdomen, device=self.args.sim_device, dtype=torch.long)
+        print(self.index_abdomen_sim)
+        
 
         #It is always 13: 3 floats for position, 4 floats for quaternion, 3 floats for linear velocity, and 3 floats for angular velocity.
         #self.old_position = torch.zeros((self.args.num_envs, 3), device=self.args.sim_device)
@@ -219,6 +232,9 @@ class Fly:
         asset_options.fix_base_link = False
         fly_asset = self.gym.load_asset(self.sim, asset_root, asset_file, asset_options)
         num_dof = self.gym.get_asset_dof_count(fly_asset)
+        num_rigid_body = self.gym.get_asset_rigid_body_count(fly_asset)
+        
+        #print("num_rigid_body", num_rigid_body) #93
         #print("num_dof: ", num_dof) #42
         self.joints_42dof = self.gym.get_asset_dof_names(fly_asset) ## GIVES ONLY THE DOFS WHICH YOU CAN HAVE AN ACTION ON !!! so 42
         # print("Dof_names: ", self.joints_42dof)
@@ -232,10 +248,10 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(10) #This cannot be over a certain value idk what ... At least lower than 1000000 
+        dof_props['stiffness'].fill(1000) #This cannot be over a certain value idk #6
+        #dof_props['stiffness'][action_indexes_one] = 6
         dof_props['damping'].fill(0.1)
-        dof_props['velocity'].fill(6)
-        #dof_props['effort'].fill(3.4e+38)
+        dof_props['velocity'].fill(15) #entre 7-8 tester #11
 
         
         self.PROP = dof_props
@@ -296,6 +312,7 @@ class Fly:
 
         #action_indexes for just one fly (indexes relative to the env) 
         action_indexes_one = action_indexes[0:self.num_act]
+        print(action_indexes_one)
 
         indexosef = indexosef.squeeze(-1)        
         dof_translation = dof_translation[indexosef]
@@ -323,7 +340,7 @@ class Fly:
         #Initial_dof for just one fly, useful in the reset 
         initial_dofs_one = initial_dofs[:num_dof]        
         
-        return envs, num_dof, action_indexes, action_indexes_one, initial_dofs, initial_dofs_one, dof_translation, dof_multiplication, dof_limits_lower, dof_limits_upper
+        return envs, actors, num_dof, num_rigid_body, action_indexes, action_indexes_one, initial_dofs, initial_dofs_one, dof_translation, dof_multiplication, dof_limits_lower, dof_limits_upper
 
     #find the translation to apply to transform a value between [-1 1] to [lower upper]
     def find_trans(self, lower: float, upper: float):
@@ -364,21 +381,27 @@ class Fly:
     def get_states_tensor(self):
         # get dof state tensor of All the flys
         _dof_states = self.gym.acquire_dof_state_tensor(self.sim)
-        dof_states = gymtorch.wrap_tensor(_dof_states)
-        dof_states = dof_states.view(self.args.num_envs, self.num_dof*2)
-
+        
         # acquire root state tensor descriptor
         _root_tensor = self.gym.acquire_actor_root_state_tensor(self.sim)
 
+        # acquire force state tensor descritor
+        _force_tensor = self.gym.acquire_net_contact_force_tensor(self.sim)
+
         # wrap it in a PyTorch Tensor and create convenient views
         root_tensor = gymtorch.wrap_tensor(_root_tensor)
-        #print("Roooot: ", root_tensor.size())
+        force_tensor = gymtorch.wrap_tensor(_force_tensor)
+        dof_states = gymtorch.wrap_tensor(_dof_states)
 
-        return dof_states, root_tensor
+
+        dof_states = dof_states.view(self.args.num_envs, self.num_dof*2)
+
+        return dof_states, root_tensor, force_tensor
 
     def get_obs(self):
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_dof_state_tensor(self.sim) 
+        self.gym.refresh_net_contact_force_tensor(self.sim)
         
         self.obs_buf[:], self.potentials[:], self.prev_potentials[:], self.up_vec[:], self.heading_vec[:] = compute_fly_observations(
             self.obs_buf, self.root_tensor, self.targets, self.potentials,
@@ -416,7 +439,9 @@ class Fly:
             self.dof_limits_lower,
             self.args.num_envs,
             self.root_orientations,
-            self.num_act
+            self.num_act, 
+            self.force_tensor,
+            self.index_abdomen_sim
         )
         
         #self.old_position = self.root_positions
@@ -478,8 +503,42 @@ class Fly:
                     print("We end the simulation !!!")
                     self.end = True
                 elif evt.action == "print" and evt.value > 0:
-                    print(self.actions[self.left_leg_indicies])
+                    """"
+                    heading_weight_tensor = torch.ones_like(self.obs_buf[:, 11]) * self.heading_weight
+                    heading_reward = torch.where(self.obs_buf[:, 11] > 0.8, heading_weight_tensor, self.heading_weight * self.obs_buf[:, 11] / 0.8)
+                    #print("heading_reward", heading_reward)
+                    alive_reward = torch.ones_like(self.potentials) * 0.5
+                    #print("alive_reward", alive_reward)
+                    up_reward = torch.zeros_like(heading_reward)
+                    up_reward = torch.where(self.obs_buf[:, 0] > 1.4, up_reward + self.up_weight, up_reward)
+                    #print("height", self.obs_buf[:, 0])
+                    print("up_reward", up_reward)
+                    # Aligned with origin orientation 
+                    # put up_weight there just because I think orientation should be as important as beeing up
+                    # works because base orientation is 1 + 0i + 0j + 0k and to be on the same plane reel^2 + k^2 should be = 1
+                    orient_reward = torch.zeros_like(up_reward)
+                    orient_reward = torch.where(torch.square(self.root_orientations[:, 2])  + torch.square(self.root_orientations[:, 3]) > 0.92, orient_reward + self.up_weight, orient_reward)
+                    print("orient_reward", orient_reward)
+                    # energy penalty for movement
+                    actions_cost = torch.sum(self.actions.view(self.args.num_envs, -1) ** 2, dim=-1)
+                    print("actions_cost", actions_cost)
+                    #Plus la diff de mouvement est grande plus ça coute  
+                    start = (12+2*self.num_act)
+                    electricity_cost = torch.sum(torch.abs(self.actions.view(self.args.num_envs, -1) - self.obs_buf[:, start:(start + self.num_act)]), dim=-1)
+                    print("electricity_cost", electricity_cost)
+                    #Be at the the extremities costs  
+                    #print(obs_buf[:, 96:114].size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)).size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((10, 1))) 
+                    dof_at_limit_cost = torch.sum(self.obs_buf[:, start:(start + self.num_act)] > self.dof_limits_upper[self.action_indexes_one].squeeze(-1).repeat((self.args.num_envs, 1)) * 0.9, dim=-1)
+                    dof_at_limit_cost += torch.sum(self.obs_buf[:, start:(start + self.num_act)] < self.dof_limits_lower[self.action_indexes_one].squeeze(-1).repeat((self.args.num_envs, 1)) * 0.9, dim=-1)
+                    print("dof_at_limit_cost",dof_at_limit_cost)
+                    progress_reward = self.potentials - self.prev_potentials
+                    #print("progress_reward", progress_reward)
+                    #print("Position", self.root_positions)
+                    print("reward up*orient", up_reward * orient_reward)
+                    """
+                    print(torch.sum(torch.sum(self.force_tensor[self.index_abdomen_sim, :], dim=1).view(self.args.num_envs, -1), dim=1) )
                     
+
 
             # fetch results
             if self.args.sim_device != 'cpu':
@@ -569,7 +628,7 @@ class Fly:
         self.actions = actions_scaled.clone()
         
         #Replaces in the mask the values of the actions
-        actions_tensor[..., 0][self.action_indexes] = actions_scaled
+        #actions_tensor[..., 0][self.action_indexes] = actions_scaled
         
         #We only want position !! No velocity 
         actions_pos_only = actions_tensor[...,0].contiguous()
@@ -648,9 +707,11 @@ def compute_fly_reward2(
     lower_limit_of_actions, 
     num_env,
     orientation,
-    num_actions 
+    num_actions,
+    force_tensor,
+    index_abdomen_sim
 ):
-    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, float, Tensor, Tensor, Tensor, int, Tensor, int) -> Tuple[Tensor, Tensor]
+    # type: (Tensor, Tensor, Tensor, Tensor, float, float, Tensor, Tensor, float, float, float, float, float, float, float, Tensor, Tensor, Tensor, int, Tensor, int, Tensor, Tensor) -> Tuple[Tensor, Tensor]
 
     # reward from direction headed
     heading_weight_tensor = torch.ones_like(obs_buf[:, 11]) * heading_weight
@@ -658,13 +719,14 @@ def compute_fly_reward2(
 
     # aligning up axis of ant and environment
     up_reward = torch.zeros_like(heading_reward)
-    up_reward = torch.where(obs_buf[:, 10] > 1.3, up_reward + up_weight, up_reward)
+    up_reward = torch.where(obs_buf[:, 0] > 1.4, up_reward + up_weight, up_reward)
+    up_reward = torch.where(obs_buf[:, 0] < 2.1, up_reward - up_weight, up_reward)
 
     # Aligned with origin orientation 
     # put up_weight there just because I think orientation should be as important as beeing up
     # works because base orientation is 1 + 0i + 0j + 0k and to be on the same plane reel^2 + k^2 should be = 1
     orient_reward = torch.zeros_like(up_reward)
-    orient_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) > 0.92, orient_reward + up_weight, orient_reward)
+    orient_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) > 0.98, orient_reward + up_weight, orient_reward)
 
     # energy penalty for movement
     actions_cost = torch.sum(actions ** 2, dim=-1)
@@ -681,22 +743,23 @@ def compute_fly_reward2(
     alive_reward = torch.ones_like(potentials) * 0.5
     progress_reward = potentials - prev_potentials
 
-    total_reward = progress_reward * 3 + alive_reward + up_reward + heading_reward - \
-        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
-
+    #total_reward = progress_reward * 3 + alive_reward + up_reward + heading_reward - \
+     #   actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward
+    total_reward = alive_reward + up_reward * orient_reward - energy_cost_scale * electricity_cost 
 
     # adjust reward for fallen agents
     total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)
     total_reward = torch.where(obs_buf[:, 0] > termination_height_up, torch.ones_like(total_reward) * death_cost, total_reward)
     total_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) < 0.5, torch.ones_like(total_reward) * death_cost, total_reward)
+    total_reward = torch.where(torch.sum(torch.sum(force_tensor[index_abdomen_sim, :], dim=1).view(num_env, -1), dim=1) > 0, torch.ones_like(total_reward) * death_cost, total_reward)
 
     # reset agents
     reset = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(reset_buf), reset_buf)
     reset = torch.where(obs_buf[:, 0] > termination_height_up, torch.ones_like(reset_buf), reset)
     reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset)
     reset = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) < 0.5, torch.ones_like(reset_buf), reset)
-
-
+    reset = torch.where(torch.sum(torch.sum(force_tensor[index_abdomen_sim, :], dim=1).view(num_env, -1), dim=1) > 0, torch.ones_like(reset_buf), reset)
+    
     return total_reward, reset
 
 
