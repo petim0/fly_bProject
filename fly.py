@@ -86,8 +86,8 @@ class Fly:
             "joint_RFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363}
         }
 
-        self.plane_static_friction = 2.0
-        self.plane_dynamic_friction = 2.0
+        self.plane_static_friction = 1.0
+        self.plane_dynamic_friction = 1.0
 
         #Constants for the reward function, taken from ant
         self.dof_vel_scale = 0.2
@@ -142,7 +142,6 @@ class Fly:
 
         index_abdomen.sort()
         self.index_abdomen_sim = to_torch(index_abdomen, device=self.args.sim_device, dtype=torch.long)
-        print(self.index_abdomen_sim)
         
 
         #It is always 13: 3 floats for position, 4 floats for quaternion, 3 floats for linear velocity, and 3 floats for angular velocity.
@@ -204,14 +203,12 @@ class Fly:
         self.distance[env_ids] = 0
         """
 
-        
-
-
         #Stuff I have to init after starting the simulation
         print("velocity", self.PROP["velocity"][0])
         print("effort", self.PROP["effort"][0])
         print("stiffness", self.PROP["stiffness"][0])
         print("damping", self.PROP["damping"][0])
+
 
         
     def create_envs(self):
@@ -272,6 +269,15 @@ class Fly:
             envs.append(env)
             actors.append(fly)
 
+        """"
+        for i in range(self.args.num_envs):
+            actor_name = self.gym.get_actor_name(envs[i], actors[i])
+            for name, value in self.initial_joints_dict.items():
+                joint_handle = self.gym.get_joint_handle(envs[i], actor_name, name)
+                self.gym.set_joint_target_position(envs[i], joint_handle, 1000)
+        """
+
+
         dof_limits_lower = []
         dof_limits_upper = []
         dof_prop = self.gym.get_actor_dof_properties(envs[0], actors[0])
@@ -286,8 +292,11 @@ class Fly:
         dof_limits_lower = to_torch(dof_limits_lower, device=self.args.sim_device)
         dof_limits_upper = to_torch(dof_limits_upper, device=self.args.sim_device)
 
-
-
+        #print(self.gym.get_actor_rigid_body_names(envs[0],actors[0]))
+        #print(self.gym.get_asset_joint_dict(fly_asset))
+        #print(self.gym.find_asset_joint_index(fly_asset, "joint_RHCoxa"))
+        print(self.initial_joints_dict)
+        
         # Find the indexes we want to modify, these indexes are relative to the sim 0 and 42*num_envs
         # It should have a size num_action*num_envs
         # We also calculate the translation and multiplication factor we want to apply, this could be done without hardcoding 
@@ -313,7 +322,6 @@ class Fly:
 
         #action_indexes for just one fly (indexes relative to the env) 
         action_indexes_one = action_indexes[0:self.num_act]
-        print(action_indexes_one)
 
         indexosef = indexosef.squeeze(-1)        
         dof_translation = dof_translation[indexosef]
@@ -339,7 +347,9 @@ class Fly:
                 initial_dofs[joint_index, 0] = self.initial_joints_dict.get(joint_name, 0) # defaults to 0 for unspecified joints
         
         #Initial_dof for just one fly, useful in the reset 
-        initial_dofs_one = initial_dofs[:num_dof]        
+        initial_dofs_one = initial_dofs[:num_dof]   
+
+        print("Joint count:", self.gym.get_sim_joint_count(self.sim))     
         
         return envs, actors, num_dof, num_rigid_body, action_indexes, action_indexes_one, initial_dofs, initial_dofs_one, dof_translation, dof_multiplication, dof_limits_lower, dof_limits_upper
 
@@ -464,12 +474,13 @@ class Fly:
         self.root_tensor[env_ids, :] = self.origin_root_tensor[env_ids, :] 
 
         # Reset desired environments 
-        self.gym.set_actor_root_state_tensor_indexed(self.sim,
+        set1 = self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_tensor),
                                                      gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
-        self.gym.set_dof_state_tensor_indexed(self.sim,
+        set2 = self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_states),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
+        print(set1, set2)
         # clear up desired buffer states
         self.reset_buf[env_ids] = 0
         self.progress_buf[env_ids] = 0
@@ -537,8 +548,9 @@ class Fly:
                     #print("Position", self.root_positions)
                     print("reward up*orient", up_reward * orient_reward)
                     """
-                    print(torch.sum(torch.sum(self.force_tensor[self.index_abdomen_sim, :], dim=1).view(self.args.num_envs, -1), dim=1) )
-                    
+                    #print(torch.sum(torch.sum(self.force_tensor[self.index_abdomen_sim, :], dim=1).view(self.args.num_envs, -1), dim=1) )
+                    print(self.dof_pos)
+                    print(self.initial_dofs)
 
 
             # fetch results
