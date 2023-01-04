@@ -259,9 +259,9 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(2200) #This cannot be over a certain value idk #6 #3000
+        dof_props['stiffness'].fill(2000) #This cannot be over a certain value idk #6 #3000
         dof_props['damping'].fill(50)
-        dof_props['velocity'].fill(2200)
+        dof_props['velocity'].fill(2000)
 
         self.PROP = dof_props
         # generate environments
@@ -542,7 +542,7 @@ class Fly:
                     #Plus la diff de mouvement est grande plus ça coute  
                     start = (12+2*self.num_act)
                     electricity_cost = torch.sum(torch.abs(self.actions.view(self.args.num_envs, -1) - self.obs_buf[:, start:(start + self.num_act)]), dim=-1)
-                    #print("electricity_cost", electricity_cost)
+                    print("electricity_cost", electricity_cost)
                     #Be at the the extremities costs  
                     #print(obs_buf[:, 96:114].size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)).size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((10, 1))) 
                     dof_at_limit_cost = torch.sum(self.obs_buf[:, start:(start + self.num_act)] > self.dof_limits_upper[self.action_indexes_one].squeeze(-1).repeat((self.args.num_envs, 1)) * 0.9, dim=-1)
@@ -560,7 +560,7 @@ class Fly:
                     #print(scale(torch.ones(18, device=self.args.sim_device), self.dof_limits_lower, self.dof_limits_upper) <= self.dof_limits_upper+0.01)
                     #print(scale(torch.ones(18, device=self.args.sim_device), self.dof_limits_lower, self.dof_limits_upper) >= self.dof_limits_lower-0.01)
                     leg_reward = torch.sum((torch.sum(self.force_tensor[self.index_legs_tip, :], dim=1).view(self.args.num_envs, -1) > 0).long(), dim=1) * 0.1
-                    print((torch.sum(self.force_tensor[self.index_legs_tip, :], dim=1).view(self.args.num_envs, -1) > 0).long())
+                    #print((torch.sum(self.force_tensor[self.index_legs_tip, :], dim=1).view(self.args.num_envs, -1) > 0).long())
                     print(leg_reward)
 
             # fetch results
