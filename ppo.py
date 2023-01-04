@@ -102,8 +102,8 @@ class PPO:
 
         # initialise parameters
         self.env = Fly(args)
-        self.num_acts = 18 # number of actions
-        self.num_obs = 13 + 3*self.num_acts # number of observations
+        self.num_acts = 17 # number of actions
+        self.num_obs = 19 + 3*self.num_acts # number of observations
         self.num_rewa = 1 # number of reward
         self.epoch = 5
         self.lr = 0.001 
