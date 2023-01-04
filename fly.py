@@ -228,7 +228,7 @@ class Fly:
 
         # add cartpole asset
         asset_root = 'assets'
-        asset_file = 'nmf_no_limits_8dof.urdf'
+        asset_file = 'nmf_no_limits_limited_Dofs.urdf'
         asset_options = gymapi.AssetOptions() #get default options
         asset_options.fix_base_link = False
         fly_asset = self.gym.load_asset(self.sim, asset_root, asset_file, asset_options)
@@ -295,7 +295,8 @@ class Fly:
         #print(self.gym.get_actor_rigid_body_names(envs[0],actors[0]))
         #print(self.gym.get_asset_joint_dict(fly_asset))
         #print(self.gym.find_asset_joint_index(fly_asset, "joint_RHCoxa"))
-        print(self.initial_joints_dict)
+        for name, value in self.initial_joints_dict.items():
+            print(name,": ", value)
         
         # Find the indexes we want to modify, these indexes are relative to the sim 0 and 42*num_envs
         # It should have a size num_action*num_envs

@@ -479,7 +479,7 @@
   <joint name="joint_RHTarsus1" type="revolute">
     <parent link="RHTibia"/>
     <child link="RHTarsus1"/>
-    <origin xyz="-2.6000e-04  6.6000e-04 -6.8445e-01" rpy="0 0 0"/>
+    <origin xyz="-2.6000e-04  6.6000e-04 -6.8445e-01" rpy="1 0 0"/>
     <axis xyz="0 1 0"/>
     <limit lower="-2.5134971441991394" upper="1.620555689251449" effort="10000000000.0" velocity="628.3185307179587"/>
   </joint>
@@ -653,13 +653,13 @@
     <collision name="A1A2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A1A2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A1A2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="A1A2_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A1A2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A1A2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -672,13 +672,13 @@
     <collision name="A3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="A3_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -691,13 +691,13 @@
     <collision name="A4_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="A4_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -710,13 +710,13 @@
     <collision name="A5_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="A5_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -729,13 +729,13 @@
     <collision name="A6_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A6.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A6.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="A6_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/A6.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/A6.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -748,13 +748,13 @@
     <collision name="Haustellum_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/Haustellum.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/Haustellum.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="Haustellum_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/Haustellum.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/Haustellum.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -767,13 +767,13 @@
     <collision name="Head_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/Head.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/Head.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="Head_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/Head.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/Head.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -800,13 +800,13 @@
     <collision name="LAntenna_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LAntenna.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LAntenna.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LAntenna_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LAntenna.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LAntenna.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -819,13 +819,13 @@
     <collision name="LEye_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LEye.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LEye.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LEye_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LEye.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LEye.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -838,13 +838,13 @@
     <collision name="LFCoxa_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LFCoxa_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -871,13 +871,13 @@
     <collision name="LFFemur_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LFFemur_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -897,13 +897,13 @@
     <collision name="LFTarsus1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LFTarsus1_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -916,13 +916,13 @@
     <collision name="LFTarsus2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LFTarsus2_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -935,13 +935,13 @@
     <collision name="LFTarsus3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LFTarsus3_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -954,13 +954,13 @@
     <collision name="LFTarsus4_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LFTarsus4_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -973,13 +973,13 @@
     <collision name="LFTarsus5_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LFTarsus5_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -992,13 +992,13 @@
     <collision name="LFTibia_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LFTibia_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LFTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LFTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1011,13 +1011,13 @@
     <collision name="LHCoxa_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHCoxa_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1044,13 +1044,13 @@
     <collision name="LHFemur_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHFemur_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1070,13 +1070,13 @@
     <collision name="LHTarsus1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHTarsus1_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1089,13 +1089,13 @@
     <collision name="LHTarsus2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHTarsus2_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1108,13 +1108,13 @@
     <collision name="LHTarsus3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHTarsus3_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1127,13 +1127,13 @@
     <collision name="LHTarsus4_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHTarsus4_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1146,13 +1146,13 @@
     <collision name="LHTarsus5_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHTarsus5_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1165,13 +1165,13 @@
     <collision name="LHTibia_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHTibia_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1184,13 +1184,13 @@
     <collision name="LHaltere_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHaltere.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHaltere.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LHaltere_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LHaltere.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LHaltere.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1217,13 +1217,13 @@
     <collision name="LMCoxa_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LMCoxa_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1250,13 +1250,13 @@
     <collision name="LMFemur_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LMFemur_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1276,13 +1276,13 @@
     <collision name="LMTarsus1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LMTarsus1_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1295,13 +1295,13 @@
     <collision name="LMTarsus2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LMTarsus2_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1314,13 +1314,13 @@
     <collision name="LMTarsus3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LMTarsus3_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1333,13 +1333,13 @@
     <collision name="LMTarsus4_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LMTarsus4_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1352,13 +1352,13 @@
     <collision name="LMTarsus5_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LMTarsus5_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1371,13 +1371,13 @@
     <collision name="LMTibia_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LMTibia_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LMTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LMTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1390,13 +1390,13 @@
     <collision name="LWing_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LWing.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LWing.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="LWing_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/LWing.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/LWing.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1423,13 +1423,13 @@
     <collision name="RAntenna_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RAntenna.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RAntenna.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RAntenna_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RAntenna.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RAntenna.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1442,13 +1442,13 @@
     <collision name="REye_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/REye.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/REye.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="REye_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/REye.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/REye.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1461,13 +1461,13 @@
     <collision name="RFCoxa_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RFCoxa_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1494,13 +1494,13 @@
     <collision name="RFFemur_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RFFemur_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1520,13 +1520,13 @@
     <collision name="RFTarsus1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RFTarsus1_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1539,13 +1539,13 @@
     <collision name="RFTarsus2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RFTarsus2_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1558,13 +1558,13 @@
     <collision name="RFTarsus3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RFTarsus3_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1577,13 +1577,13 @@
     <collision name="RFTarsus4_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RFTarsus4_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1596,13 +1596,13 @@
     <collision name="RFTarsus5_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RFTarsus5_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1615,13 +1615,13 @@
     <collision name="RFTibia_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RFTibia_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RFTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RFTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1634,13 +1634,13 @@
     <collision name="RHCoxa_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHCoxa_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1667,13 +1667,13 @@
     <collision name="RHFemur_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHFemur_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1693,13 +1693,13 @@
     <collision name="RHTarsus1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHTarsus1_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1712,13 +1712,13 @@
     <collision name="RHTarsus2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHTarsus2_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1731,13 +1731,13 @@
     <collision name="RHTarsus3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHTarsus3_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1750,13 +1750,13 @@
     <collision name="RHTarsus4_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHTarsus4_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1769,13 +1769,13 @@
     <collision name="RHTarsus5_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHTarsus5_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1788,13 +1788,13 @@
     <collision name="RHTibia_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHTibia_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1807,13 +1807,13 @@
     <collision name="RHaltere_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHaltere.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHaltere.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RHaltere_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RHaltere.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RHaltere.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1840,13 +1840,13 @@
     <collision name="RMCoxa_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RMCoxa_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMCoxa.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMCoxa.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1873,13 +1873,13 @@
     <collision name="RMFemur_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RMFemur_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMFemur.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMFemur.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1899,13 +1899,13 @@
     <collision name="RMTarsus1_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RMTarsus1_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus1.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1918,13 +1918,13 @@
     <collision name="RMTarsus2_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RMTarsus2_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus2.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1937,13 +1937,13 @@
     <collision name="RMTarsus3_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RMTarsus3_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus3.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1956,13 +1956,13 @@
     <collision name="RMTarsus4_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RMTarsus4_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus4.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1975,13 +1975,13 @@
     <collision name="RMTarsus5_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RMTarsus5_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTarsus5.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -1994,13 +1994,13 @@
     <collision name="RMTibia_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RMTibia_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RMTibia.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RMTibia.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -2013,13 +2013,13 @@
     <collision name="RWing_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RWing.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RWing.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="RWing_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/RWing.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/RWing.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -2046,13 +2046,13 @@
     <collision name="Rostrum_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/Rostrum.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/Rostrum.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="Rostrum_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/Rostrum.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/Rostrum.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
@@ -2065,13 +2065,13 @@
     <collision name="Thorax_collision">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/Thorax.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/Thorax.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </collision>
     <visual name="Thorax_visual">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package:///home/achard/stlfiles/Thorax.stl" scale="1000.0 1000.0 1000.0"/>
+        <mesh filename="/home/achard/stlfiles/Thorax.stl" scale="1000.0 1000.0 1000.0"/>
       </geometry>
     </visual>
   </link>
