@@ -1,8 +1,5 @@
 from env import Cartpole
 from fly import Fly
-
-
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -15,7 +12,7 @@ class Net(nn.Module):
     def __init__(self, num_obs, num_act):
         super(Net, self).__init__()
         # we use a shared backbone for both actor and critic
-        """"
+        
         self.shared_net = nn.Sequential(
             nn.Linear(num_obs, 256),
             nn.ELU(),
@@ -60,6 +57,7 @@ class Net(nn.Module):
             nn.ELU(),
             nn.Linear(128, 1)
         )
+        """
         
         """
         self.shared_net = nn.Sequential(
@@ -102,7 +100,7 @@ class PPO:
 
         # initialise parameters
         self.env = Fly(args)
-        self.num_acts = 17 # number of actions
+        self.num_acts = 12 # number of actions
         self.num_obs = 19 + 3*self.num_acts # number of observations
         self.num_rewa = 1 # number of reward
         self.epoch = 5
@@ -140,7 +138,7 @@ class PPO:
             print("loaded from: ", str(self.args.load_path))
             self.net.load_state_dict(torch.load(self.args.load_path))
 
-        self.action_var = torch.full((self.env.num_act,), 0.1).to(args.sim_device)
+        self.action_var = torch.full((self.env.num_act,), 0.2).to(args.sim_device) #was 0.1
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
 
     def make_data(self):
@@ -230,7 +228,7 @@ class PPO:
 
         self.score += torch.mean(self.all_reward[self.mini_batch_number].float()).item() / self.num_eval_freq #IS THIS A TENSOR ?? 
 
-        self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00002)
+        self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00001) #was 0.00002
 
         # training mode
         if self.mini_batch_number+1 == self.rollout_size:

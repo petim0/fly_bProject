@@ -15,12 +15,12 @@ class Fly:
         self.print_once = True #TODO
         self.args = args
         self.end = False
-        self.dt = 1 / 1000 #was 1000.
+        self.dt = 1 / 60 #was 1000.
         self.up_axis_idx = 2 # index of up axis: X= 0, Y=1, Z=2
         # configure sim (gravity is pointing down)
         sim_params = gymapi.SimParams()
         sim_params.up_axis = gymapi.UP_AXIS_Z
-        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*500) #should be *1000
+        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81) #should be *1000
         sim_params.dt = self.dt
         sim_params.substeps = 2
         sim_params.use_gpu_pipeline = True
@@ -34,9 +34,9 @@ class Fly:
         sim_params.physx.use_gpu = True
         self.i = 0
         # task-specific parameters
-        self.num_act = 17 #(3 DoFs * 6 legs)
+        self.num_act = 12 #(3 DoFs * 6 legs)
         self.num_obs = 19 + 3*self.num_act  # See compute_fly_observations
-        self.starting_height = 2.1
+        self.starting_height = 2
         #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
         self.max_episode_length = 1500  # maximum episode length
         self.render_count = 0
@@ -45,6 +45,10 @@ class Fly:
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
+        self.names = ["joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
+                    "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
+                    "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
+
         #Only middle legs with 2 dofs
         #self.names = ["joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia"]
         
@@ -259,9 +263,9 @@ class Fly:
         # define fly dof properties
         dof_props = self.gym.get_asset_dof_properties(fly_asset)
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(2000) #This cannot be over a certain value idk #6 #3000
-        dof_props['damping'].fill(50)
-        dof_props['velocity'].fill(2000)
+        dof_props['stiffness'].fill(1) #This cannot be over a certain value idk #6 #3000
+        dof_props['damping'].fill(0.1)
+        dof_props['velocity'].fill(1)
 
         self.PROP = dof_props
         # generate environments
@@ -562,6 +566,7 @@ class Fly:
                     leg_reward = torch.sum((torch.sum(self.force_tensor[self.index_legs_tip, :], dim=1).view(self.args.num_envs, -1) > 0).long(), dim=1) * 0.1
                     #print((torch.sum(self.force_tensor[self.index_legs_tip, :], dim=1).view(self.args.num_envs, -1) > 0).long())
                     print(leg_reward)
+                    print(self.actions[self.action_indexes_one].view(len(self.action_indexes_one)))
 
             # fetch results
             if self.args.sim_device != 'cpu':
@@ -652,7 +657,7 @@ class Fly:
         if torch.sum(actions_scaled[self.action_indexes_one].view(len(self.action_indexes_one)) > self.dof_limits_upper[self.action_indexes_one].squeeze(-1) + 0.1) and self.print_once:
             self.print_once = False
             print("Action asked to go over !!!")
-            print(actions)
+            #print(actions[0, self.action_indexes_one])
             #print(actions_scaled[self.action_indexes_one].view(len(self.action_indexes_one)))
             #print(self.dof_limits_upper[self.action_indexes_one].squeeze(-1))
             print(actions_scaled[self.action_indexes_one].view(len(self.action_indexes_one)) > self.dof_limits_upper[self.action_indexes_one].squeeze(-1))
