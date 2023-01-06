@@ -571,12 +571,13 @@ class Fly:
                 self.gym.fetch_results(self.sim, True)
 
             # step graphics
-            if self.enable_viewer_sync:
+            if self.enable_viewer_sync or self.args.record:
                 self.gym.step_graphics(self.sim)
-                self.gym.draw_viewer(self.viewer, self.sim, True)
-                # Wait for dt to elapse in real time.
-                # This synchronizes the physics simulation with the rendering rate.
-                self.gym.sync_frame_time(self.sim)
+                if self.enable_viewer_sync:
+                    self.gym.draw_viewer(self.viewer, self.sim, True)
+                    # Wait for dt to elapse in real time.
+                    # This synchronizes the physics simulation with the rendering rate.
+                    self.gym.sync_frame_time(self.sim)
 
             else:
                 self.gym.poll_viewer_events(self.viewer)
@@ -633,9 +634,6 @@ class Fly:
 
     def exit(self):
         # close the simulator in a graceful way
-        if self.args.record:
-            self.generate_video()  
-
         if not self.args.headless:
             self.gym.destroy_viewer(self.viewer)
         self.gym.destroy_sim(self.sim)

@@ -24,7 +24,7 @@ parser.add_argument('--load', type=bool, default=False) ##Quand ça load ça dev
 parser.add_argument('--load_path', type=str, default=None)
 parser.add_argument('--record', type=bool, default=False) #MMm
 parser.add_argument('--record_dir_name', type=str, default=None)
-parser.add_argument('--time_steps_per_recorded_frame', type=int, default=1000)
+parser.add_argument('--time_steps_per_recorded_frame', type=int, default=2)
 
 args = parser.parse_args()
 
@@ -45,4 +45,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-policy.save()
+    policy.save()
+    #if args.record:
+     #   policy.self.generate_video()  
