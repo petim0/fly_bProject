@@ -22,9 +22,10 @@ parser.add_argument('--path', type=str, default="saved")
 parser.add_argument('--save_freq', type=int, default=200)
 parser.add_argument('--load', type=bool, default=False) ##Quand ça load ça devrai pas commencer à 0 mais bon osef 
 parser.add_argument('--load_path', type=str, default=None)
-parser.add_argument('--record', type=bool, default=False) #MMm
+parser.add_argument('--record', type=bool, default=False) 
 parser.add_argument('--record_dir_name', type=str, default=None)
 parser.add_argument('--time_steps_per_recorded_frame', type=int, default=2)
+parser.add_argument('--testing', type=bool, default=False)
 
 args = parser.parse_args()
 
@@ -46,5 +47,5 @@ def main():
 if __name__ == '__main__':
     main()
     policy.save()
-    #if args.record:
-     #   policy.self.generate_video()  
+    if args.record:
+        policy.generate_video()  

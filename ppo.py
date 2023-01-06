@@ -138,7 +138,8 @@ class PPO:
             print("loaded from: ", str(self.args.load_path))
             self.net.load_state_dict(torch.load(self.args.load_path))
 
-        self.action_var = torch.full((self.env.num_act,), 0.2).to(args.sim_device) #was 0.1
+        action_var = 0.01 if self.args.testing else 0.2
+        self.action_var = torch.full((self.env.num_act,), action_var).to(args.sim_device) 
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
 
     def make_data(self):
@@ -227,13 +228,15 @@ class PPO:
         
 
         self.score += torch.mean(self.all_reward[self.mini_batch_number].float()).item() / self.num_eval_freq #IS THIS A TENSOR ?? 
-
-        self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00001) #was 0.00002
+        
+        if not self.args.testing:
+            self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00001) #was 0.00002
 
         # training mode
         if self.mini_batch_number+1 == self.rollout_size:
-            print("Training")
-            self.update()
+            if not self.args.testing:
+                print("Training")
+                self.update()
             self.mini_batch_number = 0
             # save sometimes
             if self.args.save and self.optim_step % self.args.save_freq == 0 and self.optim_step != 0:
@@ -261,7 +264,8 @@ class PPO:
 
         torch.save(self.net.state_dict(), path)
     
-    
+    def generate_video(self):
+        self.env.generate_video()
 
 
 
