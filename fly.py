@@ -17,29 +17,14 @@ class Fly:
         self.end = False
         self.dt = 1 / 60 #was 1000.
         self.up_axis_idx = 2 # index of up axis: X= 0, Y=1, Z=2
-        # configure sim (gravity is pointing down)
-        sim_params = gymapi.SimParams()
-        sim_params.up_axis = gymapi.UP_AXIS_Z
-        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81) #should be *1000
-        sim_params.dt = self.dt
-        sim_params.substeps = 2
-        sim_params.use_gpu_pipeline = True
-
-        # set simulation parameters (we use PhysX engine by default, these parameters are from the example file)
-        ### I should maybe change these params, see doc here file:///Users/petimo/Desktop/IsaacGym_Preview_4_Package/isaacgym/docs/api/python/struct_py.html#isaacgym.gymapi.PhysXParams
-        sim_params.physx.num_position_iterations = 4
-        sim_params.physx.num_velocity_iterations = 1
-        sim_params.physx.rest_offset = 0.001
-        sim_params.physx.contact_offset = 0.02
-        sim_params.physx.use_gpu = True
         self.i = 0
         # task-specific parameters
         self.num_act = 12 #(3 DoFs * 6 legs)
         self.num_obs = 19 + 3*self.num_act  # See compute_fly_observations
         self.starting_height = 2
-        #ThC pitch for the front legs (joint_RFCoxa), ThC roll (joint_LMCoxa_roll) for the middle and hind legs, and CTr pitch (joint_RFFemur) and FTi pitch (joint_LFTibia) for all leg
         self.max_episode_length = 1500  # maximum episode length
         self.render_count = 0
+        
         #"joint_RHCoxa_roll"
         self.names = ["joint_LHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
@@ -48,49 +33,6 @@ class Fly:
         self.names = ["joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
                     "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                     "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
-
-        #Only middle legs with 2 dofs
-        #self.names = ["joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia"]
-        
-        #All Coxa
-        #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", 
-         #          "joint_LMCoxa_roll", "joint_RMCoxa_roll",
-          #           "joint_LFCoxa", "joint_RFCoxa"]
-
-        #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
-         #            "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMTibia", "joint_RMTibia",
-          #           "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
-        
-        #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
-         #            "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
-        #self.names = ["joint_LHTibia", "joint_RHTibia",
-         #            "joint_LMTibia", "joint_RMTibia",
-          #          "joint_LFTibia", "joint_RFTibia"]
-        #self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll",
-        #            "joint_LMCoxa_roll", "joint_RMCoxa_roll",
-        #            "joint_LFCoxa", "joint_RFCoxa"]
-        #self.names = ["joint_LFFemur"]
-
-        self.joints_limits = {
-            "joint_LHCoxa_roll" : {'lower': 0.6012615998580322, 'upper': 4.120341207989709}, 
-            "joint_RHCoxa_roll": {'lower': -4.120341207989709, 'upper': -0.6012615998580322}, 
-            "joint_LHFemur": {'lower': -5.553724929606129, 'upper': 1.6139985085925022}, 
-            "joint_RHFemur": {'lower': -5.553724929606129, 'upper': 1.6139985085925022}, 
-            "joint_LHTibia": {'lower': -3.8187837662418334, 'upper': 6.979499524663906}, 
-            "joint_RHTibia": {'lower': -3.8187837662418334, 'upper': 6.979499524663906},
-            "joint_LMCoxa_roll": {'lower': -0.1644733111051202, 'upper': 3.843949339634286}, 
-            "joint_RMCoxa_roll": {'lower': -3.843949339634286, 'upper': 0.1644733111051202}, 
-            "joint_LMFemur": {'lower': -3.8856558255692613, 'upper': 0.2503410005690172}, 
-            "joint_RMFemur": {'lower': -3.8856558255692613, 'upper': 0.2503410005690172}, 
-            "joint_LMTibia": {'lower': -2.5514814160669523, 'upper': 5.025832418893524}, 
-            "joint_RMTibia": {'lower': -2.5514814160669523, 'upper': 5.025832418893524},
-            "joint_LFCoxa": {'lower': -1.2282643976845713, 'upper': 1.4495346989023457}, 
-            "joint_RFCoxa": {'lower': -1.2282643976845713, 'upper': 1.4495346989023457}, 
-            "joint_LFFemur": {'lower': -4.986930927481532, 'upper': 1.4560609499793291}, 
-            "joint_RFFemur": {'lower': -4.986930927481532, 'upper': 1.4560609499793291}, 
-            "joint_LFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363},
-            "joint_RFTibia": {'lower': -2.362989686468837, 'upper': 4.222732123265363}
-        }
 
         self.plane_static_friction = 1.0
         self.plane_dynamic_friction = 1.0
@@ -108,37 +50,248 @@ class Fly:
 
         # allocate buffers
         #obs_buf size will have to change TODO 
-        self.obs_buf = torch.zeros((self.args.num_envs, self.num_obs), device=self.args.sim_device) #Observation given to the NN
-        self.reward_buf = torch.zeros(self.args.num_envs, device=self.args.sim_device)
-        self.reset_buf = torch.ones(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
-        self.progress_buf = torch.zeros(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
-        
-        # Distance that a fly ha made since the last reset
-        self.distance = torch.zeros(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
-        #Time it has spend too close to the ground
-        self.timer_down = torch.zeros(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
+        self.obs_buf, self.reward_buf, self.reset_buf, self.progress_buf = self.init_buffers()
 
         # acquire gym interface
         self.gym = gymapi.acquire_gym()
-        self.sim = self.gym.create_sim(args.compute_device_id, args.graphics_device_id, gymapi.SIM_PHYSX, sim_params)
+        #Create the simulation 
+        self.sim = self.create_sim()
 
         initial_joints_file = 'assets/pose_default.yaml'
         with open(initial_joints_file) as f:
             initial_joints_dict = yaml.safe_load(f)
+
         self.initial_joints_dict = {k: np.deg2rad(v) for k, v in initial_joints_dict['joints'].items()}
-        ## ATTENTION ceci ne marche pas si on ne prends pas pose default psk pause stretch ne prends pas toutes les dofs##
+        
+        # Useless but was uesful for some time, I let it here, you also have other ways to get this information via the API 
+        # careful this doesn't work if we don't take position default: position stretch only has 42 dofs.
         self.joints_92dof = self.initial_joints_dict.keys()
-        self.num_total_dof = len(self.joints_92dof) # Not equal to num_dof because this contains all the dofs even the ones you can't moove
+        # num_total_dof is not equal to num_dof because it contains all the dofs even the ones you can't moove
+        self.num_total_dof = len(self.joints_92dof) #92
 
-        #print("Nb of base positions: ", len(self.joints_92dof)) #92
 
-        # initialise envs and state tensors
-        self.envs, self.actors, self.num_dof, self.num_rigid_body, self.action_indexes, self.action_indexes_one, self.initial_dofs, self.initial_dofs_one, self.translation, self.multiplication, self.dof_limits_lower, self.dof_limits_upper  = self.create_envs()
+        self.create_ground()
+        
+        self.fly_asset, self.num_dof, self.num_rigid_body, self.dof_names = self.load_asset()
+
+        # initialise envs 
+        self.envs, self.actors, self.pose, self.dof_props = self.create_envs()
+
+        self.dof_limits_lower, self.dof_limits_upper = self.get_limits_dofs()
+
+        self.action_indexes, self.action_indexes_one = self.get_action_indexes()
+
+        self.initial_dofs, self.initial_dofs_one = self.get_initial_dof_pos()
+
         self.dof_states, self.root_tensor, self.force_tensor = self.get_states_tensor()
         self.dof_pos = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_states.view(self.args.num_envs, self.num_dof, 2)[..., 1]
         
+        self.index_abdomen_sim, self.index_legs_tip = self.get_abdomen_leg_indices()
 
+
+        # the root position (in our case the torso) is described by 13 floats: 
+        # 3 floats for position, 4 floats for quaternion, 3 floats for linear velocity, and 3 floats for angular velocity.
+        self.root_positions = self.root_tensor.view(self.args.num_envs, 13)[:, 0:3] 
+        self.root_orientations = self.root_tensor.view(self.args.num_envs, 13)[:, 3:7]
+        self.root_linvels = self.root_tensor.view(self.args.num_envs, 13)[:, 7:10]
+        self.root_angvels = self.root_tensor.view(self.args.num_envs, 13)[:, 10:13]
+        
+        # some of those are not used anymore but I let them in, they can always be useful
+        self.origin_root_tensor = self.create_origin_root_tensor()
+        self.origin_position = self.origin_root_tensor.view(self.args.num_envs, 13)[:, 0:3] 
+        self.origin_root_tensor_one = self.origin_root_tensor[0]
+        self.origin_orientations = self.origin_root_tensor.view(self.args.num_envs, 13)[:, 3:7]
+
+        # generate viewer for visualisation
+        self.viewer = self.create_viewer()
+
+        ## Setup the camera for making videos ##
+        cameras_initial_pos = gymapi.Vec3(30, 0.0, 10)
+        if self.args.record:
+            self.record_dir_name = self.args.record_dir_name
+            self.time_steps_per_recorded_frame = self.args.time_steps_per_recorded_frame
+            self.camera, self.record_root_dir, self.record_command = self.set_up_recording(cameras_initial_pos, self.pose)
+        
+        ## Initialise other values for the reward and the observation buffer ##
+
+        # potential is the distance from the target scaled by dt
+        self.potentials = to_torch([-1000./self.dt], device=self.args.sim_device).repeat(self.args.num_envs)
+        # previous potential, needed to calculate the gain or loss of potential between two steps
+        self.prev_potentials = self.potentials.clone() #TODO
+        # the vector that is normal to the plane
+        self.up_vec = to_torch(get_axis_params(1., self.up_axis_idx), device=self.args.sim_device).repeat((self.args.num_envs, 1))
+        # the vector that gives us the direction the fly should be heading, claculated upon the target position  
+        self.heading_vec = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1))
+        # the starting rotation of the flies, similar to self.origin_orientations
+        self.inv_start_rot = quat_conjugate(self.origin_orientation).repeat((self.args.num_envs, 1))
+        # basis vector of the 3d space
+        self.basis_vec0 = self.heading_vec.clone() #TODO
+        self.basis_vec1 = self.up_vec.clone() #TODO
+        # the target location for each actor
+        self.targets = to_torch([1000, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1)) #was [1000, 0, 0]
+        self.target_dirs = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1)) #was [1, 0, 0]
+
+        
+        # step simulation to initialise tensor buffers, .clone() can be used on them now
+        self.gym.prepare_sim(self.sim)
+        
+        print("velocity", self.dof_props["velocity"][0])
+        print("effort", self.dof_props["effort"][0])
+        print("stiffness", self.dof_props["stiffness"][0])
+        print("damping", self.dof_props["damping"][0])
+
+
+    def create_sim(self):
+        # configure sim (gravity is pointing down)
+        sim_params = gymapi.SimParams()
+        sim_params.up_axis = gymapi.UP_AXIS_Z
+        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81) #should be *1000
+        sim_params.dt = self.dt
+        sim_params.substeps = 2
+        sim_params.use_gpu_pipeline = True
+
+        # set simulation parameters (we use PhysX engine by default, these parameters are from the example file)
+        ### I should maybe change these params, see doc here file:///Users/petimo/Desktop/IsaacGym_Preview_4_Package/isaacgym/docs/api/python/struct_py.html#isaacgym.gymapi.PhysXParams
+        sim_params.physx.num_position_iterations = 4
+        sim_params.physx.num_velocity_iterations = 1
+        sim_params.physx.rest_offset = 0.001
+        sim_params.physx.contact_offset = 0.02
+        sim_params.physx.use_gpu = True
+
+        sim = self.gym.create_sim(self.args.compute_device_id, self.args.graphics_device_id, gymapi.SIM_PHYSX, sim_params)
+
+        return sim
+    
+    def init_buffers(self):
+        # Observation given to the NN [num_environement, num_observations]
+        obs_buf = torch.zeros((self.args.num_envs, self.num_obs), device=self.args.sim_device) 
+        # Reward given to the NN
+        reward_buf = torch.zeros(self.args.num_envs, device=self.args.sim_device)
+        # Reset of the environements, if the i value is set to 1 the ith Actor is reset
+        reset_buf = torch.ones(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
+        # How many steps have been made since the last reset 
+        progress_buf = torch.zeros(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
+
+        return obs_buf, reward_buf, reset_buf, progress_buf
+        
+    
+    def create_ground(self):
+        # Add ground plane
+        plane_params = gymapi.PlaneParams()
+        plane_params.static_friction = self.plane_static_friction
+        plane_params.dynamic_friction = self.plane_dynamic_friction
+        plane_params.restitution = 0.0
+        plane_params.normal = gymapi.Vec3(0, 0, 1) # z-Up
+        self.gym.add_ground(self.sim, plane_params)
+
+    def load_asset(self):
+         # add cartpole asset
+        asset_root = 'assets'
+        asset_file = 'nmf_no_limits_limited_Dofs.urdf'
+        asset_options = gymapi.AssetOptions() #get default options
+        asset_options.fix_base_link = False
+        fly_asset = self.gym.load_asset(self.sim, asset_root, asset_file, asset_options)
+
+        # GIVES ONLY THE DOFS WHICH YOU CAN HAVE AN ACTION ON !!! so 42
+        num_dof = self.gym.get_asset_dof_count(fly_asset) #18 
+        num_rigid_body = self.gym.get_asset_rigid_body_count(fly_asset) #93
+        dof_names = self.gym.get_asset_dof_names(fly_asset)
+
+        return fly_asset, num_dof, num_rigid_body, dof_names
+
+
+    def create_envs(self):
+        # define environment space (for visualisation)
+        spacing = 7
+        lower = gymapi.Vec3(-spacing, 0, -spacing)
+        upper = gymapi.Vec3(spacing, spacing, spacing)
+        num_per_row = int(np.sqrt(self.args.num_envs))
+
+        # Define fly position
+        pose = gymapi.Transform()
+        pose.p.z = self.starting_height   # Generate the fly starting_height meters from the ground
+        self.origin_orientation = torch.tensor([pose.r.x, pose.r.y, pose.r.z, pose.r.w], device=self.args.sim_device)
+
+        # Define fly dof properties
+        dof_props = self.gym.get_asset_dof_properties(self.fly_asset)
+
+        # Those cannot be over certain values otherwise the position controler doesn't work anymore !! Those values depend on the gravity and other
+        # unknown parameters. Be careful with it a do tests when changing it. Example: see if the limbs are reseted correctly when calling self.Reset()
+        dof_props['driveMode'] = gymapi.DOF_MODE_POS
+        dof_props['stiffness'].fill(1.4) 
+        dof_props['damping'].fill(0.1)
+        dof_props['velocity'].fill(1)
+
+        # Generate environments
+        envs = []
+        actors = []
+        print(f'Creating {self.args.num_envs} environments.')
+        for i in range(self.args.num_envs):
+            # create env
+            env = self.gym.create_env(self.sim, lower, upper, num_per_row)
+
+            # Add fly here in each environment
+            fly = self.gym.create_actor(env, self.fly_asset, pose, f'fly{i}', i, 1, 0)
+            self.gym.set_actor_dof_properties(env, fly, dof_props)
+            
+            envs.append(env)
+            actors.append(fly)
+        
+        return envs, actors, pose, dof_props
+    
+
+    def get_limits_dofs(self):
+        """
+            This functions gets the limits of the degrees of freedom. So that we sacale up the actions of the NN correctly.
+            Those limits are also used in the reward function
+        """
+
+        dof_limits_lower = []
+        dof_limits_upper = []
+        dof_prop = self.gym.get_actor_dof_properties(self.envs[0], self.actors[0])
+        
+        for j in range(self.num_dof):
+            if dof_prop['lower'][j] > dof_prop['upper'][j]:
+                dof_limits_lower.append(dof_prop['upper'][j])
+                dof_limits_upper.append(dof_prop['lower'][j])
+            else:
+                dof_limits_lower.append(dof_prop['lower'][j])
+                dof_limits_upper.append(dof_prop['upper'][j])
+        
+        dof_limits_lower = to_torch(dof_limits_lower, device=self.args.sim_device)
+        dof_limits_upper = to_torch(dof_limits_upper, device=self.args.sim_device)
+
+        return dof_limits_lower, dof_limits_upper
+
+
+    def get_action_indexes(self):
+
+        """
+            This function creates a mask of all the dofs we want to have an effect on
+            Find the indexes of the actions we want to modify, these indexes are relative to the simulation
+            The indexes range from 0 to (num_dofs * num_envs)
+            This function is useless if we use all the dofs contained in the asset ie. if self.names and self.dof_names is equal.
+        """
+
+        action_indexes = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.long, device=self.args.sim_device)
+        j = 0
+        for i in range(self.args.num_envs):
+            for name in self.names:
+                action_indexes[j] = self.gym.find_actor_dof_index(self.envs[i], self.actors[i], name, gymapi.DOMAIN_SIM)
+                j+=1
+
+        action_indexes, ___ = torch.sort(action_indexes, 0) # It should have a size num_action * num_envs
+
+        action_indexes_one = action_indexes[0:self.num_act] # Same thing but only for one actor
+        
+        return action_indexes, action_indexes_one
+
+    def get_abdomen_leg_indices(self):
+        """
+            Getting the abdomen and the leg indicies so it can be use as a mask to find the good values in the force tensor
+            Those values of the force tensor are then used to calculate if there was a collision or not
+        """
         names_abdomen_parts = ["A1A2", "A3", "A4", "A5", "A6"]
         names_leg_tip = ["RFTarsus5", "LFTarsus5", "RMTarsus5", "LMTarsus5", "RHTarsus5", "LHTarsus5"]
         index_abdomen = []
@@ -153,222 +306,42 @@ class Fly:
 
         index_abdomen.sort()
         index_legs_tip.sort()
-        self.index_abdomen_sim = to_torch(index_abdomen, device=self.args.sim_device, dtype=torch.long)
-        self.index_legs_tip = to_torch(index_legs_tip, device=self.args.sim_device, dtype=torch.long)
+        index_abdomen_sim = to_torch(index_abdomen, device=self.args.sim_device, dtype=torch.long)
+        index_legs_tip = to_torch(index_legs_tip, device=self.args.sim_device, dtype=torch.long)
+
+        return index_abdomen_sim, index_legs_tip
+
+    def get_initial_dof_pos(self):
         
-
-        #It is always 13: 3 floats for position, 4 floats for quaternion, 3 floats for linear velocity, and 3 floats for angular velocity.
-        #self.old_position = torch.zeros((self.args.num_envs, 3), device=self.args.sim_device)
-        self.root_positions = self.root_tensor.view(self.args.num_envs, 13)[:, 0:3] 
-        self.root_orientations = self.root_tensor.view(self.args.num_envs, 13)[:, 3:7] #THOSE ORIENTATION ARE NOT ADDING UP TO ONE !!
-        self.root_linvels = self.root_tensor.view(self.args.num_envs, 13)[:, 7:10]
-        self.root_angvels = self.root_tensor.view(self.args.num_envs, 13)[:, 10:13]
-        
-        self.origin_pos = torch.zeros((self.args.num_envs, 3), device=self.args.sim_device)
-        self.origin_root_tensor = torch.zeros((self.args.num_envs, 13), device=self.args.sim_device) #self.root_tensor.clone() ne marchera pas 
-        #psk on le fait avant de lancer la simulation
-        self.origin_root_tensor[:,2] = self.starting_height
-        self.origin_root_tensor[:,6] = 1 #the last quaterion should be one
-        self.origin_root_tensor_one = self.origin_root_tensor[0]
-
-        self.origin_orientations = self.origin_root_tensor.view(self.args.num_envs, 13)[:, 3:7]
-
-        # generate viewer for visualisation
-        self.viewer = self.create_viewer()
-
-        cameras_initial_pos = gymapi.Vec3(30, 0.0, 10)
-        if self.args.record:
-            self.record_dir_name = self.args.record_dir_name
-            self.time_steps_per_recorded_frame = self.args.time_steps_per_recorded_frame
-            self.camera, self.record_root_dir, self.record_command = self.set_up_recording(cameras_initial_pos, self.pose)
-        
-        #Initialise other values for reward and obs buffer 
-        self.potentials = to_torch([-1000./self.dt], device=self.args.sim_device).repeat(self.args.num_envs)
-        self.prev_potentials = self.potentials.clone()
-        self.up_vec = to_torch(get_axis_params(1., self.up_axis_idx), device=self.args.sim_device).repeat((self.args.num_envs, 1))
-        self.heading_vec = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1))
-
-        self.inv_start_rot = quat_conjugate(self.origin_orientation).repeat((self.args.num_envs, 1))
-
-        self.basis_vec0 = self.heading_vec.clone()
-        self.basis_vec1 = self.up_vec.clone()
-
-        self.targets = to_torch([1000, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1)) #was [1000, 0, 0]
-        self.target_dirs = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1)) #was [1, 0, 0]
-
-        
-        # step simulation to initialise tensor buffers
-        self.gym.prepare_sim(self.sim)
-        
-        """"
-        #self.reset() #Ne Peux pas être là !
-        ## First reset to start on smth frseh, This has to be modified, it is ugly
-        env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)
-        self.dof_pos[env_ids, :] = self.initial_dofs_one[..., 0]
-        self.dof_vel[env_ids, :] = self.initial_dofs_one[..., 1]
-        env_ids_int32 = env_ids.to(dtype=torch.int32)
-        self.gym.set_dof_state_tensor_indexed(self.sim,
-                                              gymtorch.unwrap_tensor(self.dof_states),
-                                              gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
-        
-        self.reset_buf[env_ids] = 0
-        self.progress_buf[env_ids] = 0
-        self.distance[env_ids] = 0
         """
-
-        #Stuff I have to init after starting the simulation
-        print("velocity", self.PROP["velocity"][0])
-        print("effort", self.PROP["effort"][0])
-        print("stiffness", self.PROP["stiffness"][0])
-        print("damping", self.PROP["damping"][0])
-
-
-        
-    def create_envs(self):
-        # add ground plane
-        plane_params = gymapi.PlaneParams()
-        plane_params.static_friction = self.plane_static_friction
-        plane_params.dynamic_friction = self.plane_dynamic_friction
-        plane_params.restitution = 0.0
-        plane_params.normal = gymapi.Vec3(0, 0, 1) # z-Up
-        self.gym.add_ground(self.sim, plane_params)
-
-        # define environment space (for visualisation)
-        spacing = 7
-        lower = gymapi.Vec3(-spacing, 0, -spacing)
-        upper = gymapi.Vec3(spacing, spacing, spacing)
-        num_per_row = int(np.sqrt(self.args.num_envs))
-
-        # add cartpole asset
-        asset_root = 'assets'
-        asset_file = 'nmf_no_limits_limited_Dofs.urdf'
-        asset_options = gymapi.AssetOptions() #get default options
-        asset_options.fix_base_link = False
-        fly_asset = self.gym.load_asset(self.sim, asset_root, asset_file, asset_options)
-        num_dof = self.gym.get_asset_dof_count(fly_asset)
-        num_rigid_body = self.gym.get_asset_rigid_body_count(fly_asset)
-        
-        #print("num_rigid_body", num_rigid_body) #93
-        print("num_dof: ", num_dof) #18
-        self.dof_names = self.gym.get_asset_dof_names(fly_asset) ## GIVES ONLY THE DOFS WHICH YOU CAN HAVE AN ACTION ON !!! so 42
-        #print("Dof_names: ", self.dof_names)
-
-        # define fly pose
-        pose = gymapi.Transform()
-        pose.p.z = self.starting_height   # generate the fly Xm from the ground
-        self.origin_orientation = torch.tensor([pose.r.x, pose.r.y, pose.r.z, pose.r.w], device=self.args.sim_device)
-        #pose.r = gymapi.Quat.from_axis_angle(gymapi.Vec3(1, 0, 0), np.pi / 8) # No rotation needed 
-        self.pose = pose #Degeu TODO 
-
-        # define fly dof properties
-        dof_props = self.gym.get_asset_dof_properties(fly_asset)
-        dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(1.4) #This cannot be over a certain value otherwise the position controler doesn't work anymore. 
-        dof_props['damping'].fill(0.1)
-        dof_props['velocity'].fill(1)
-
-        self.PROP = dof_props
-        # generate environments
-        envs = []
-        actors = []
-        print(f'Creating {self.args.num_envs} environments.')
-        for i in range(self.args.num_envs):
-            # create env
-            env = self.gym.create_env(self.sim, lower, upper, num_per_row)
-
-            # add fly here in each environment
-            fly = self.gym.create_actor(env, fly_asset, pose, f'fly{i}', i, 1, 0)
-            self.gym.set_actor_dof_properties(env, fly, dof_props)
-            
-            envs.append(env)
-            actors.append(fly)
-
-        """"
-        for i in range(self.args.num_envs):
-            actor_name = self.gym.get_actor_name(envs[i], actors[i])
-            for name, value in self.initial_joints_dict.items():
-                joint_handle = self.gym.get_joint_handle(envs[i], actor_name, name)
-                self.gym.set_joint_target_position(envs[i], joint_handle, 1000)
+            Getting initial joint angles for each dofs of the fly of all the flies, with no velocity set for all dofs, 
+            We will use it later to reset the dofs when we reset the fly 
         """
-
-
-        dof_limits_lower = []
-        dof_limits_upper = []
-        dof_prop = self.gym.get_actor_dof_properties(envs[0], actors[0])
-        for j in range(num_dof):
-            if dof_prop['lower'][j] > dof_prop['upper'][j]:
-                dof_limits_lower.append(dof_prop['upper'][j])
-                dof_limits_upper.append(dof_prop['lower'][j])
-            else:
-                dof_limits_lower.append(dof_prop['lower'][j])
-                dof_limits_upper.append(dof_prop['upper'][j])
         
-        dof_limits_lower = to_torch(dof_limits_lower, device=self.args.sim_device)
-        dof_limits_upper = to_torch(dof_limits_upper, device=self.args.sim_device)
+        # Initial_dofs should be of size self.num_dof * self.args.num_envs
+        initial_dofs = torch.full((self.num_dof*self.args.num_envs, 2), 0, dtype=torch.float32, device=self.args.sim_device) 
         
-        # Find the indexes we want to modify, these indexes are relative to the sim 0 and 42*num_envs
-        # It should have a size num_action*num_envs
-        # We also calculate the translation and multiplication factor we want to apply, this could be done without hardcoding 
-        # the values in a dictionnary using get_actor_dof_properties() !! Don't have the time to change 
-
-        action_indexes = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.long, device=self.args.sim_device)
-        dof_translation = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
-        dof_multiplication = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
-        #maxU = torch.full((self.num_act * self.args.num_envs, 1), 0, dtype=torch.float, device=self.args.sim_device)
-
-        #lower = []
-        j = 0
-        for i in range(self.args.num_envs):
-            for name in self.names:
-                action_indexes[j] = self.gym.find_actor_dof_index(envs[i], actors[i], name, gymapi.DOMAIN_SIM)
-                #lower.append(self.joints_limits[name]["lower"])
-                dof_translation[j] = self.find_trans(self.joints_limits[name]["lower"], self.joints_limits[name]["upper"])
-                dof_multiplication[j] = self.find_mult(self.joints_limits[name]["lower"], self.joints_limits[name]["upper"])
-                #maxU[j] = self.joints_limits[name]["upper"]
-                j+=1
-        #lower = to_torch(lower, device=self.args.sim_device)
-        action_indexes, indexosef = torch.sort(action_indexes, 0)
-
-        #action_indexes for just one fly (indexes relative to the env) 
-        action_indexes_one = action_indexes[0:self.num_act]
-
-        indexosef = indexosef.squeeze(-1)        
-        dof_translation = dof_translation[indexosef]
-        dof_multiplication = dof_multiplication[indexosef]
-        #maxU = maxU[indexosef]
-
-        #It's the same thing ! But the second one is easier, I'll change it when I have some time !
-        #print(lower[indexosef][0:self.num_act])
-        #print(self.dof_limits_lower[action_indexes_one])
-
-        self.left_leg_indicies = [self.gym.find_actor_dof_index(envs[i], actors[i], "joint_LMCoxa_roll", gymapi.DOMAIN_ENV), 
-                                self.gym.find_actor_dof_index(envs[i], actors[i], "joint_LMFemur", gymapi.DOMAIN_ENV),
-                                self.gym.find_actor_dof_index(envs[i], actors[i], "joint_LMTibia", gymapi.DOMAIN_ENV)]
-
-        print("Setting initial dof position")
-
-        # Set initial joint angles for each dofs of the fly of all the flys, with no velocity set for all dofs, should be of size self.num_dof * self.args.num_envs
-        # We keep this initial_dof, we will use it later to only moove some dofs 
-        initial_dofs = torch.full((num_dof*self.args.num_envs, 2), 0, dtype=torch.float32, device=self.args.sim_device) 
         for i in range(self.args.num_envs):
             for joint_name in self.dof_names:
-                joint_index = self.gym.find_actor_dof_index(envs[i], actors[i], joint_name, gymapi.DOMAIN_SIM)
+                joint_index = self.gym.find_actor_dof_index(self.envs[i], self.actors[i], joint_name, gymapi.DOMAIN_SIM)
                 initial_dofs[joint_index, 0] = self.initial_joints_dict.get(joint_name, 0) # defaults to 0 for unspecified joints
         
         #Initial_dof for just one fly, useful in the reset 
-        initial_dofs_one = initial_dofs[:num_dof]   
+        initial_dofs_one = initial_dofs[:self.num_dof]   
 
-        print("Joint count:", self.gym.get_sim_joint_count(self.sim))     
-        
-        return envs, actors, num_dof, num_rigid_body, action_indexes, action_indexes_one, initial_dofs, initial_dofs_one, dof_translation, dof_multiplication, dof_limits_lower, dof_limits_upper
+        return initial_dofs, initial_dofs_one
 
-    #find the translation to apply to transform a value between [-1 1] to [lower upper]
-    def find_trans(self, lower: float, upper: float):
-        return (upper+lower)/2.0 
+    def create_origin_root_tensor(self):
+        """
+            Create the tensor for the reset of the position and the orientation of the fly 
+            self.root_tensor.clone() will only work when the simulation is started since the root_tensor is not initialised yet 
+            but this function still is a bit useless and could be replaced by that.
+        """
+        origin_root_tensor = torch.zeros((self.args.num_envs, 13), device=self.args.sim_device) 
+        origin_root_tensor[:,2] = self.starting_height
+        origin_root_tensor[:,6] = 1 #the last quaterion should be one
 
-    def find_mult(self, lower: float, upper: float):
-        return (upper-lower)/2.0
-
+        return origin_root_tensor
 
     def create_viewer(self):
         # create viewer for debugging (looking at the center of environment)
@@ -399,26 +372,28 @@ class Fly:
         return viewer
 
     def get_states_tensor(self):
-        # get dof state tensor of All the flys
+        # Get dof state tensor of All the flys
         _dof_states = self.gym.acquire_dof_state_tensor(self.sim)
         
-        # acquire root state tensor descriptor
+        # Acquire root state tensor descriptor
         _root_tensor = self.gym.acquire_actor_root_state_tensor(self.sim)
 
-        # acquire force state tensor descritor
+        # Acquire force state tensor descritor
         _force_tensor = self.gym.acquire_net_contact_force_tensor(self.sim)
 
-        # wrap it in a PyTorch Tensor and create convenient views
+        # Wraps it in a PyTorch Tensor and create convenient views
         root_tensor = gymtorch.wrap_tensor(_root_tensor)
         force_tensor = gymtorch.wrap_tensor(_force_tensor)
         dof_states = gymtorch.wrap_tensor(_dof_states)
-
 
         dof_states = dof_states.view(self.args.num_envs, self.num_dof*2)
 
         return dof_states, root_tensor, force_tensor
 
     def get_obs(self):
+        """
+            Refreshes the different tensors and updates the observation buffer and other accordingly 
+        """
         self.gym.refresh_actor_root_state_tensor(self.sim)
         self.gym.refresh_dof_state_tensor(self.sim) 
         self.gym.refresh_net_contact_force_tensor(self.sim)
@@ -435,9 +410,6 @@ class Fly:
         # retrieve environment observations from buffer
         nb_of_sim_step = self.progress_buf
         nb_of_sim_step[nb_of_sim_step==0] = 1
-
-        #self.reward_buf[:], self.reset_buf[:], self.timer_down[:] = compute_fly_reward(nb_of_sim_step, self.timer_down, self.origin_pos, 
-            #self.root_positions, self.reset_buf, self.max_episode_length, 250)
 
         self.reward_buf[:], self.reset_buf[:] = compute_fly_reward2(
             self.obs_buf,
@@ -465,10 +437,8 @@ class Fly:
             self.index_abdomen_sim,
             self.index_legs_tip
         )
-        
-        #self.old_position = self.root_positions
-    
-    ## Can be made better  
+
+
     def reset(self):
         env_ids = self.reset_buf.nonzero(as_tuple=False).squeeze(-1)
        
@@ -484,35 +454,34 @@ class Fly:
 
         self.root_tensor[env_ids, :] = self.origin_root_tensor[env_ids, :] 
 
-        # Reset desired environments 
-        set1 = self.gym.set_actor_root_state_tensor_indexed(self.sim,
+        # Reset desired environments torso position and orientation 
+        self.gym.set_actor_root_state_tensor_indexed(self.sim,
                                                      gymtorch.unwrap_tensor(self.root_tensor),
                                                      gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
-        set2 = self.gym.set_dof_state_tensor_indexed(self.sim,
+        # Reset desired environments degrees of freedom 
+        self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_states),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
         # clear up desired buffer states
         self.reset_buf[env_ids] = 0
         self.progress_buf[env_ids] = 0
-        self.timer_down[env_ids] = 0
-        self.distance[env_ids] = 0
     
         #YOU CANNOT GET_OBS HERE 
         return True 
 
     def simulate(self):
-        # step the physics
+        # Step the physics
         self.gym.simulate(self.sim)
         self.gym.fetch_results(self.sim, True)
 
     def render(self):
-        # update viewer
+        # Update viewer
         if self.viewer:
-            # check for window closed
+            # Check for window closed
             if self.gym.query_viewer_has_closed(self.viewer):
                 sys.exit()
 
-            # check for keyboard events
+            # Check for keyboard events
             for evt in self.gym.query_viewer_action_events(self.viewer):
                 if evt.action == "QUIT" and evt.value > 0:
                     sys.exit()
@@ -525,6 +494,8 @@ class Fly:
                     print("We end the simulation !!!")
                     self.end = True
                 elif evt.action == "print" and evt.value > 0:
+                    # This can be changed at will 
+
                     heading_weight_tensor = torch.ones_like(self.obs_buf[:, 11]) * self.heading_weight
                     heading_reward = torch.where(self.obs_buf[:, 11] > 0.8, heading_weight_tensor, self.heading_weight * self.obs_buf[:, 11] / 0.8)
                     #print("heading_reward", heading_reward)
@@ -582,7 +553,7 @@ class Fly:
             else:
                 self.gym.poll_viewer_events(self.viewer)
 
-    # returns (camera, record_root_dir, record_command)
+
     def set_up_recording(self, cameras_initial_pos, cameras_look_at_pos):
 
         recorded_real_frame_rate = 1.0 / (self.time_steps_per_recorded_frame * self.dt)
@@ -641,15 +612,21 @@ class Fly:
     
     def step(self, actions):
         # apply action
-        #print("Action len", len(actions), len(actions[0]))
-        #print("dof_limits_lower[self.action_indexes_one] len", self.dof_limits_lower[self.action_indexes_one].view(1, -1).repeat(self.args.num_envs, 1))
-        actions_tensor = torch.clone(self.initial_dofs).detach()
 
+        # Clone the initial position of the fly
+        actions_tensor = torch.clone(self.initial_dofs).detach()
+        
+        # Sclaes the actions from [-1 1] to [limit_lowe limit_upper] for every action
         actions_scaled = scale(actions, self.dof_limits_lower[self.action_indexes_one].view(1, -1).repeat(self.args.num_envs, 1)
                                         , self.dof_limits_upper[self.action_indexes_one].view(1, -1).repeat(self.args.num_envs, 1))
-                      
+
+        # Puts the result back in a convinent form   
         actions_scaled = actions_scaled.view(self.args.num_envs * self.num_act, 1)
+        
+        # Updates the actions for later 
         self.actions = actions_scaled.clone()
+        
+        #TODO remouve this check
         if torch.sum(actions_scaled[self.action_indexes_one].view(len(self.action_indexes_one)) > self.dof_limits_upper[self.action_indexes_one].squeeze(-1) + 0.1) and self.print_once:
             self.print_once = False
             print("Action asked to go over !!!")
@@ -658,64 +635,44 @@ class Fly:
             #print(self.dof_limits_upper[self.action_indexes_one].squeeze(-1))
             print(actions_scaled[self.action_indexes_one].view(len(self.action_indexes_one)) > self.dof_limits_upper[self.action_indexes_one].squeeze(-1))
         
-        #Replaces in the mask the values of the actions
+        # Replaces, using the mask, the values of the actions
         actions_tensor[..., 0][self.action_indexes] = actions_scaled
         
-        #We only want position !! No velocity 
+        # We only want position, no velocity. The .contiguous() makes that the tensor is contiguous in memory, required for setting the dof positions
         actions_pos_only = actions_tensor[...,0].contiguous()
-        #print(actions_pos_only.size())
-        #Sets the target position dicted by the actions 
+        
+        # Wraps the torch tensor in an IsaacGym tensor
         positions = gymtorch.unwrap_tensor(actions_pos_only)
-        targets_set = self.gym.set_dof_position_target_tensor(self.sim, positions)
-        #print("Target well set ? ", targets_set)
 
+        # Sets the target position dicted by the actions 
+        self.gym.set_dof_position_target_tensor(self.sim, positions)
+
+        # Reset the environements 
         self.reset()
 
-        # simulate and render
+        # Simulate: !! You need a simulate between a 
         self.simulate()
         
+        # Renders 
         if not self.args.headless :
-            if self.render_count % 1 == 0:
-                self.render()
+            self.render()
         
-        render_camera = self.args.record and (self.render_count % self.time_steps_per_recorded_frame == 0)
-        if render_camera:
-            # update camera and save file
+        # Update camera and Save file
+        if self.args.record and (self.render_count % self.time_steps_per_recorded_frame == 0):
             self.record_frame(self.render_count)
 
         self.render_count+=1
 
-        #You cannot get obs if you reset 
+        # Reset the observations
         self.get_obs()        
+
         self.progress_buf += 1
+
+        # Calculate the reward
         self.get_reward()
 
 
 # define reward function using JIT
-@torch.jit.script
-def compute_fly_reward(time, timer_down, origin_pos, pos, reset_buf, max_episode_length, max_time_down):
-    # type: (Tensor, Tensor, Tensor, Tensor, Tensor, float, float) -> Tuple[Tensor, Tensor, Tensor]
-    
-
-    #We only want progress in the X axis 
-    dist_x = pos[...,0] - origin_pos[...,0]
-    
-    
-    reward = dist_x / time 
-    reward += pos[..., 2]
-
-    timer_down[pos[..., 2]< 1] += 1
-    
-    # adjust reward for reset agents
-    reward = torch.where(time > max_episode_length, torch.ones_like(reward) * -2.0, reward)
-    reward = torch.where(timer_down > max_time_down, torch.ones_like(reward) * -2.0, reward)
-
-    reset = torch.where(time > max_episode_length, torch.ones_like(reset_buf), reset_buf)
-    reset = torch.where(timer_down > max_time_down, torch.ones_like(reset), reset)
-    #reset = torch.where(rotation < rot or rotation < rot2 or rotation < rot3 , torch.ones_like(reset), reset)
-    
-    return reward, reset, timer_down
-
 @torch.jit.script
 def compute_fly_reward2(
     obs_buf,
@@ -749,25 +706,24 @@ def compute_fly_reward2(
     heading_weight_tensor = torch.ones_like(obs_buf[:, 11]) * heading_weight
     heading_reward = torch.where(obs_buf[:, 11] > 0.8, heading_weight_tensor, heading_weight * obs_buf[:, 11] / 0.8)
 
-    # aligning up axis of ant and environment
+    # reward for the torso beeing above a certain height 
     up_reward = torch.zeros_like(heading_reward)
     up_reward = torch.where(obs_buf[:, 0] > 1.4, up_reward + up_weight, up_reward)
     up_reward = torch.where(obs_buf[:, 0] < 2.1, up_reward - up_weight, up_reward)
 
-    # Aligned with origin orientation 
+    # reward for beeing parallel to the ground, same as beiing parallel from the base orientation
     # put up_weight there just because I think orientation should be as important as beeing up
-    # works because base orientation is 1 + 0i + 0j + 0k and to be on the same plane reel^2 + k^2 should be = 1
     orient_reward = torch.zeros_like(up_reward)
+
+    # works because base orientation is 0i + 0j + 0k + 1 and to be on the same plane reel^2 + k^2 should be = 1
     orient_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) > 0.98, orient_reward + up_weight, orient_reward)
 
-    # energy penalty for movement
-    actions_cost = torch.sum(actions ** 2, dim=-1)
-    #Plus la diff de mouvement est grande plus ça coute  
     start = (12+2*num_actions)
+    # energy penalty for movement, the more the movements differ from the previous ones, grater is the cost 
+    actions_cost = torch.sum(actions ** 2, dim=-1)
     electricity_cost = torch.sum(torch.abs(actions - obs_buf[:, start:(start + num_actions)]), dim=-1)
    
-    #Be at the the extremities costs  
-    #print(obs_buf[:, 96:114].size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)).size(), upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((10, 1))) 
+    # dofs at the the extremities costs 
     dof_at_limit_cost = torch.sum(obs_buf[:, start:(start + num_actions)] > upper_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
     dof_at_limit_cost += torch.sum(obs_buf[:, start:(start + num_actions)] < lower_limit_of_actions[action_indicies_one].squeeze(-1).repeat((num_env, 1)) * 0.9, dim=-1)
 
@@ -775,31 +731,34 @@ def compute_fly_reward2(
     alive_reward = torch.ones_like(potentials) * 0.5
     progress_reward = potentials - prev_potentials
 
-    #Leg on the ground reward 
-    leg_ground_reward = torch.sum((torch.sum(force_tensor[index_legs_tip, :], dim=1).view(num_env, -1) > 0).long(), dim=1)
+    # leg on the ground reward 
+    leg_ground_reward = torch.sum((torch.sum(force_tensor[index_legs_tip, :], dim=1).view(num_env, -1) > 0).long(), dim=1) * 0.1 ##TODO 0.1 maybe too high 
 
 
     total_reward = progress_reward * 2 + alive_reward + up_reward + heading_reward - \
-        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward + leg_ground_reward * 0.1
-    #total_reward = alive_reward + up_reward * orient_reward - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + leg_ground_reward * 0.1 ##TODO 0.1 maybe too high 
+        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward + leg_ground_reward 
+    #total_reward = alive_reward + up_reward * orient_reward - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + leg_ground_reward 
 
-    # adjust reward for fallen agents
+    # adjust reward for fallen agents, see below for more info. This is double. It could me made better maybe. 
     total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)
     total_reward = torch.where(obs_buf[:, 0] > termination_height_up, torch.ones_like(total_reward) * death_cost, total_reward)
     total_reward = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) < 0.5, torch.ones_like(total_reward) * death_cost, total_reward)
     total_reward = torch.where(torch.sum(torch.sum(force_tensor[index_abdomen_sim, :], dim=1).view(num_env, -1), dim=1) > 0, torch.ones_like(total_reward) * death_cost, total_reward)
 
-    # reset agents
+    # Reset if higher or lower than a certain height 
     reset = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(reset_buf), reset_buf)
     reset = torch.where(obs_buf[:, 0] > termination_height_up, torch.ones_like(reset_buf), reset)
+    # Reset if the fly was alive for more steps than max_episode_length
     reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset)
+    # Reset if it is too tilted in any direction 
     reset = torch.where(torch.square(orientation[:, 2])  + torch.square(orientation[:, 3]) < 0.5, torch.ones_like(reset_buf), reset)
+    # Reset if the abdomen touches the ground 
     reset = torch.where(torch.sum(torch.sum(force_tensor[index_abdomen_sim, :], dim=1).view(num_env, -1), dim=1) > 0, torch.ones_like(reset_buf), reset)
     
     return total_reward, reset
 
 
-@torch.jit.script
+@torch.jit.script #TODO
 def compute_fly_observations(obs_buf, root_states, targets, potentials,
                              inv_start_rot, dof_pos, dof_vel,
                              dof_limits_lower, dof_limits_upper, dof_vel_scale, actions, dt,
@@ -826,13 +785,6 @@ def compute_fly_observations(obs_buf, root_states, targets, potentials,
     dof_pos_scaled = unscale(dof_pos, dof_limits_lower, dof_limits_upper)
 
     touching = (torch.sum(force_tensor[index_legs_tip, :], dim=1).view(num_envs, -1) > 0).long()
-    
-    # ATTENTION DOF POSITION ET ACTION EST UNE Répétition du coup ici 
-    # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_dofs(42), num_dofs(42), num_actions(18), 1 = 115
-    #obs = torch.cat((torso_position[:, up_axis_idx].view(-1, 1), vel_loc, angvel_loc,
-     #                yaw.unsqueeze(-1), roll.unsqueeze(-1), angle_to_target.unsqueeze(-1),
-      #               up_proj.unsqueeze(-1), heading_proj.unsqueeze(-1), dof_pos_scaled,
-       #              dof_vel * dof_vel_scale, actions, pitch.unsqueeze(-1)), dim=-1)
 
     # obs_buf shapes: 1, 3, 3, 1, 1, 1, 1, 1, num_action(18), num_action(18), num_actions(18), 1, 6 = 73
     obs = torch.cat((torso_position[:, up_axis_idx].view(-1, 1), vel_loc, angvel_loc,
