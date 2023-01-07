@@ -6,12 +6,10 @@ from isaacgymenvs.utils.torch_jit_utils import *
 import sys
 import torch
 import yaml
-import torchgeometry as tgm
 import os
 
 class Fly:
     def __init__(self, args):
-        #TODO CHAGER LA VITESS MAX DE CHAQUE JOINT !!!
         self.print_once = True #TODO
         self.args = args
         self.end = False
@@ -25,14 +23,14 @@ class Fly:
         self.max_episode_length = 1500  # maximum episode length
         self.render_count = 0
         
-        #"joint_RHCoxa_roll"
-        self.names = ["joint_LHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
+        
+        self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
-        self.names = ["joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
-                    "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
-                    "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
+        #self.names = ["joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
+         #           "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
+          #          "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
 
         self.plane_static_friction = 1.0
         self.plane_dynamic_friction = 1.0
@@ -49,7 +47,6 @@ class Fly:
         self.termination_height_up = 6 #A jouer avec 
 
         # allocate buffers
-        #obs_buf size will have to change TODO 
         self.obs_buf, self.reward_buf, self.reset_buf, self.progress_buf = self.init_buffers()
 
         # acquire gym interface
@@ -118,7 +115,7 @@ class Fly:
         # potential is the distance from the target scaled by dt
         self.potentials = to_torch([-1000./self.dt], device=self.args.sim_device).repeat(self.args.num_envs)
         # previous potential, needed to calculate the gain or loss of potential between two steps
-        self.prev_potentials = self.potentials.clone() #TODO
+        self.prev_potentials = self.potentials.clone() 
         # the vector that is normal to the plane
         self.up_vec = to_torch(get_axis_params(1., self.up_axis_idx), device=self.args.sim_device).repeat((self.args.num_envs, 1))
         # the vector that gives us the direction the fly should be heading, claculated upon the target position  
@@ -126,8 +123,8 @@ class Fly:
         # the starting rotation of the flies, similar to self.origin_orientations
         self.inv_start_rot = quat_conjugate(self.origin_orientation).repeat((self.args.num_envs, 1))
         # basis vector of the 3d space
-        self.basis_vec0 = self.heading_vec.clone() #TODO
-        self.basis_vec1 = self.up_vec.clone() #TODO
+        self.basis_vec0 = self.heading_vec.clone() 
+        self.basis_vec1 = self.up_vec.clone() 
         # the target location for each actor
         self.targets = to_torch([1000, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1)) #was [1000, 0, 0]
         self.target_dirs = to_torch([1, 0, 0], device=self.args.sim_device).repeat((self.args.num_envs, 1)) #was [1, 0, 0]
@@ -355,7 +352,7 @@ class Fly:
             viewer = self.gym.create_viewer(self.sim, gymapi.CameraProperties())
 
             self.gym.subscribe_viewer_keyboard_event(
-                viewer, gymapi.KEY_ESCAPE, "QUIT")
+                viewer, gymapi.KEY_ESCAPE, "End_simulation")
             self.gym.subscribe_viewer_keyboard_event(
                 viewer, gymapi.KEY_V, "toggle_viewer_sync")
             self.gym.subscribe_viewer_keyboard_event(
@@ -363,7 +360,7 @@ class Fly:
             self.gym.subscribe_viewer_keyboard_event(
                 viewer, gymapi.KEY_E, "End_simulation")
             self.gym.subscribe_viewer_keyboard_event(
-                viewer, gymapi.KEY_P, "print")     
+                viewer, gymapi.KEY_P, "Print")     
             
         cam_pos = gymapi.Vec3(30, 0.0, 10)
         cam_target = gymapi.Vec3(-1, 0, 0)
@@ -483,17 +480,15 @@ class Fly:
 
             # Check for keyboard events
             for evt in self.gym.query_viewer_action_events(self.viewer):
-                if evt.action == "QUIT" and evt.value > 0:
-                    sys.exit()
-                elif evt.action == "toggle_viewer_sync" and evt.value > 0:
+                if evt.action == "toggle_viewer_sync" and evt.value > 0:
                     self.enable_viewer_sync = not self.enable_viewer_sync
                 elif  evt.action == "Reset_everyone" and evt.value > 0:
                     print("We reset everyone !")
                     self.reset_buf = torch.ones(self.args.num_envs, device=self.args.sim_device, dtype=torch.long)
                 elif evt.action == "End_simulation" and evt.value > 0:
-                    print("We end the simulation !!!")
+                    print("We end the simulation")
                     self.end = True
-                elif evt.action == "print" and evt.value > 0:
+                elif evt.action == "Print" and evt.value > 0:
                     # This can be changed at will 
 
                     heading_weight_tensor = torch.ones_like(self.obs_buf[:, 11]) * self.heading_weight
@@ -582,6 +577,9 @@ class Fly:
         return camera, root, command
        
     def generate_video(self):
+        if not self.args.record:
+            return
+
         recorded_real_frame_rate = 1.0 / (self.time_steps_per_recorded_frame * self.dt)
 
         if not recorded_real_frame_rate.is_integer():
@@ -758,7 +756,7 @@ def compute_fly_reward2(
     return total_reward, reset
 
 
-@torch.jit.script #TODO
+@torch.jit.script 
 def compute_fly_observations(obs_buf, root_states, targets, potentials,
                              inv_start_rot, dof_pos, dof_vel,
                              dof_limits_lower, dof_limits_upper, dof_vel_scale, actions, dt,

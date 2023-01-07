@@ -1,4 +1,3 @@
-from env import Cartpole
 from fly import Fly
 import torch
 import torch.nn as nn
@@ -102,7 +101,6 @@ class PPO:
         self.env = Fly(args)
         self.num_acts = 12 # number of actions
         self.num_obs = 19 + 3*self.num_acts # number of observations
-        self.num_rewa = 1 # number of reward
         self.epoch = 5
         self.lr = 0.001 
         self.gamma = 0.99
@@ -123,7 +121,7 @@ class PPO:
         self.all_obs = torch.zeros((self.rollout_size, self.args.num_envs, self.num_obs), device=self.args.sim_device)
         self.all_acts = torch.zeros((self.rollout_size, self.args.num_envs, self.num_acts), device=self.args.sim_device)
         self.all_next_obs = torch.zeros((self.rollout_size, self.args.num_envs, self.num_obs), device=self.args.sim_device)
-        self.all_reward = torch.zeros((self.rollout_size, self.args.num_envs, self.num_rewa), device=self.args.sim_device)
+        self.all_reward = torch.zeros((self.rollout_size, self.args.num_envs, 1), device=self.args.sim_device)
         self.all_done = torch.zeros((self.rollout_size, self.args.num_envs, 1), device=self.args.sim_device)
         self.all_log_prob = torch.zeros((self.rollout_size, self.args.num_envs), device=self.args.sim_device)
         self.all_advantage = torch.zeros((self.rollout_size, self.args.num_envs, 1), device=self.args.sim_device)
@@ -143,27 +141,12 @@ class PPO:
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
 
     def make_data(self):
-        #obs: 20 (mini_chunk_size) * 10 (num_env) * 114 (self.num_obs)
-        #a_lst : 20 (mini_chunk_size) * 10 (num_env) * 18 (num_actions)
-        #next_obs: 20 (mini_chunk_size) * 10 (num_env) * 114 (self.num_obs)
-        #r_lst: 20 (mini_chunk_size) * 10 (num_env) * 1 (self.num_rewa)
-        #done_lst: 20 (mini_chunk_size) * 10 (num_env) * 1 (1 int for done or not done)
-        #log_prob = 20 (mini_chunk_size) * 10 (num_env)
-
-        #print("obs_lst: ", len(obs_lst), "*" , len(obs_lst[0]), "*", len(obs_lst[0][0]))
-        #print("action", len(a_lst), "*" , len(a_lst[0]), "*", len(a_lst[0][0]))
-        #print("obs_lst: ", len(r_lst), "*" , len(r_lst[0]), "*", len(r_lst[0][0]))
-        #print("obs_lst: ", len(done_lst), "*" , len(done_lst[0]), "*", len(done_lst[0][0]))
-        #print("self.all_log_prob", len(self.all_log_prob), "*" , len(self.all_log_prob[0]))
-
         # compute reward-to-go (target)
         with torch.no_grad():
             target = self.all_reward + self.gamma * self.net.v(self.all_next_obs) * self.all_done
             delta = target - self.net.v(self.all_obs)
 
-        #print("delta: ", len(delta), "*" , len(delta[0]), "*", len(delta[0][0]))
-        # compute advantage
-       
+        # compute advantage       
         advantage = 0.0
         i = self.rollout_size-1
         for delta_t in reversed(delta):
@@ -185,7 +168,7 @@ class PPO:
                 obs_mc, action_mc, old_log_prob_mc, target_mc, advantage_mc = obs[k:j], action[k:j], old_log_prob[k:j], target[k:j], advantage[k:j]
                 mu = self.net.pi(obs_mc)
                 cov_mat = torch.diag(self.action_var)
-                #dist = MultivariateNormal(mu, cov_mat) #THIS IS SLOW AS FUCK
+                #dist = MultivariateNormal(mu, cov_mat) #THIS IS VERY SLOW 
                 scale_tril = torch.cholesky(cov_mat) #But this is speeeed 
                 dist = MultivariateNormal(mu, scale_tril=scale_tril)
                 log_prob = dist.log_prob(action_mc)
@@ -214,8 +197,8 @@ class PPO:
             scale_tril = torch.cholesky(cov_mat) 
             dist = MultivariateNormal(mu, scale_tril=scale_tril)
             action = dist.sample()
-            self.all_log_prob[self.mini_batch_number] = dist.log_prob(action) #This is a tensor 
-            action = action.clip(-1, 1) #MMMMM what is this doing ? 
+            self.all_log_prob[self.mini_batch_number] = dist.log_prob(action)
+            action = action.clip(-1, 1)
 
         self.env.step(action)
     
@@ -227,10 +210,10 @@ class PPO:
         self.all_done = (1 - self.env.reset_buf).unsqueeze(-1)
         
 
-        self.score += torch.mean(self.all_reward[self.mini_batch_number].float()).item() / self.num_eval_freq #IS THIS A TENSOR ?? 
+        self.score += torch.mean(self.all_reward[self.mini_batch_number].float()).item() / self.num_eval_freq 
         
         if not self.args.testing:
-            self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00001) #was 0.00002
+            self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00001) 
 
         # training mode
         if self.mini_batch_number+1 == self.rollout_size:
@@ -260,12 +243,15 @@ class PPO:
         if(not self.args.save):
             return 
         
-        path = self.args.path + endofname + ".pth"
+        path = self.args.save_path + endofname + ".pth"
 
         torch.save(self.net.state_dict(), path)
     
     def generate_video(self):
         self.env.generate_video()
+
+    def exit(self):
+        self.env.exit()
 
 
 
