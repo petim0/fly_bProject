@@ -99,7 +99,7 @@ class PPO:
 
         # initialise parameters
         self.env = Fly(args)
-        self.num_acts = 12 # number of actions
+        self.num_acts = 18 # number of actions
         self.num_obs = 19 + 3*self.num_acts # number of observations
         self.epoch = 5
         self.lr = 0.001 
@@ -136,7 +136,7 @@ class PPO:
             print("loaded from: ", str(self.args.load_path))
             self.net.load_state_dict(torch.load(self.args.load_path))
 
-        action_var = 0.01 if self.args.testing else 0.2
+        action_var = 0.01 if self.args.testing else 0.05 #was 0.1
         self.action_var = torch.full((self.env.num_act,), action_var).to(args.sim_device) 
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
 
@@ -213,7 +213,7 @@ class PPO:
         self.score += torch.mean(self.all_reward[self.mini_batch_number].float()).item() / self.num_eval_freq 
         
         if not self.args.testing:
-            self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00001) 
+            self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.000003) # was 0.00001
 
         # training mode
         if self.mini_batch_number+1 == self.rollout_size:

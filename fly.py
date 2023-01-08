@@ -17,7 +17,7 @@ class Fly:
         self.up_axis_idx = 2 # index of up axis: X= 0, Y=1, Z=2
         self.i = 0
         # task-specific parameters
-        self.num_act = 12 #(3 DoFs * 6 legs)
+        self.num_act = 18 #(3 DoFs * 6 legs)
         self.num_obs = 19 + 3*self.num_act  # See compute_fly_observations
         self.starting_height = 2
         self.max_episode_length = 1500  # maximum episode length
@@ -32,19 +32,19 @@ class Fly:
          #           "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
           #          "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
 
-        self.plane_static_friction = 1.0
-        self.plane_dynamic_friction = 1.0
+        self.plane_static_friction = 3.0 #was 1.0
+        self.plane_dynamic_friction = 3.0 #was 1.0
 
-        #Constants for the reward function, taken from ant
+        # constants for the reward function
         self.dof_vel_scale = 0.2
         self.heading_weight = 0.5
-        self.up_weight = 1
+        self.up_weight = 0.75 #TODO was 1
         self.actions_cost_scale = 0.005
-        self.energy_cost_scale = 0.05
+        self.energy_cost_scale = 0.005 # was 0.05 #TODO 
         self.joints_at_limit_cost_scale = 0.1
         self.death_cost = -2.0
         self.termination_height = 1.1
-        self.termination_height_up = 6 #A jouer avec 
+        self.termination_height_up = 6 #
 
         # allocate buffers
         self.obs_buf, self.reward_buf, self.reset_buf, self.progress_buf = self.init_buffers()
@@ -71,6 +71,7 @@ class Fly:
         
         self.fly_asset, self.num_dof, self.num_rigid_body, self.dof_names = self.load_asset()
 
+        print("self.num_dof", self.num_dof)
         # initialise envs 
         self.envs, self.actors, self.pose, self.dof_props = self.create_envs()
 
@@ -216,7 +217,7 @@ class Fly:
         # Those cannot be over certain values otherwise the position controler doesn't work anymore !! Those values depend on the gravity and other
         # unknown parameters. Be careful with it a do tests when changing it. Example: see if the limbs are reseted correctly when calling self.Reset()
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(1.4) 
+        dof_props['stiffness'].fill(1.3) 
         dof_props['damping'].fill(0.1)
         dof_props['velocity'].fill(1)
 
@@ -493,7 +494,7 @@ class Fly:
 
                     heading_weight_tensor = torch.ones_like(self.obs_buf[:, 11]) * self.heading_weight
                     heading_reward = torch.where(self.obs_buf[:, 11] > 0.8, heading_weight_tensor, self.heading_weight * self.obs_buf[:, 11] / 0.8)
-                    #print("heading_reward", heading_reward)
+                    print("heading_reward", heading_reward[:10])
                     alive_reward = torch.ones_like(self.potentials) * 0.5
                     print("alive_reward", alive_reward[:10])
                     up_reward = torch.zeros_like(heading_reward)
@@ -733,8 +734,9 @@ def compute_fly_reward2(
     leg_ground_reward = torch.sum((torch.sum(force_tensor[index_legs_tip, :], dim=1).view(num_env, -1) > 0).long(), dim=1) * 0.1 ##TODO 0.1 maybe too high 
 
 
-    total_reward = progress_reward * 2 + alive_reward + up_reward + heading_reward - \
-        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + orient_reward + leg_ground_reward 
+    total_reward = progress_reward * 2 + alive_reward + up_reward * orient_reward + heading_reward - \
+        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale #+ leg_ground_reward 
+    
     #total_reward = alive_reward + up_reward * orient_reward - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + leg_ground_reward 
 
     # adjust reward for fallen agents, see below for more info. This is double. It could me made better maybe. 
@@ -791,3 +793,6 @@ def compute_fly_observations(obs_buf, root_states, targets, potentials,
                      dof_vel[:, action_idx].squeeze(-1) * dof_vel_scale, actions, pitch.unsqueeze(-1), touching), dim=-1)
 
     return obs, potentials, prev_potentials_new, up_vec, heading_vec
+
+
+    

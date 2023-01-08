@@ -15,507 +15,877 @@ Not connected to PVD
 Physics Engine: PhysX
 Physics Device: cuda:0
 GPU Pipeline: enabled
-num_dof:  18
+self.num_dof 18
 Creating 1000 environments.
-Setting initial dof position
-Joint count: 92000
 velocity 1.0
 effort 10000000000.0
-stiffness 1.0
+stiffness 1.4
 damping 0.1
 mini_chunk_size:  40
 rollout_size:  640
-Action asked to go over !!!
-tensor([False, False, False, False,  True, False, False,  True, False, False,
-        False, False], device='cuda:0')
-Steps: 0000 | Opt Step: 0000 | Reward 0.0050 | Action Var 0.2000
-Steps: 0100 | Opt Step: 0000 | Reward 0.4857 | Action Var 0.1990
-Steps: 0200 | Opt Step: 0000 | Reward 0.4747 | Action Var 0.1980
-Steps: 0300 | Opt Step: 0000 | Reward 0.4795 | Action Var 0.1970
-Steps: 0400 | Opt Step: 0000 | Reward 0.4793 | Action Var 0.1960
-Steps: 0500 | Opt Step: 0000 | Reward 0.4782 | Action Var 0.1950
-Steps: 0600 | Opt Step: 0000 | Reward 0.4780 | Action Var 0.1940
+Steps: 0000 | Opt Step: 0000 | Reward 0.0049 | Action Var 0.2000
+Steps: 0100 | Opt Step: 0000 | Reward 0.4769 | Action Var 0.1990
+Steps: 0200 | Opt Step: 0000 | Reward 0.4654 | Action Var 0.1980
+Steps: 0300 | Opt Step: 0000 | Reward 0.4700 | Action Var 0.1970
+Steps: 0400 | Opt Step: 0000 | Reward 0.4691 | Action Var 0.1960
+Steps: 0500 | Opt Step: 0000 | Reward 0.4719 | Action Var 0.1950
+Steps: 0600 | Opt Step: 0000 | Reward 0.4737 | Action Var 0.1940
 Training
-Steps: 0700 | Opt Step: 0075 | Reward 0.4794 | Action Var 0.1930
-Steps: 0800 | Opt Step: 0075 | Reward 0.4814 | Action Var 0.1920
-Steps: 0900 | Opt Step: 0075 | Reward 0.4810 | Action Var 0.1910
-Steps: 1000 | Opt Step: 0075 | Reward 0.4857 | Action Var 0.1900
-Steps: 1100 | Opt Step: 0075 | Reward 0.4842 | Action Var 0.1890
-Steps: 1200 | Opt Step: 0075 | Reward 0.4824 | Action Var 0.1880
+Steps: 0700 | Opt Step: 0075 | Reward 0.4767 | Action Var 0.1930
+Steps: 0800 | Opt Step: 0075 | Reward 0.4792 | Action Var 0.1920
+Steps: 0900 | Opt Step: 0075 | Reward 0.4791 | Action Var 0.1910
+Steps: 1000 | Opt Step: 0075 | Reward 0.4815 | Action Var 0.1900
+Steps: 1100 | Opt Step: 0075 | Reward 0.4834 | Action Var 0.1890
+Steps: 1200 | Opt Step: 0075 | Reward 0.4850 | Action Var 0.1880
 Training
-Steps: 1300 | Opt Step: 0150 | Reward 0.4822 | Action Var 0.1870
-Steps: 1400 | Opt Step: 0150 | Reward 0.4855 | Action Var 0.1860
-Steps: 1500 | Opt Step: 0150 | Reward 0.4882 | Action Var 0.1850
-Steps: 1600 | Opt Step: 0150 | Reward 0.4859 | Action Var 0.1840
-Steps: 1700 | Opt Step: 0150 | Reward 0.4864 | Action Var 0.1830
-Steps: 1800 | Opt Step: 0150 | Reward 0.4898 | Action Var 0.1820
-Steps: 1900 | Opt Step: 0150 | Reward 0.4878 | Action Var 0.1810
+Steps: 1300 | Opt Step: 0150 | Reward 0.4859 | Action Var 0.1870
+Steps: 1400 | Opt Step: 0150 | Reward 0.4919 | Action Var 0.1860
+Steps: 1500 | Opt Step: 0150 | Reward 0.4892 | Action Var 0.1850
+Steps: 1600 | Opt Step: 0150 | Reward 0.4955 | Action Var 0.1840
+Steps: 1700 | Opt Step: 0150 | Reward 0.4930 | Action Var 0.1830
+Steps: 1800 | Opt Step: 0150 | Reward 0.4952 | Action Var 0.1820
+Steps: 1900 | Opt Step: 0150 | Reward 0.4960 | Action Var 0.1810
 Training
-Steps: 2000 | Opt Step: 0225 | Reward 0.4979 | Action Var 0.1800
-Steps: 2100 | Opt Step: 0225 | Reward 0.4999 | Action Var 0.1790
-Steps: 2200 | Opt Step: 0225 | Reward 0.5005 | Action Var 0.1780
-Steps: 2300 | Opt Step: 0225 | Reward 0.5002 | Action Var 0.1770
-Steps: 2400 | Opt Step: 0225 | Reward 0.4985 | Action Var 0.1760
-Steps: 2500 | Opt Step: 0225 | Reward 0.5036 | Action Var 0.1750
+Steps: 2000 | Opt Step: 0225 | Reward 0.4991 | Action Var 0.1800
+Steps: 2100 | Opt Step: 0225 | Reward 0.4998 | Action Var 0.1790
+Steps: 2200 | Opt Step: 0225 | Reward 0.5027 | Action Var 0.1780
+Steps: 2300 | Opt Step: 0225 | Reward 0.5007 | Action Var 0.1770
+Steps: 2400 | Opt Step: 0225 | Reward 0.5010 | Action Var 0.1760
+Steps: 2500 | Opt Step: 0225 | Reward 0.5048 | Action Var 0.1750
 Training
-saving...
-saved!
-Steps: 2600 | Opt Step: 0300 | Reward 0.4988 | Action Var 0.1740
-Steps: 2700 | Opt Step: 0300 | Reward 0.5049 | Action Var 0.1730
-Steps: 2800 | Opt Step: 0300 | Reward 0.5106 | Action Var 0.1720
-Steps: 2900 | Opt Step: 0300 | Reward 0.5073 | Action Var 0.1710
-Steps: 3000 | Opt Step: 0300 | Reward 0.5073 | Action Var 0.1700
-Steps: 3100 | Opt Step: 0300 | Reward 0.5093 | Action Var 0.1690
+Steps: 2600 | Opt Step: 0300 | Reward 0.5069 | Action Var 0.1740
+Steps: 2700 | Opt Step: 0300 | Reward 0.5065 | Action Var 0.1730
+Steps: 2800 | Opt Step: 0300 | Reward 0.5083 | Action Var 0.1720
+Steps: 2900 | Opt Step: 0300 | Reward 0.5135 | Action Var 0.1710
+Steps: 3000 | Opt Step: 0300 | Reward 0.5124 | Action Var 0.1700
+Steps: 3100 | Opt Step: 0300 | Reward 0.5117 | Action Var 0.1690
 Training
-Steps: 3200 | Opt Step: 0375 | Reward 0.5081 | Action Var 0.1680
-Steps: 3300 | Opt Step: 0375 | Reward 0.5145 | Action Var 0.1670
-Steps: 3400 | Opt Step: 0375 | Reward 0.5161 | Action Var 0.1660
-Steps: 3500 | Opt Step: 0375 | Reward 0.5130 | Action Var 0.1650
-Steps: 3600 | Opt Step: 0375 | Reward 0.5162 | Action Var 0.1640
-Steps: 3700 | Opt Step: 0375 | Reward 0.5142 | Action Var 0.1630
-Steps: 3800 | Opt Step: 0375 | Reward 0.5183 | Action Var 0.1620
+Steps: 3200 | Opt Step: 0375 | Reward 0.5150 | Action Var 0.1680
+Steps: 3300 | Opt Step: 0375 | Reward 0.5170 | Action Var 0.1670
+Steps: 3400 | Opt Step: 0375 | Reward 0.5177 | Action Var 0.1660
+Steps: 3500 | Opt Step: 0375 | Reward 0.5192 | Action Var 0.1650
+Steps: 3600 | Opt Step: 0375 | Reward 0.5179 | Action Var 0.1640
+Steps: 3700 | Opt Step: 0375 | Reward 0.5199 | Action Var 0.1630
+Steps: 3800 | Opt Step: 0375 | Reward 0.5227 | Action Var 0.1620
 Training
-Steps: 3900 | Opt Step: 0450 | Reward 0.5245 | Action Var 0.1610
-Steps: 4000 | Opt Step: 0450 | Reward 0.5243 | Action Var 0.1600
-Steps: 4100 | Opt Step: 0450 | Reward 0.5230 | Action Var 0.1590
-Steps: 4200 | Opt Step: 0450 | Reward 0.5274 | Action Var 0.1580
-Steps: 4300 | Opt Step: 0450 | Reward 0.5248 | Action Var 0.1570
-Steps: 4400 | Opt Step: 0450 | Reward 0.5267 | Action Var 0.1560
+Steps: 3900 | Opt Step: 0450 | Reward 0.5239 | Action Var 0.1610
+Steps: 4000 | Opt Step: 0450 | Reward 0.5245 | Action Var 0.1600
+Steps: 4100 | Opt Step: 0450 | Reward 0.5310 | Action Var 0.1590
+Steps: 4200 | Opt Step: 0450 | Reward 0.5291 | Action Var 0.1580
+Steps: 4300 | Opt Step: 0450 | Reward 0.5291 | Action Var 0.1570
+Steps: 4400 | Opt Step: 0450 | Reward 0.5323 | Action Var 0.1560
 Training
-Steps: 4500 | Opt Step: 0525 | Reward 0.5278 | Action Var 0.1550
-Steps: 4600 | Opt Step: 0525 | Reward 0.5300 | Action Var 0.1540
-Steps: 4700 | Opt Step: 0525 | Reward 0.5321 | Action Var 0.1530
-Steps: 4800 | Opt Step: 0525 | Reward 0.5298 | Action Var 0.1520
-Steps: 4900 | Opt Step: 0525 | Reward 0.5296 | Action Var 0.1510
-Steps: 5000 | Opt Step: 0525 | Reward 0.5315 | Action Var 0.1500
-Steps: 5100 | Opt Step: 0525 | Reward 0.5330 | Action Var 0.1490
+Steps: 4500 | Opt Step: 0525 | Reward 0.5317 | Action Var 0.1550
+Steps: 4600 | Opt Step: 0525 | Reward 0.5339 | Action Var 0.1540
+Steps: 4700 | Opt Step: 0525 | Reward 0.5326 | Action Var 0.1530
+Steps: 4800 | Opt Step: 0525 | Reward 0.5374 | Action Var 0.1520
+Steps: 4900 | Opt Step: 0525 | Reward 0.5374 | Action Var 0.1510
+Steps: 5000 | Opt Step: 0525 | Reward 0.5372 | Action Var 0.1500
+Steps: 5100 | Opt Step: 0525 | Reward 0.5393 | Action Var 0.1490
 Training
 saving...
 saved!
-Steps: 5200 | Opt Step: 0600 | Reward 0.5390 | Action Var 0.1480
-Steps: 5300 | Opt Step: 0600 | Reward 0.5395 | Action Var 0.1470
-Steps: 5400 | Opt Step: 0600 | Reward 0.5414 | Action Var 0.1460
-Steps: 5500 | Opt Step: 0600 | Reward 0.5401 | Action Var 0.1450
-Steps: 5600 | Opt Step: 0600 | Reward 0.5432 | Action Var 0.1440
-Steps: 5700 | Opt Step: 0600 | Reward 0.5407 | Action Var 0.1430
+Steps: 5200 | Opt Step: 0600 | Reward 0.5384 | Action Var 0.1480
+Steps: 5300 | Opt Step: 0600 | Reward 0.5423 | Action Var 0.1470
+Steps: 5400 | Opt Step: 0600 | Reward 0.5389 | Action Var 0.1460
+Steps: 5500 | Opt Step: 0600 | Reward 0.5437 | Action Var 0.1450
+Steps: 5600 | Opt Step: 0600 | Reward 0.5439 | Action Var 0.1440
+Steps: 5700 | Opt Step: 0600 | Reward 0.5477 | Action Var 0.1430
 Training
-Steps: 5800 | Opt Step: 0675 | Reward 0.5382 | Action Var 0.1420
-Steps: 5900 | Opt Step: 0675 | Reward 0.5449 | Action Var 0.1410
-Steps: 6000 | Opt Step: 0675 | Reward 0.5481 | Action Var 0.1400
-Steps: 6100 | Opt Step: 0675 | Reward 0.5477 | Action Var 0.1390
-Steps: 6200 | Opt Step: 0675 | Reward 0.5451 | Action Var 0.1380
-Steps: 6300 | Opt Step: 0675 | Reward 0.5479 | Action Var 0.1370
+Steps: 5800 | Opt Step: 0675 | Reward 0.5473 | Action Var 0.1420
+Steps: 5900 | Opt Step: 0675 | Reward 0.5477 | Action Var 0.1410
+Steps: 6000 | Opt Step: 0675 | Reward 0.5461 | Action Var 0.1400
+Steps: 6100 | Opt Step: 0675 | Reward 0.5497 | Action Var 0.1390
+Steps: 6200 | Opt Step: 0675 | Reward 0.5511 | Action Var 0.1380
+Steps: 6300 | Opt Step: 0675 | Reward 0.5529 | Action Var 0.1370
 Training
-Steps: 6400 | Opt Step: 0750 | Reward 0.5504 | Action Var 0.1360
-Steps: 6500 | Opt Step: 0750 | Reward 0.5456 | Action Var 0.1350
-Steps: 6600 | Opt Step: 0750 | Reward 0.5461 | Action Var 0.1340
-Steps: 6700 | Opt Step: 0750 | Reward 0.5451 | Action Var 0.1330
-Steps: 6800 | Opt Step: 0750 | Reward 0.5478 | Action Var 0.1320
-Steps: 6900 | Opt Step: 0750 | Reward 0.5482 | Action Var 0.1310
-Steps: 7000 | Opt Step: 0750 | Reward 0.5439 | Action Var 0.1300
+Steps: 6400 | Opt Step: 0750 | Reward 0.5513 | Action Var 0.1360
+Steps: 6500 | Opt Step: 0750 | Reward 0.5531 | Action Var 0.1350
+Steps: 6600 | Opt Step: 0750 | Reward 0.5549 | Action Var 0.1340
+Steps: 6700 | Opt Step: 0750 | Reward 0.5557 | Action Var 0.1330
+Steps: 6800 | Opt Step: 0750 | Reward 0.5571 | Action Var 0.1320
+Steps: 6900 | Opt Step: 0750 | Reward 0.5591 | Action Var 0.1310
+Steps: 7000 | Opt Step: 0750 | Reward 0.5618 | Action Var 0.1300
 Training
-Steps: 7100 | Opt Step: 0825 | Reward 0.5490 | Action Var 0.1290
-Steps: 7200 | Opt Step: 0825 | Reward 0.5478 | Action Var 0.1280
-Steps: 7300 | Opt Step: 0825 | Reward 0.5491 | Action Var 0.1270
-Steps: 7400 | Opt Step: 0825 | Reward 0.5484 | Action Var 0.1260
-Steps: 7500 | Opt Step: 0825 | Reward 0.5498 | Action Var 0.1250
-Steps: 7600 | Opt Step: 0825 | Reward 0.5440 | Action Var 0.1240
+Steps: 7100 | Opt Step: 0825 | Reward 0.5594 | Action Var 0.1290
+Steps: 7200 | Opt Step: 0825 | Reward 0.5594 | Action Var 0.1280
+Steps: 7300 | Opt Step: 0825 | Reward 0.5611 | Action Var 0.1270
+Steps: 7400 | Opt Step: 0825 | Reward 0.5598 | Action Var 0.1260
+Steps: 7500 | Opt Step: 0825 | Reward 0.5609 | Action Var 0.1250
+Steps: 7600 | Opt Step: 0825 | Reward 0.5651 | Action Var 0.1240
 Training
-saving...
-saved!
-Steps: 7700 | Opt Step: 0900 | Reward 0.5510 | Action Var 0.1230
-Steps: 7800 | Opt Step: 0900 | Reward 0.5542 | Action Var 0.1220
-Steps: 7900 | Opt Step: 0900 | Reward 0.5524 | Action Var 0.1210
-Steps: 8000 | Opt Step: 0900 | Reward 0.5566 | Action Var 0.1200
-Steps: 8100 | Opt Step: 0900 | Reward 0.5523 | Action Var 0.1190
-Steps: 8200 | Opt Step: 0900 | Reward 0.5590 | Action Var 0.1180
-Steps: 8300 | Opt Step: 0900 | Reward 0.5550 | Action Var 0.1170
+Steps: 7700 | Opt Step: 0900 | Reward 0.5656 | Action Var 0.1230
+Steps: 7800 | Opt Step: 0900 | Reward 0.5677 | Action Var 0.1220
+Steps: 7900 | Opt Step: 0900 | Reward 0.5705 | Action Var 0.1210
+Steps: 8000 | Opt Step: 0900 | Reward 0.5714 | Action Var 0.1200
+Steps: 8100 | Opt Step: 0900 | Reward 0.5709 | Action Var 0.1190
+Steps: 8200 | Opt Step: 0900 | Reward 0.5731 | Action Var 0.1180
+Steps: 8300 | Opt Step: 0900 | Reward 0.5722 | Action Var 0.1170
 Training
-Steps: 8400 | Opt Step: 0975 | Reward 0.5681 | Action Var 0.1160
-Steps: 8500 | Opt Step: 0975 | Reward 0.5695 | Action Var 0.1150
-Steps: 8600 | Opt Step: 0975 | Reward 0.5688 | Action Var 0.1140
-Steps: 8700 | Opt Step: 0975 | Reward 0.5700 | Action Var 0.1130
-Steps: 8800 | Opt Step: 0975 | Reward 0.5707 | Action Var 0.1120
-Steps: 8900 | Opt Step: 0975 | Reward 0.5743 | Action Var 0.1110
+Steps: 8400 | Opt Step: 0975 | Reward 0.5725 | Action Var 0.1160
+Steps: 8500 | Opt Step: 0975 | Reward 0.5747 | Action Var 0.1150
+Steps: 8600 | Opt Step: 0975 | Reward 0.5745 | Action Var 0.1140
+Steps: 8700 | Opt Step: 0975 | Reward 0.5797 | Action Var 0.1130
+Steps: 8800 | Opt Step: 0975 | Reward 0.5802 | Action Var 0.1120
+Steps: 8900 | Opt Step: 0975 | Reward 0.5800 | Action Var 0.1110
 Training
-Steps: 9000 | Opt Step: 1050 | Reward 0.5726 | Action Var 0.1100
-Steps: 9100 | Opt Step: 1050 | Reward 0.5774 | Action Var 0.1090
-Steps: 9200 | Opt Step: 1050 | Reward 0.5751 | Action Var 0.1080
-Steps: 9300 | Opt Step: 1050 | Reward 0.5787 | Action Var 0.1070
-Steps: 9400 | Opt Step: 1050 | Reward 0.5767 | Action Var 0.1060
-Steps: 9500 | Opt Step: 1050 | Reward 0.5814 | Action Var 0.1050
+Steps: 9000 | Opt Step: 1050 | Reward 0.5815 | Action Var 0.1100
+Steps: 9100 | Opt Step: 1050 | Reward 0.5843 | Action Var 0.1090
+Steps: 9200 | Opt Step: 1050 | Reward 0.5858 | Action Var 0.1080
+Steps: 9300 | Opt Step: 1050 | Reward 0.5889 | Action Var 0.1070
+Steps: 9400 | Opt Step: 1050 | Reward 0.5880 | Action Var 0.1060
+Steps: 9500 | Opt Step: 1050 | Reward 0.5891 | Action Var 0.1050
 Training
-Steps: 9600 | Opt Step: 1125 | Reward 0.5816 | Action Var 0.1040
-Steps: 9700 | Opt Step: 1125 | Reward 0.5818 | Action Var 0.1030
-Steps: 9800 | Opt Step: 1125 | Reward 0.5855 | Action Var 0.1020
-Steps: 9900 | Opt Step: 1125 | Reward 0.5824 | Action Var 0.1010
-Steps: 10000 | Opt Step: 1125 | Reward 0.5834 | Action Var 0.1000
-Steps: 10100 | Opt Step: 1125 | Reward 0.5861 | Action Var 0.0990
-Steps: 10200 | Opt Step: 1125 | Reward 0.5859 | Action Var 0.0980
+Steps: 9600 | Opt Step: 1125 | Reward 0.5898 | Action Var 0.1040
+Steps: 9700 | Opt Step: 1125 | Reward 0.5884 | Action Var 0.1030
+Steps: 9800 | Opt Step: 1125 | Reward 0.5893 | Action Var 0.1020
+Steps: 9900 | Opt Step: 1125 | Reward 0.5868 | Action Var 0.1010
+Steps: 10000 | Opt Step: 1125 | Reward 0.5925 | Action Var 0.1000
+Steps: 10100 | Opt Step: 1125 | Reward 0.5936 | Action Var 0.0990
+Steps: 10200 | Opt Step: 1125 | Reward 0.5929 | Action Var 0.0980
 Training
 saving...
 saved!
-Steps: 10300 | Opt Step: 1200 | Reward 0.5876 | Action Var 0.0970
-Steps: 10400 | Opt Step: 1200 | Reward 0.5919 | Action Var 0.0960
-Steps: 10500 | Opt Step: 1200 | Reward 0.5897 | Action Var 0.0950
-Steps: 10600 | Opt Step: 1200 | Reward 0.5936 | Action Var 0.0940
-Steps: 10700 | Opt Step: 1200 | Reward 0.5923 | Action Var 0.0930
-Steps: 10800 | Opt Step: 1200 | Reward 0.5910 | Action Var 0.0920
+Steps: 10300 | Opt Step: 1200 | Reward 0.5957 | Action Var 0.0970
+Steps: 10400 | Opt Step: 1200 | Reward 0.5990 | Action Var 0.0960
+Steps: 10500 | Opt Step: 1200 | Reward 0.5984 | Action Var 0.0950
+Steps: 10600 | Opt Step: 1200 | Reward 0.5994 | Action Var 0.0940
+Steps: 10700 | Opt Step: 1200 | Reward 0.6000 | Action Var 0.0930
+Steps: 10800 | Opt Step: 1200 | Reward 0.6007 | Action Var 0.0920
 Training
-Steps: 10900 | Opt Step: 1275 | Reward 0.5970 | Action Var 0.0910
-Steps: 11000 | Opt Step: 1275 | Reward 0.6015 | Action Var 0.0900
-Steps: 11100 | Opt Step: 1275 | Reward 0.5997 | Action Var 0.0890
-Steps: 11200 | Opt Step: 1275 | Reward 0.6033 | Action Var 0.0880
-Steps: 11300 | Opt Step: 1275 | Reward 0.6049 | Action Var 0.0870
-Steps: 11400 | Opt Step: 1275 | Reward 0.6061 | Action Var 0.0860
-Steps: 11500 | Opt Step: 1275 | Reward 0.6044 | Action Var 0.0850
+Steps: 10900 | Opt Step: 1275 | Reward 0.6018 | Action Var 0.0910
+Steps: 11000 | Opt Step: 1275 | Reward 0.6039 | Action Var 0.0900
+Steps: 11100 | Opt Step: 1275 | Reward 0.6045 | Action Var 0.0890
+Steps: 11200 | Opt Step: 1275 | Reward 0.6058 | Action Var 0.0880
+Steps: 11300 | Opt Step: 1275 | Reward 0.6055 | Action Var 0.0870
+Steps: 11400 | Opt Step: 1275 | Reward 0.6073 | Action Var 0.0860
+Steps: 11500 | Opt Step: 1275 | Reward 0.6089 | Action Var 0.0850
 Training
-Steps: 11600 | Opt Step: 1350 | Reward 0.6110 | Action Var 0.0840
-Steps: 11700 | Opt Step: 1350 | Reward 0.6095 | Action Var 0.0830
-Steps: 11800 | Opt Step: 1350 | Reward 0.6153 | Action Var 0.0820
-Steps: 11900 | Opt Step: 1350 | Reward 0.6137 | Action Var 0.0810
-Steps: 12000 | Opt Step: 1350 | Reward 0.6166 | Action Var 0.0800
-Steps: 12100 | Opt Step: 1350 | Reward 0.6159 | Action Var 0.0790
+Steps: 11600 | Opt Step: 1350 | Reward 0.6108 | Action Var 0.0840
+Steps: 11700 | Opt Step: 1350 | Reward 0.6132 | Action Var 0.0830
+Steps: 11800 | Opt Step: 1350 | Reward 0.6128 | Action Var 0.0820
+Steps: 11900 | Opt Step: 1350 | Reward 0.6138 | Action Var 0.0810
+Steps: 12000 | Opt Step: 1350 | Reward 0.6161 | Action Var 0.0800
+Steps: 12100 | Opt Step: 1350 | Reward 0.6158 | Action Var 0.0790
 Training
-Steps: 12200 | Opt Step: 1425 | Reward 0.6172 | Action Var 0.0780
-Steps: 12300 | Opt Step: 1425 | Reward 0.6226 | Action Var 0.0770
-Steps: 12400 | Opt Step: 1425 | Reward 0.6219 | Action Var 0.0760
-Steps: 12500 | Opt Step: 1425 | Reward 0.6239 | Action Var 0.0750
-Steps: 12600 | Opt Step: 1425 | Reward 0.6256 | Action Var 0.0740
-Steps: 12700 | Opt Step: 1425 | Reward 0.6262 | Action Var 0.0730
+Steps: 12200 | Opt Step: 1425 | Reward 0.6183 | Action Var 0.0780
+Steps: 12300 | Opt Step: 1425 | Reward 0.6173 | Action Var 0.0770
+Steps: 12400 | Opt Step: 1425 | Reward 0.6200 | Action Var 0.0760
+Steps: 12500 | Opt Step: 1425 | Reward 0.6234 | Action Var 0.0750
+Steps: 12600 | Opt Step: 1425 | Reward 0.6247 | Action Var 0.0740
+Steps: 12700 | Opt Step: 1425 | Reward 0.6273 | Action Var 0.0730
 Training
-saving...
-saved!
-Steps: 12800 | Opt Step: 1500 | Reward 0.6264 | Action Var 0.0720
-Steps: 12900 | Opt Step: 1500 | Reward 0.6319 | Action Var 0.0710
-Steps: 13000 | Opt Step: 1500 | Reward 0.6279 | Action Var 0.0700
-Steps: 13100 | Opt Step: 1500 | Reward 0.6315 | Action Var 0.0690
-Steps: 13200 | Opt Step: 1500 | Reward 0.6353 | Action Var 0.0680
-Steps: 13300 | Opt Step: 1500 | Reward 0.6356 | Action Var 0.0670
-Steps: 13400 | Opt Step: 1500 | Reward 0.6368 | Action Var 0.0660
+Steps: 12800 | Opt Step: 1500 | Reward 0.6245 | Action Var 0.0720
+Steps: 12900 | Opt Step: 1500 | Reward 0.6287 | Action Var 0.0710
+Steps: 13000 | Opt Step: 1500 | Reward 0.6305 | Action Var 0.0700
+Steps: 13100 | Opt Step: 1500 | Reward 0.6284 | Action Var 0.0690
+Steps: 13200 | Opt Step: 1500 | Reward 0.6294 | Action Var 0.0680
+Steps: 13300 | Opt Step: 1500 | Reward 0.6307 | Action Var 0.0670
+Steps: 13400 | Opt Step: 1500 | Reward 0.6320 | Action Var 0.0660
 Training
-Steps: 13500 | Opt Step: 1575 | Reward 0.6356 | Action Var 0.0650
-Steps: 13600 | Opt Step: 1575 | Reward 0.6395 | Action Var 0.0640
-Steps: 13700 | Opt Step: 1575 | Reward 0.6385 | Action Var 0.0630
-Steps: 13800 | Opt Step: 1575 | Reward 0.6405 | Action Var 0.0620
-Steps: 13900 | Opt Step: 1575 | Reward 0.6410 | Action Var 0.0610
-Steps: 14000 | Opt Step: 1575 | Reward 0.6444 | Action Var 0.0600
+Steps: 13500 | Opt Step: 1575 | Reward 0.6352 | Action Var 0.0650
+Steps: 13600 | Opt Step: 1575 | Reward 0.6349 | Action Var 0.0640
+Steps: 13700 | Opt Step: 1575 | Reward 0.6377 | Action Var 0.0630
+Steps: 13800 | Opt Step: 1575 | Reward 0.6381 | Action Var 0.0620
+Steps: 13900 | Opt Step: 1575 | Reward 0.6375 | Action Var 0.0610
+Steps: 14000 | Opt Step: 1575 | Reward 0.6375 | Action Var 0.0600
 Training
-Steps: 14100 | Opt Step: 1650 | Reward 0.6424 | Action Var 0.0590
-Steps: 14200 | Opt Step: 1650 | Reward 0.6409 | Action Var 0.0580
-Steps: 14300 | Opt Step: 1650 | Reward 0.6464 | Action Var 0.0570
+Steps: 14100 | Opt Step: 1650 | Reward 0.6413 | Action Var 0.0590
+Steps: 14200 | Opt Step: 1650 | Reward 0.6437 | Action Var 0.0580
+Steps: 14300 | Opt Step: 1650 | Reward 0.6439 | Action Var 0.0570
 Steps: 14400 | Opt Step: 1650 | Reward 0.6437 | Action Var 0.0560
-Steps: 14500 | Opt Step: 1650 | Reward 0.6451 | Action Var 0.0550
-Steps: 14600 | Opt Step: 1650 | Reward 0.6468 | Action Var 0.0540
+Steps: 14500 | Opt Step: 1650 | Reward 0.6431 | Action Var 0.0550
+Steps: 14600 | Opt Step: 1650 | Reward 0.6479 | Action Var 0.0540
 Steps: 14700 | Opt Step: 1650 | Reward 0.6506 | Action Var 0.0530
 Training
 Steps: 14800 | Opt Step: 1725 | Reward 0.6507 | Action Var 0.0520
-Steps: 14900 | Opt Step: 1725 | Reward 0.6549 | Action Var 0.0510
-Steps: 15000 | Opt Step: 1725 | Reward 0.6559 | Action Var 0.0500
-Steps: 15100 | Opt Step: 1725 | Reward 0.6571 | Action Var 0.0490
-Steps: 15200 | Opt Step: 1725 | Reward 0.6579 | Action Var 0.0480
-Steps: 15300 | Opt Step: 1725 | Reward 0.6621 | Action Var 0.0470
+Steps: 14900 | Opt Step: 1725 | Reward 0.6548 | Action Var 0.0510
+Steps: 15000 | Opt Step: 1725 | Reward 0.6531 | Action Var 0.0500
+Steps: 15100 | Opt Step: 1725 | Reward 0.6554 | Action Var 0.0490
+Steps: 15200 | Opt Step: 1725 | Reward 0.6569 | Action Var 0.0480
+Steps: 15300 | Opt Step: 1725 | Reward 0.6588 | Action Var 0.0470
 Training
 saving...
 saved!
-Steps: 15400 | Opt Step: 1800 | Reward 0.6613 | Action Var 0.0460
-Steps: 15500 | Opt Step: 1800 | Reward 0.6643 | Action Var 0.0450
-Steps: 15600 | Opt Step: 1800 | Reward 0.6656 | Action Var 0.0440
-Steps: 15700 | Opt Step: 1800 | Reward 0.6680 | Action Var 0.0430
-Steps: 15800 | Opt Step: 1800 | Reward 0.6692 | Action Var 0.0420
-Steps: 15900 | Opt Step: 1800 | Reward 0.6702 | Action Var 0.0410
+Steps: 15400 | Opt Step: 1800 | Reward 0.6599 | Action Var 0.0460
+Steps: 15500 | Opt Step: 1800 | Reward 0.6602 | Action Var 0.0450
+Steps: 15600 | Opt Step: 1800 | Reward 0.6610 | Action Var 0.0440
+Steps: 15700 | Opt Step: 1800 | Reward 0.6644 | Action Var 0.0430
+Steps: 15800 | Opt Step: 1800 | Reward 0.6654 | Action Var 0.0420
+Steps: 15900 | Opt Step: 1800 | Reward 0.6675 | Action Var 0.0410
 Training
-Steps: 16000 | Opt Step: 1875 | Reward 0.6744 | Action Var 0.0400
-Steps: 16100 | Opt Step: 1875 | Reward 0.6775 | Action Var 0.0390
-Steps: 16200 | Opt Step: 1875 | Reward 0.6795 | Action Var 0.0380
-Steps: 16300 | Opt Step: 1875 | Reward 0.6817 | Action Var 0.0370
-Steps: 16400 | Opt Step: 1875 | Reward 0.6813 | Action Var 0.0360
-Steps: 16500 | Opt Step: 1875 | Reward 0.6852 | Action Var 0.0350
-Steps: 16600 | Opt Step: 1875 | Reward 0.6875 | Action Var 0.0340
+Steps: 16000 | Opt Step: 1875 | Reward 0.6685 | Action Var 0.0400
+Steps: 16100 | Opt Step: 1875 | Reward 0.6708 | Action Var 0.0390
+Steps: 16200 | Opt Step: 1875 | Reward 0.6768 | Action Var 0.0380
+Steps: 16300 | Opt Step: 1875 | Reward 0.6740 | Action Var 0.0370
+Steps: 16400 | Opt Step: 1875 | Reward 0.6800 | Action Var 0.0360
+Steps: 16500 | Opt Step: 1875 | Reward 0.6819 | Action Var 0.0350
+Steps: 16600 | Opt Step: 1875 | Reward 0.6836 | Action Var 0.0340
 Training
-Steps: 16700 | Opt Step: 1950 | Reward 0.6872 | Action Var 0.0330
-Steps: 16800 | Opt Step: 1950 | Reward 0.6868 | Action Var 0.0320
-Steps: 16900 | Opt Step: 1950 | Reward 0.6890 | Action Var 0.0310
-Steps: 17000 | Opt Step: 1950 | Reward 0.6912 | Action Var 0.0300
-Steps: 17100 | Opt Step: 1950 | Reward 0.6963 | Action Var 0.0290
-Steps: 17200 | Opt Step: 1950 | Reward 0.6980 | Action Var 0.0280
+Steps: 16700 | Opt Step: 1950 | Reward 0.6858 | Action Var 0.0330
+Steps: 16800 | Opt Step: 1950 | Reward 0.6892 | Action Var 0.0320
+Steps: 16900 | Opt Step: 1950 | Reward 0.6930 | Action Var 0.0310
+Steps: 17000 | Opt Step: 1950 | Reward 0.6948 | Action Var 0.0300
+Steps: 17100 | Opt Step: 1950 | Reward 0.6955 | Action Var 0.0290
+Steps: 17200 | Opt Step: 1950 | Reward 0.6998 | Action Var 0.0280
 Training
-Steps: 17300 | Opt Step: 2025 | Reward 0.7028 | Action Var 0.0270
-Steps: 17400 | Opt Step: 2025 | Reward 0.7036 | Action Var 0.0260
-Steps: 17500 | Opt Step: 2025 | Reward 0.7081 | Action Var 0.0250
-Steps: 17600 | Opt Step: 2025 | Reward 0.7096 | Action Var 0.0240
-Steps: 17700 | Opt Step: 2025 | Reward 0.7122 | Action Var 0.0230
-Steps: 17800 | Opt Step: 2025 | Reward 0.7177 | Action Var 0.0220
-Steps: 17900 | Opt Step: 2025 | Reward 0.7207 | Action Var 0.0210
+Steps: 17300 | Opt Step: 2025 | Reward 0.7018 | Action Var 0.0270
+Steps: 17400 | Opt Step: 2025 | Reward 0.7009 | Action Var 0.0260
+Steps: 17500 | Opt Step: 2025 | Reward 0.7026 | Action Var 0.0250
+Steps: 17600 | Opt Step: 2025 | Reward 0.7066 | Action Var 0.0240
+Steps: 17700 | Opt Step: 2025 | Reward 0.7086 | Action Var 0.0230
+Steps: 17800 | Opt Step: 2025 | Reward 0.7142 | Action Var 0.0220
+Steps: 17900 | Opt Step: 2025 | Reward 0.7134 | Action Var 0.0210
 Training
-saving...
-saved!
-Steps: 18000 | Opt Step: 2100 | Reward 0.7301 | Action Var 0.0200
-Steps: 18100 | Opt Step: 2100 | Reward 0.7376 | Action Var 0.0190
-Steps: 18200 | Opt Step: 2100 | Reward 0.7411 | Action Var 0.0180
-Steps: 18300 | Opt Step: 2100 | Reward 0.7475 | Action Var 0.0170
-Steps: 18400 | Opt Step: 2100 | Reward 0.7539 | Action Var 0.0160
-Steps: 18500 | Opt Step: 2100 | Reward 0.7602 | Action Var 0.0150
+Steps: 18000 | Opt Step: 2100 | Reward 0.7180 | Action Var 0.0200
+Steps: 18100 | Opt Step: 2100 | Reward 0.7220 | Action Var 0.0190
+Steps: 18200 | Opt Step: 2100 | Reward 0.7278 | Action Var 0.0180
+Steps: 18300 | Opt Step: 2100 | Reward 0.7306 | Action Var 0.0170
+Steps: 18400 | Opt Step: 2100 | Reward 0.7366 | Action Var 0.0160
+Steps: 18500 | Opt Step: 2100 | Reward 0.7427 | Action Var 0.0150
 Training
-Steps: 18600 | Opt Step: 2175 | Reward 0.7685 | Action Var 0.0140
-Steps: 18700 | Opt Step: 2175 | Reward 0.7749 | Action Var 0.0130
-Steps: 18800 | Opt Step: 2175 | Reward 0.7815 | Action Var 0.0120
-Steps: 18900 | Opt Step: 2175 | Reward 0.7907 | Action Var 0.0110
-Steps: 19000 | Opt Step: 2175 | Reward 0.7995 | Action Var 0.0100
-Steps: 19100 | Opt Step: 2175 | Reward 0.8008 | Action Var 0.0100
+Steps: 18600 | Opt Step: 2175 | Reward 0.7444 | Action Var 0.0140
+Steps: 18700 | Opt Step: 2175 | Reward 0.7465 | Action Var 0.0130
+Steps: 18800 | Opt Step: 2175 | Reward 0.7537 | Action Var 0.0120
+Steps: 18900 | Opt Step: 2175 | Reward 0.7598 | Action Var 0.0110
+Steps: 19000 | Opt Step: 2175 | Reward 0.7654 | Action Var 0.0100
+Steps: 19100 | Opt Step: 2175 | Reward 0.7712 | Action Var 0.0100
 Training
-Steps: 19200 | Opt Step: 2250 | Reward 0.8054 | Action Var 0.0100
-Steps: 19300 | Opt Step: 2250 | Reward 0.8049 | Action Var 0.0100
-Steps: 19400 | Opt Step: 2250 | Reward 0.8026 | Action Var 0.0100
-Steps: 19500 | Opt Step: 2250 | Reward 0.8048 | Action Var 0.0100
-Steps: 19600 | Opt Step: 2250 | Reward 0.8028 | Action Var 0.0100
-Steps: 19700 | Opt Step: 2250 | Reward 0.8014 | Action Var 0.0100
-Steps: 19800 | Opt Step: 2250 | Reward 0.8018 | Action Var 0.0100
+Steps: 19200 | Opt Step: 2250 | Reward 0.7761 | Action Var 0.0100
+Steps: 19300 | Opt Step: 2250 | Reward 0.7798 | Action Var 0.0100
+Steps: 19400 | Opt Step: 2250 | Reward 0.7806 | Action Var 0.0100
+Steps: 19500 | Opt Step: 2250 | Reward 0.7831 | Action Var 0.0100
+Steps: 19600 | Opt Step: 2250 | Reward 0.7799 | Action Var 0.0100
+Steps: 19700 | Opt Step: 2250 | Reward 0.7793 | Action Var 0.0100
+Steps: 19800 | Opt Step: 2250 | Reward 0.7803 | Action Var 0.0100
 Training
-Steps: 19900 | Opt Step: 2325 | Reward 0.8024 | Action Var 0.0100
-Steps: 20000 | Opt Step: 2325 | Reward 0.7997 | Action Var 0.0100
-Steps: 20100 | Opt Step: 2325 | Reward 0.8014 | Action Var 0.0100
-Steps: 20200 | Opt Step: 2325 | Reward 0.8033 | Action Var 0.0100
-Steps: 20300 | Opt Step: 2325 | Reward 0.8026 | Action Var 0.0100
-Steps: 20400 | Opt Step: 2325 | Reward 0.8036 | Action Var 0.0100
+Steps: 19900 | Opt Step: 2325 | Reward 0.7779 | Action Var 0.0100
+Steps: 20000 | Opt Step: 2325 | Reward 0.7765 | Action Var 0.0100
+Steps: 20100 | Opt Step: 2325 | Reward 0.7783 | Action Var 0.0100
+Steps: 20200 | Opt Step: 2325 | Reward 0.7751 | Action Var 0.0100
+Steps: 20300 | Opt Step: 2325 | Reward 0.7767 | Action Var 0.0100
+Steps: 20400 | Opt Step: 2325 | Reward 0.7768 | Action Var 0.0100
 Training
 saving...
 saved!
-Steps: 20500 | Opt Step: 2400 | Reward 0.8042 | Action Var 0.0100
-Steps: 20600 | Opt Step: 2400 | Reward 0.8071 | Action Var 0.0100
-Steps: 20700 | Opt Step: 2400 | Reward 0.8038 | Action Var 0.0100
-Steps: 20800 | Opt Step: 2400 | Reward 0.8058 | Action Var 0.0100
-Steps: 20900 | Opt Step: 2400 | Reward 0.8085 | Action Var 0.0100
-Steps: 21000 | Opt Step: 2400 | Reward 0.8066 | Action Var 0.0100
-Steps: 21100 | Opt Step: 2400 | Reward 0.8054 | Action Var 0.0100
+Steps: 20500 | Opt Step: 2400 | Reward 0.7760 | Action Var 0.0100
+Steps: 20600 | Opt Step: 2400 | Reward 0.7763 | Action Var 0.0100
+Steps: 20700 | Opt Step: 2400 | Reward 0.7714 | Action Var 0.0100
+Steps: 20800 | Opt Step: 2400 | Reward 0.7778 | Action Var 0.0100
+Steps: 20900 | Opt Step: 2400 | Reward 0.7748 | Action Var 0.0100
+Steps: 21000 | Opt Step: 2400 | Reward 0.7752 | Action Var 0.0100
+Steps: 21100 | Opt Step: 2400 | Reward 0.7749 | Action Var 0.0100
 Training
-Steps: 21200 | Opt Step: 2475 | Reward 0.8097 | Action Var 0.0100
-Steps: 21300 | Opt Step: 2475 | Reward 0.8062 | Action Var 0.0100
-Steps: 21400 | Opt Step: 2475 | Reward 0.8075 | Action Var 0.0100
-Steps: 21500 | Opt Step: 2475 | Reward 0.8089 | Action Var 0.0100
-Steps: 21600 | Opt Step: 2475 | Reward 0.8080 | Action Var 0.0100
-Steps: 21700 | Opt Step: 2475 | Reward 0.8083 | Action Var 0.0100
+Steps: 21200 | Opt Step: 2475 | Reward 0.7784 | Action Var 0.0100
+Steps: 21300 | Opt Step: 2475 | Reward 0.7791 | Action Var 0.0100
+Steps: 21400 | Opt Step: 2475 | Reward 0.7801 | Action Var 0.0100
+Steps: 21500 | Opt Step: 2475 | Reward 0.7793 | Action Var 0.0100
+Steps: 21600 | Opt Step: 2475 | Reward 0.7811 | Action Var 0.0100
+Steps: 21700 | Opt Step: 2475 | Reward 0.7761 | Action Var 0.0100
 Training
-Steps: 21800 | Opt Step: 2550 | Reward 0.8084 | Action Var 0.0100
-Steps: 21900 | Opt Step: 2550 | Reward 0.8055 | Action Var 0.0100
-Steps: 22000 | Opt Step: 2550 | Reward 0.8050 | Action Var 0.0100
-Steps: 22100 | Opt Step: 2550 | Reward 0.8063 | Action Var 0.0100
-Steps: 22200 | Opt Step: 2550 | Reward 0.8053 | Action Var 0.0100
-Steps: 22300 | Opt Step: 2550 | Reward 0.8043 | Action Var 0.0100
+Steps: 21800 | Opt Step: 2550 | Reward 0.7830 | Action Var 0.0100
+Steps: 21900 | Opt Step: 2550 | Reward 0.7866 | Action Var 0.0100
+Steps: 22000 | Opt Step: 2550 | Reward 0.7911 | Action Var 0.0100
+Steps: 22100 | Opt Step: 2550 | Reward 0.7878 | Action Var 0.0100
+Steps: 22200 | Opt Step: 2550 | Reward 0.7865 | Action Var 0.0100
+Steps: 22300 | Opt Step: 2550 | Reward 0.7853 | Action Var 0.0100
 Training
-Steps: 22400 | Opt Step: 2625 | Reward 0.8068 | Action Var 0.0100
-Steps: 22500 | Opt Step: 2625 | Reward 0.8106 | Action Var 0.0100
-Steps: 22600 | Opt Step: 2625 | Reward 0.8104 | Action Var 0.0100
-Steps: 22700 | Opt Step: 2625 | Reward 0.8108 | Action Var 0.0100
-Steps: 22800 | Opt Step: 2625 | Reward 0.8099 | Action Var 0.0100
-Steps: 22900 | Opt Step: 2625 | Reward 0.8102 | Action Var 0.0100
-Steps: 23000 | Opt Step: 2625 | Reward 0.8093 | Action Var 0.0100
+Steps: 22400 | Opt Step: 2625 | Reward 0.7884 | Action Var 0.0100
+Steps: 22500 | Opt Step: 2625 | Reward 0.7868 | Action Var 0.0100
+Steps: 22600 | Opt Step: 2625 | Reward 0.7874 | Action Var 0.0100
+Steps: 22700 | Opt Step: 2625 | Reward 0.7893 | Action Var 0.0100
+Steps: 22800 | Opt Step: 2625 | Reward 0.7934 | Action Var 0.0100
+Steps: 22900 | Opt Step: 2625 | Reward 0.7912 | Action Var 0.0100
+Steps: 23000 | Opt Step: 2625 | Reward 0.7914 | Action Var 0.0100
 Training
-saving...
-saved!
-Steps: 23100 | Opt Step: 2700 | Reward 0.8084 | Action Var 0.0100
-Steps: 23200 | Opt Step: 2700 | Reward 0.8076 | Action Var 0.0100
-Steps: 23300 | Opt Step: 2700 | Reward 0.8096 | Action Var 0.0100
-Steps: 23400 | Opt Step: 2700 | Reward 0.8077 | Action Var 0.0100
-Steps: 23500 | Opt Step: 2700 | Reward 0.8076 | Action Var 0.0100
-Steps: 23600 | Opt Step: 2700 | Reward 0.8085 | Action Var 0.0100
+Steps: 23100 | Opt Step: 2700 | Reward 0.7969 | Action Var 0.0100
+Steps: 23200 | Opt Step: 2700 | Reward 0.7976 | Action Var 0.0100
+Steps: 23300 | Opt Step: 2700 | Reward 0.7971 | Action Var 0.0100
+Steps: 23400 | Opt Step: 2700 | Reward 0.7999 | Action Var 0.0100
+Steps: 23500 | Opt Step: 2700 | Reward 0.7984 | Action Var 0.0100
+Steps: 23600 | Opt Step: 2700 | Reward 0.7963 | Action Var 0.0100
 Training
-Steps: 23700 | Opt Step: 2775 | Reward 0.8079 | Action Var 0.0100
-Steps: 23800 | Opt Step: 2775 | Reward 0.8009 | Action Var 0.0100
-Steps: 23900 | Opt Step: 2775 | Reward 0.8033 | Action Var 0.0100
-Steps: 24000 | Opt Step: 2775 | Reward 0.8016 | Action Var 0.0100
-Steps: 24100 | Opt Step: 2775 | Reward 0.8037 | Action Var 0.0100
-Steps: 24200 | Opt Step: 2775 | Reward 0.8032 | Action Var 0.0100
-Steps: 24300 | Opt Step: 2775 | Reward 0.8008 | Action Var 0.0100
+Steps: 23700 | Opt Step: 2775 | Reward 0.8008 | Action Var 0.0100
+Steps: 23800 | Opt Step: 2775 | Reward 0.8004 | Action Var 0.0100
+Steps: 23900 | Opt Step: 2775 | Reward 0.8010 | Action Var 0.0100
+Steps: 24000 | Opt Step: 2775 | Reward 0.8007 | Action Var 0.0100
+Steps: 24100 | Opt Step: 2775 | Reward 0.7997 | Action Var 0.0100
+Steps: 24200 | Opt Step: 2775 | Reward 0.8023 | Action Var 0.0100
+Steps: 24300 | Opt Step: 2775 | Reward 0.8017 | Action Var 0.0100
 Training
-Steps: 24400 | Opt Step: 2850 | Reward 0.8031 | Action Var 0.0100
-Steps: 24500 | Opt Step: 2850 | Reward 0.8025 | Action Var 0.0100
-Steps: 24600 | Opt Step: 2850 | Reward 0.8008 | Action Var 0.0100
-Steps: 24700 | Opt Step: 2850 | Reward 0.8013 | Action Var 0.0100
-Steps: 24800 | Opt Step: 2850 | Reward 0.8011 | Action Var 0.0100
-Steps: 24900 | Opt Step: 2850 | Reward 0.8016 | Action Var 0.0100
+Steps: 24400 | Opt Step: 2850 | Reward 0.8052 | Action Var 0.0100
+Steps: 24500 | Opt Step: 2850 | Reward 0.8080 | Action Var 0.0100
+Steps: 24600 | Opt Step: 2850 | Reward 0.8067 | Action Var 0.0100
+Steps: 24700 | Opt Step: 2850 | Reward 0.8074 | Action Var 0.0100
+Steps: 24800 | Opt Step: 2850 | Reward 0.8064 | Action Var 0.0100
+Steps: 24900 | Opt Step: 2850 | Reward 0.8049 | Action Var 0.0100
 Training
-Steps: 25000 | Opt Step: 2925 | Reward 0.8023 | Action Var 0.0100
-Steps: 25100 | Opt Step: 2925 | Reward 0.8033 | Action Var 0.0100
-Steps: 25200 | Opt Step: 2925 | Reward 0.8054 | Action Var 0.0100
-Steps: 25300 | Opt Step: 2925 | Reward 0.8029 | Action Var 0.0100
-Steps: 25400 | Opt Step: 2925 | Reward 0.8017 | Action Var 0.0100
-Steps: 25500 | Opt Step: 2925 | Reward 0.8023 | Action Var 0.0100
+Steps: 25000 | Opt Step: 2925 | Reward 0.8057 | Action Var 0.0100
+Steps: 25100 | Opt Step: 2925 | Reward 0.8059 | Action Var 0.0100
+Steps: 25200 | Opt Step: 2925 | Reward 0.8090 | Action Var 0.0100
+Steps: 25300 | Opt Step: 2925 | Reward 0.8066 | Action Var 0.0100
+Steps: 25400 | Opt Step: 2925 | Reward 0.8067 | Action Var 0.0100
+Steps: 25500 | Opt Step: 2925 | Reward 0.8089 | Action Var 0.0100
 Training
 saving...
 saved!
-Steps: 25600 | Opt Step: 3000 | Reward 0.8021 | Action Var 0.0100
-Steps: 25700 | Opt Step: 3000 | Reward 0.8006 | Action Var 0.0100
-Steps: 25800 | Opt Step: 3000 | Reward 0.8019 | Action Var 0.0100
-Steps: 25900 | Opt Step: 3000 | Reward 0.7978 | Action Var 0.0100
-Steps: 26000 | Opt Step: 3000 | Reward 0.8027 | Action Var 0.0100
-Steps: 26100 | Opt Step: 3000 | Reward 0.8025 | Action Var 0.0100
-Steps: 26200 | Opt Step: 3000 | Reward 0.8048 | Action Var 0.0100
+Steps: 25600 | Opt Step: 3000 | Reward 0.8039 | Action Var 0.0100
+Steps: 25700 | Opt Step: 3000 | Reward 0.8055 | Action Var 0.0100
+Steps: 25800 | Opt Step: 3000 | Reward 0.8054 | Action Var 0.0100
+Steps: 25900 | Opt Step: 3000 | Reward 0.8105 | Action Var 0.0100
+Steps: 26000 | Opt Step: 3000 | Reward 0.8074 | Action Var 0.0100
+Steps: 26100 | Opt Step: 3000 | Reward 0.8058 | Action Var 0.0100
+Steps: 26200 | Opt Step: 3000 | Reward 0.8035 | Action Var 0.0100
 Training
-Steps: 26300 | Opt Step: 3075 | Reward 0.7991 | Action Var 0.0100
-Steps: 26400 | Opt Step: 3075 | Reward 0.8034 | Action Var 0.0100
+Steps: 26300 | Opt Step: 3075 | Reward 0.8040 | Action Var 0.0100
+Steps: 26400 | Opt Step: 3075 | Reward 0.8040 | Action Var 0.0100
 Steps: 26500 | Opt Step: 3075 | Reward 0.8043 | Action Var 0.0100
-Steps: 26600 | Opt Step: 3075 | Reward 0.8034 | Action Var 0.0100
-Steps: 26700 | Opt Step: 3075 | Reward 0.8036 | Action Var 0.0100
+Steps: 26600 | Opt Step: 3075 | Reward 0.8075 | Action Var 0.0100
+Steps: 26700 | Opt Step: 3075 | Reward 0.8055 | Action Var 0.0100
 Steps: 26800 | Opt Step: 3075 | Reward 0.8033 | Action Var 0.0100
 Training
-Steps: 26900 | Opt Step: 3150 | Reward 0.8068 | Action Var 0.0100
-Steps: 27000 | Opt Step: 3150 | Reward 0.8041 | Action Var 0.0100
-Steps: 27100 | Opt Step: 3150 | Reward 0.8047 | Action Var 0.0100
-Steps: 27200 | Opt Step: 3150 | Reward 0.8065 | Action Var 0.0100
-Steps: 27300 | Opt Step: 3150 | Reward 0.8061 | Action Var 0.0100
-Steps: 27400 | Opt Step: 3150 | Reward 0.8053 | Action Var 0.0100
-Steps: 27500 | Opt Step: 3150 | Reward 0.8064 | Action Var 0.0100
+Steps: 26900 | Opt Step: 3150 | Reward 0.8073 | Action Var 0.0100
+Steps: 27000 | Opt Step: 3150 | Reward 0.8036 | Action Var 0.0100
+Steps: 27100 | Opt Step: 3150 | Reward 0.8088 | Action Var 0.0100
+Steps: 27200 | Opt Step: 3150 | Reward 0.8036 | Action Var 0.0100
+Steps: 27300 | Opt Step: 3150 | Reward 0.8046 | Action Var 0.0100
+Steps: 27400 | Opt Step: 3150 | Reward 0.8037 | Action Var 0.0100
+Steps: 27500 | Opt Step: 3150 | Reward 0.8066 | Action Var 0.0100
 Training
-Steps: 27600 | Opt Step: 3225 | Reward 0.8046 | Action Var 0.0100
-Steps: 27700 | Opt Step: 3225 | Reward 0.8010 | Action Var 0.0100
-Steps: 27800 | Opt Step: 3225 | Reward 0.8001 | Action Var 0.0100
-Steps: 27900 | Opt Step: 3225 | Reward 0.8013 | Action Var 0.0100
-Steps: 28000 | Opt Step: 3225 | Reward 0.8061 | Action Var 0.0100
-Steps: 28100 | Opt Step: 3225 | Reward 0.8040 | Action Var 0.0100
+Steps: 27600 | Opt Step: 3225 | Reward 0.8110 | Action Var 0.0100
+Steps: 27700 | Opt Step: 3225 | Reward 0.8108 | Action Var 0.0100
+Steps: 27800 | Opt Step: 3225 | Reward 0.8080 | Action Var 0.0100
+Steps: 27900 | Opt Step: 3225 | Reward 0.8082 | Action Var 0.0100
+Steps: 28000 | Opt Step: 3225 | Reward 0.8133 | Action Var 0.0100
+Steps: 28100 | Opt Step: 3225 | Reward 0.8114 | Action Var 0.0100
 Training
-saving...
-saved!
-Steps: 28200 | Opt Step: 3300 | Reward 0.8003 | Action Var 0.0100
-Steps: 28300 | Opt Step: 3300 | Reward 0.8126 | Action Var 0.0100
-Steps: 28400 | Opt Step: 3300 | Reward 0.8126 | Action Var 0.0100
-Steps: 28500 | Opt Step: 3300 | Reward 0.8144 | Action Var 0.0100
-Steps: 28600 | Opt Step: 3300 | Reward 0.8166 | Action Var 0.0100
-Steps: 28700 | Opt Step: 3300 | Reward 0.8137 | Action Var 0.0100
+Steps: 28200 | Opt Step: 3300 | Reward 0.8114 | Action Var 0.0100
+Steps: 28300 | Opt Step: 3300 | Reward 0.8152 | Action Var 0.0100
+Steps: 28400 | Opt Step: 3300 | Reward 0.8146 | Action Var 0.0100
+Steps: 28500 | Opt Step: 3300 | Reward 0.8141 | Action Var 0.0100
+Steps: 28600 | Opt Step: 3300 | Reward 0.8137 | Action Var 0.0100
+Steps: 28700 | Opt Step: 3300 | Reward 0.8146 | Action Var 0.0100
 Training
-Steps: 28800 | Opt Step: 3375 | Reward 0.8141 | Action Var 0.0100
-Steps: 28900 | Opt Step: 3375 | Reward 0.8160 | Action Var 0.0100
-Steps: 29000 | Opt Step: 3375 | Reward 0.8157 | Action Var 0.0100
-Steps: 29100 | Opt Step: 3375 | Reward 0.8169 | Action Var 0.0100
-Steps: 29200 | Opt Step: 3375 | Reward 0.8160 | Action Var 0.0100
-Steps: 29300 | Opt Step: 3375 | Reward 0.8125 | Action Var 0.0100
-Steps: 29400 | Opt Step: 3375 | Reward 0.8113 | Action Var 0.0100
+Steps: 28800 | Opt Step: 3375 | Reward 0.8129 | Action Var 0.0100
+Steps: 28900 | Opt Step: 3375 | Reward 0.8131 | Action Var 0.0100
+Steps: 29000 | Opt Step: 3375 | Reward 0.8140 | Action Var 0.0100
+Steps: 29100 | Opt Step: 3375 | Reward 0.8133 | Action Var 0.0100
+Steps: 29200 | Opt Step: 3375 | Reward 0.8117 | Action Var 0.0100
+Steps: 29300 | Opt Step: 3375 | Reward 0.8141 | Action Var 0.0100
+Steps: 29400 | Opt Step: 3375 | Reward 0.8117 | Action Var 0.0100
 Training
-Steps: 29500 | Opt Step: 3450 | Reward 0.8172 | Action Var 0.0100
-Steps: 29600 | Opt Step: 3450 | Reward 0.8168 | Action Var 0.0100
-Steps: 29700 | Opt Step: 3450 | Reward 0.8152 | Action Var 0.0100
-Steps: 29800 | Opt Step: 3450 | Reward 0.8200 | Action Var 0.0100
-Steps: 29900 | Opt Step: 3450 | Reward 0.8170 | Action Var 0.0100
-Steps: 30000 | Opt Step: 3450 | Reward 0.8204 | Action Var 0.0100
+Steps: 29500 | Opt Step: 3450 | Reward 0.8189 | Action Var 0.0100
+Steps: 29600 | Opt Step: 3450 | Reward 0.8170 | Action Var 0.0100
+Steps: 29700 | Opt Step: 3450 | Reward 0.8170 | Action Var 0.0100
+Steps: 29800 | Opt Step: 3450 | Reward 0.8176 | Action Var 0.0100
+Steps: 29900 | Opt Step: 3450 | Reward 0.8202 | Action Var 0.0100
+Steps: 30000 | Opt Step: 3450 | Reward 0.8198 | Action Var 0.0100
 Training
-Steps: 30100 | Opt Step: 3525 | Reward 0.8183 | Action Var 0.0100
-Steps: 30200 | Opt Step: 3525 | Reward 0.8224 | Action Var 0.0100
-Steps: 30300 | Opt Step: 3525 | Reward 0.8221 | Action Var 0.0100
-Steps: 30400 | Opt Step: 3525 | Reward 0.8243 | Action Var 0.0100
-Steps: 30500 | Opt Step: 3525 | Reward 0.8232 | Action Var 0.0100
-Steps: 30600 | Opt Step: 3525 | Reward 0.8223 | Action Var 0.0100
-Steps: 30700 | Opt Step: 3525 | Reward 0.8220 | Action Var 0.0100
+Steps: 30100 | Opt Step: 3525 | Reward 0.8185 | Action Var 0.0100
+Steps: 30200 | Opt Step: 3525 | Reward 0.8179 | Action Var 0.0100
+Steps: 30300 | Opt Step: 3525 | Reward 0.8195 | Action Var 0.0100
+Steps: 30400 | Opt Step: 3525 | Reward 0.8224 | Action Var 0.0100
+Steps: 30500 | Opt Step: 3525 | Reward 0.8228 | Action Var 0.0100
+Steps: 30600 | Opt Step: 3525 | Reward 0.8204 | Action Var 0.0100
+Steps: 30700 | Opt Step: 3525 | Reward 0.8198 | Action Var 0.0100
 Training
 saving...
 saved!
-Steps: 30800 | Opt Step: 3600 | Reward 0.8205 | Action Var 0.0100
-Steps: 30900 | Opt Step: 3600 | Reward 0.8184 | Action Var 0.0100
-Steps: 31000 | Opt Step: 3600 | Reward 0.8177 | Action Var 0.0100
-Steps: 31100 | Opt Step: 3600 | Reward 0.8197 | Action Var 0.0100
-Steps: 31200 | Opt Step: 3600 | Reward 0.8201 | Action Var 0.0100
-Steps: 31300 | Opt Step: 3600 | Reward 0.8189 | Action Var 0.0100
+Steps: 30800 | Opt Step: 3600 | Reward 0.8204 | Action Var 0.0100
+Steps: 30900 | Opt Step: 3600 | Reward 0.8248 | Action Var 0.0100
+Steps: 31000 | Opt Step: 3600 | Reward 0.8250 | Action Var 0.0100
+Steps: 31100 | Opt Step: 3600 | Reward 0.8229 | Action Var 0.0100
+Steps: 31200 | Opt Step: 3600 | Reward 0.8241 | Action Var 0.0100
+Steps: 31300 | Opt Step: 3600 | Reward 0.8240 | Action Var 0.0100
 Training
-Steps: 31400 | Opt Step: 3675 | Reward 0.8204 | Action Var 0.0100
-Steps: 31500 | Opt Step: 3675 | Reward 0.8247 | Action Var 0.0100
-Steps: 31600 | Opt Step: 3675 | Reward 0.8253 | Action Var 0.0100
-Steps: 31700 | Opt Step: 3675 | Reward 0.8271 | Action Var 0.0100
-Steps: 31800 | Opt Step: 3675 | Reward 0.8261 | Action Var 0.0100
-Steps: 31900 | Opt Step: 3675 | Reward 0.8228 | Action Var 0.0100
+Steps: 31400 | Opt Step: 3675 | Reward 0.8246 | Action Var 0.0100
+Steps: 31500 | Opt Step: 3675 | Reward 0.8278 | Action Var 0.0100
+Steps: 31600 | Opt Step: 3675 | Reward 0.8280 | Action Var 0.0100
+Steps: 31700 | Opt Step: 3675 | Reward 0.8250 | Action Var 0.0100
+Steps: 31800 | Opt Step: 3675 | Reward 0.8245 | Action Var 0.0100
+Steps: 31900 | Opt Step: 3675 | Reward 0.8268 | Action Var 0.0100
 Training
-Steps: 32000 | Opt Step: 3750 | Reward 0.8238 | Action Var 0.0100
-Steps: 32100 | Opt Step: 3750 | Reward 0.8208 | Action Var 0.0100
-Steps: 32200 | Opt Step: 3750 | Reward 0.8254 | Action Var 0.0100
+Steps: 32000 | Opt Step: 3750 | Reward 0.8266 | Action Var 0.0100
+Steps: 32100 | Opt Step: 3750 | Reward 0.8239 | Action Var 0.0100
+Steps: 32200 | Opt Step: 3750 | Reward 0.8231 | Action Var 0.0100
 Steps: 32300 | Opt Step: 3750 | Reward 0.8246 | Action Var 0.0100
-Steps: 32400 | Opt Step: 3750 | Reward 0.8233 | Action Var 0.0100
-Steps: 32500 | Opt Step: 3750 | Reward 0.8238 | Action Var 0.0100
-Steps: 32600 | Opt Step: 3750 | Reward 0.8204 | Action Var 0.0100
+Steps: 32400 | Opt Step: 3750 | Reward 0.8232 | Action Var 0.0100
+Steps: 32500 | Opt Step: 3750 | Reward 0.8233 | Action Var 0.0100
+Steps: 32600 | Opt Step: 3750 | Reward 0.8242 | Action Var 0.0100
 Training
-Steps: 32700 | Opt Step: 3825 | Reward 0.8257 | Action Var 0.0100
-Steps: 32800 | Opt Step: 3825 | Reward 0.8236 | Action Var 0.0100
-Steps: 32900 | Opt Step: 3825 | Reward 0.8209 | Action Var 0.0100
-Steps: 33000 | Opt Step: 3825 | Reward 0.8241 | Action Var 0.0100
-Steps: 33100 | Opt Step: 3825 | Reward 0.8207 | Action Var 0.0100
-Steps: 33200 | Opt Step: 3825 | Reward 0.8216 | Action Var 0.0100
+Steps: 32700 | Opt Step: 3825 | Reward 0.8219 | Action Var 0.0100
+Steps: 32800 | Opt Step: 3825 | Reward 0.8241 | Action Var 0.0100
+Steps: 32900 | Opt Step: 3825 | Reward 0.8229 | Action Var 0.0100
+Steps: 33000 | Opt Step: 3825 | Reward 0.8211 | Action Var 0.0100
+Steps: 33100 | Opt Step: 3825 | Reward 0.8256 | Action Var 0.0100
+Steps: 33200 | Opt Step: 3825 | Reward 0.8250 | Action Var 0.0100
 Training
-saving...
-saved!
-Steps: 33300 | Opt Step: 3900 | Reward 0.8248 | Action Var 0.0100
-Steps: 33400 | Opt Step: 3900 | Reward 0.8230 | Action Var 0.0100
-Steps: 33500 | Opt Step: 3900 | Reward 0.8213 | Action Var 0.0100
-Steps: 33600 | Opt Step: 3900 | Reward 0.8246 | Action Var 0.0100
-Steps: 33700 | Opt Step: 3900 | Reward 0.8234 | Action Var 0.0100
-Steps: 33800 | Opt Step: 3900 | Reward 0.8242 | Action Var 0.0100
-Steps: 33900 | Opt Step: 3900 | Reward 0.8237 | Action Var 0.0100
+Steps: 33300 | Opt Step: 3900 | Reward 0.8247 | Action Var 0.0100
+Steps: 33400 | Opt Step: 3900 | Reward 0.8252 | Action Var 0.0100
+Steps: 33500 | Opt Step: 3900 | Reward 0.8246 | Action Var 0.0100
+Steps: 33600 | Opt Step: 3900 | Reward 0.8254 | Action Var 0.0100
+Steps: 33700 | Opt Step: 3900 | Reward 0.8244 | Action Var 0.0100
+Steps: 33800 | Opt Step: 3900 | Reward 0.8270 | Action Var 0.0100
+Steps: 33900 | Opt Step: 3900 | Reward 0.8256 | Action Var 0.0100
 Training
-Steps: 34000 | Opt Step: 3975 | Reward 0.8251 | Action Var 0.0100
-Steps: 34100 | Opt Step: 3975 | Reward 0.8271 | Action Var 0.0100
-Steps: 34200 | Opt Step: 3975 | Reward 0.8261 | Action Var 0.0100
-Steps: 34300 | Opt Step: 3975 | Reward 0.8251 | Action Var 0.0100
-Steps: 34400 | Opt Step: 3975 | Reward 0.8260 | Action Var 0.0100
-Steps: 34500 | Opt Step: 3975 | Reward 0.8267 | Action Var 0.0100
+Steps: 34000 | Opt Step: 3975 | Reward 0.8247 | Action Var 0.0100
+Steps: 34100 | Opt Step: 3975 | Reward 0.8239 | Action Var 0.0100
+Steps: 34200 | Opt Step: 3975 | Reward 0.8270 | Action Var 0.0100
+Steps: 34300 | Opt Step: 3975 | Reward 0.8266 | Action Var 0.0100
+Steps: 34400 | Opt Step: 3975 | Reward 0.8241 | Action Var 0.0100
+Steps: 34500 | Opt Step: 3975 | Reward 0.8249 | Action Var 0.0100
 Training
-Steps: 34600 | Opt Step: 4050 | Reward 0.8270 | Action Var 0.0100
-Steps: 34700 | Opt Step: 4050 | Reward 0.8333 | Action Var 0.0100
-Steps: 34800 | Opt Step: 4050 | Reward 0.8322 | Action Var 0.0100
-Steps: 34900 | Opt Step: 4050 | Reward 0.8304 | Action Var 0.0100
-Steps: 35000 | Opt Step: 4050 | Reward 0.8318 | Action Var 0.0100
-Steps: 35100 | Opt Step: 4050 | Reward 0.8329 | Action Var 0.0100
+Steps: 34600 | Opt Step: 4050 | Reward 0.8290 | Action Var 0.0100
+Steps: 34700 | Opt Step: 4050 | Reward 0.8303 | Action Var 0.0100
+Steps: 34800 | Opt Step: 4050 | Reward 0.8312 | Action Var 0.0100
+Steps: 34900 | Opt Step: 4050 | Reward 0.8331 | Action Var 0.0100
+Steps: 35000 | Opt Step: 4050 | Reward 0.8342 | Action Var 0.0100
+Steps: 35100 | Opt Step: 4050 | Reward 0.8304 | Action Var 0.0100
 Training
-Steps: 35200 | Opt Step: 4125 | Reward 0.8311 | Action Var 0.0100
-Steps: 35300 | Opt Step: 4125 | Reward 0.8340 | Action Var 0.0100
-Steps: 35400 | Opt Step: 4125 | Reward 0.8346 | Action Var 0.0100
-Steps: 35500 | Opt Step: 4125 | Reward 0.8365 | Action Var 0.0100
-Steps: 35600 | Opt Step: 4125 | Reward 0.8361 | Action Var 0.0100
-Steps: 35700 | Opt Step: 4125 | Reward 0.8320 | Action Var 0.0100
-Steps: 35800 | Opt Step: 4125 | Reward 0.8356 | Action Var 0.0100
+Steps: 35200 | Opt Step: 4125 | Reward 0.8332 | Action Var 0.0100
+Steps: 35300 | Opt Step: 4125 | Reward 0.8351 | Action Var 0.0100
+Steps: 35400 | Opt Step: 4125 | Reward 0.8333 | Action Var 0.0100
+Steps: 35500 | Opt Step: 4125 | Reward 0.8291 | Action Var 0.0100
+Steps: 35600 | Opt Step: 4125 | Reward 0.8354 | Action Var 0.0100
+Steps: 35700 | Opt Step: 4125 | Reward 0.8323 | Action Var 0.0100
+Steps: 35800 | Opt Step: 4125 | Reward 0.8340 | Action Var 0.0100
 Training
 saving...
 saved!
-Steps: 35900 | Opt Step: 4200 | Reward 0.8342 | Action Var 0.0100
-Steps: 36000 | Opt Step: 4200 | Reward 0.8343 | Action Var 0.0100
-Steps: 36100 | Opt Step: 4200 | Reward 0.8319 | Action Var 0.0100
-Steps: 36200 | Opt Step: 4200 | Reward 0.8367 | Action Var 0.0100
-Steps: 36300 | Opt Step: 4200 | Reward 0.8355 | Action Var 0.0100
-Steps: 36400 | Opt Step: 4200 | Reward 0.8357 | Action Var 0.0100
+Steps: 35900 | Opt Step: 4200 | Reward 0.8357 | Action Var 0.0100
+Steps: 36000 | Opt Step: 4200 | Reward 0.8334 | Action Var 0.0100
+Steps: 36100 | Opt Step: 4200 | Reward 0.8370 | Action Var 0.0100
+Steps: 36200 | Opt Step: 4200 | Reward 0.8384 | Action Var 0.0100
+Steps: 36300 | Opt Step: 4200 | Reward 0.8320 | Action Var 0.0100
+Steps: 36400 | Opt Step: 4200 | Reward 0.8347 | Action Var 0.0100
 Training
-Steps: 36500 | Opt Step: 4275 | Reward 0.8347 | Action Var 0.0100
-Steps: 36600 | Opt Step: 4275 | Reward 0.8386 | Action Var 0.0100
-Steps: 36700 | Opt Step: 4275 | Reward 0.8360 | Action Var 0.0100
-Steps: 36800 | Opt Step: 4275 | Reward 0.8401 | Action Var 0.0100
-Steps: 36900 | Opt Step: 4275 | Reward 0.8399 | Action Var 0.0100
-Steps: 37000 | Opt Step: 4275 | Reward 0.8383 | Action Var 0.0100
-Steps: 37100 | Opt Step: 4275 | Reward 0.8374 | Action Var 0.0100
+Steps: 36500 | Opt Step: 4275 | Reward 0.8346 | Action Var 0.0100
+Steps: 36600 | Opt Step: 4275 | Reward 0.8339 | Action Var 0.0100
+Steps: 36700 | Opt Step: 4275 | Reward 0.8308 | Action Var 0.0100
+Steps: 36800 | Opt Step: 4275 | Reward 0.8324 | Action Var 0.0100
+Steps: 36900 | Opt Step: 4275 | Reward 0.8339 | Action Var 0.0100
+Steps: 37000 | Opt Step: 4275 | Reward 0.8364 | Action Var 0.0100
+Steps: 37100 | Opt Step: 4275 | Reward 0.8316 | Action Var 0.0100
 Training
-Steps: 37200 | Opt Step: 4350 | Reward 0.8390 | Action Var 0.0100
-Steps: 37300 | Opt Step: 4350 | Reward 0.8364 | Action Var 0.0100
-Steps: 37400 | Opt Step: 4350 | Reward 0.8390 | Action Var 0.0100
-Steps: 37500 | Opt Step: 4350 | Reward 0.8392 | Action Var 0.0100
-Steps: 37600 | Opt Step: 4350 | Reward 0.8371 | Action Var 0.0100
-Steps: 37700 | Opt Step: 4350 | Reward 0.8382 | Action Var 0.0100
+Steps: 37200 | Opt Step: 4350 | Reward 0.8366 | Action Var 0.0100
+Steps: 37300 | Opt Step: 4350 | Reward 0.8377 | Action Var 0.0100
+Steps: 37400 | Opt Step: 4350 | Reward 0.8379 | Action Var 0.0100
+Steps: 37500 | Opt Step: 4350 | Reward 0.8353 | Action Var 0.0100
+Steps: 37600 | Opt Step: 4350 | Reward 0.8406 | Action Var 0.0100
+Steps: 37700 | Opt Step: 4350 | Reward 0.8391 | Action Var 0.0100
 Training
-Steps: 37800 | Opt Step: 4425 | Reward 0.8396 | Action Var 0.0100
-Steps: 37900 | Opt Step: 4425 | Reward 0.8379 | Action Var 0.0100
-Steps: 38000 | Opt Step: 4425 | Reward 0.8386 | Action Var 0.0100
-Steps: 38100 | Opt Step: 4425 | Reward 0.8380 | Action Var 0.0100
-Steps: 38200 | Opt Step: 4425 | Reward 0.8383 | Action Var 0.0100
-Steps: 38300 | Opt Step: 4425 | Reward 0.8377 | Action Var 0.0100
+Steps: 37800 | Opt Step: 4425 | Reward 0.8424 | Action Var 0.0100
+Steps: 37900 | Opt Step: 4425 | Reward 0.8414 | Action Var 0.0100
+Steps: 38000 | Opt Step: 4425 | Reward 0.8436 | Action Var 0.0100
+Steps: 38100 | Opt Step: 4425 | Reward 0.8430 | Action Var 0.0100
+Steps: 38200 | Opt Step: 4425 | Reward 0.8420 | Action Var 0.0100
+Steps: 38300 | Opt Step: 4425 | Reward 0.8409 | Action Var 0.0100
+Training
+Steps: 38400 | Opt Step: 4500 | Reward 0.8418 | Action Var 0.0100
+Steps: 38500 | Opt Step: 4500 | Reward 0.8470 | Action Var 0.0100
+Steps: 38600 | Opt Step: 4500 | Reward 0.8465 | Action Var 0.0100
+Steps: 38700 | Opt Step: 4500 | Reward 0.8461 | Action Var 0.0100
+Steps: 38800 | Opt Step: 4500 | Reward 0.8463 | Action Var 0.0100
+Steps: 38900 | Opt Step: 4500 | Reward 0.8472 | Action Var 0.0100
+Steps: 39000 | Opt Step: 4500 | Reward 0.8423 | Action Var 0.0100
+Training
+Steps: 39100 | Opt Step: 4575 | Reward 0.8475 | Action Var 0.0100
+Steps: 39200 | Opt Step: 4575 | Reward 0.8455 | Action Var 0.0100
+Steps: 39300 | Opt Step: 4575 | Reward 0.8485 | Action Var 0.0100
+Steps: 39400 | Opt Step: 4575 | Reward 0.8463 | Action Var 0.0100
+Steps: 39500 | Opt Step: 4575 | Reward 0.8444 | Action Var 0.0100
+Steps: 39600 | Opt Step: 4575 | Reward 0.8478 | Action Var 0.0100
+Training
+Steps: 39700 | Opt Step: 4650 | Reward 0.8442 | Action Var 0.0100
+Steps: 39800 | Opt Step: 4650 | Reward 0.8446 | Action Var 0.0100
+Steps: 39900 | Opt Step: 4650 | Reward 0.8476 | Action Var 0.0100
+Steps: 40000 | Opt Step: 4650 | Reward 0.8466 | Action Var 0.0100
+Steps: 40100 | Opt Step: 4650 | Reward 0.8489 | Action Var 0.0100
+Steps: 40200 | Opt Step: 4650 | Reward 0.8489 | Action Var 0.0100
+Steps: 40300 | Opt Step: 4650 | Reward 0.8470 | Action Var 0.0100
+Training
+Steps: 40400 | Opt Step: 4725 | Reward 0.8485 | Action Var 0.0100
+Steps: 40500 | Opt Step: 4725 | Reward 0.8487 | Action Var 0.0100
+Steps: 40600 | Opt Step: 4725 | Reward 0.8496 | Action Var 0.0100
+Steps: 40700 | Opt Step: 4725 | Reward 0.8491 | Action Var 0.0100
+Steps: 40800 | Opt Step: 4725 | Reward 0.8472 | Action Var 0.0100
+Steps: 40900 | Opt Step: 4725 | Reward 0.8475 | Action Var 0.0100
 Training
 saving...
 saved!
-Steps: 38400 | Opt Step: 4500 | Reward 0.8382 | Action Var 0.0100
-Steps: 38500 | Opt Step: 4500 | Reward 0.8400 | Action Var 0.0100
-Steps: 38600 | Opt Step: 4500 | Reward 0.8402 | Action Var 0.0100
-Steps: 38700 | Opt Step: 4500 | Reward 0.8404 | Action Var 0.0100
-Steps: 38800 | Opt Step: 4500 | Reward 0.8404 | Action Var 0.0100
-Steps: 38900 | Opt Step: 4500 | Reward 0.8394 | Action Var 0.0100
-Steps: 39000 | Opt Step: 4500 | Reward 0.8408 | Action Var 0.0100
+Steps: 41000 | Opt Step: 4800 | Reward 0.8461 | Action Var 0.0100
+Steps: 41100 | Opt Step: 4800 | Reward 0.8477 | Action Var 0.0100
+Steps: 41200 | Opt Step: 4800 | Reward 0.8461 | Action Var 0.0100
+Steps: 41300 | Opt Step: 4800 | Reward 0.8485 | Action Var 0.0100
+Steps: 41400 | Opt Step: 4800 | Reward 0.8508 | Action Var 0.0100
+Steps: 41500 | Opt Step: 4800 | Reward 0.8499 | Action Var 0.0100
 Training
-Steps: 39100 | Opt Step: 4575 | Reward 0.8378 | Action Var 0.0100
-Steps: 39200 | Opt Step: 4575 | Reward 0.8394 | Action Var 0.0100
-Steps: 39300 | Opt Step: 4575 | Reward 0.8375 | Action Var 0.0100
-Steps: 39400 | Opt Step: 4575 | Reward 0.8376 | Action Var 0.0100
-Steps: 39500 | Opt Step: 4575 | Reward 0.8365 | Action Var 0.0100
-Steps: 39600 | Opt Step: 4575 | Reward 0.8361 | Action Var 0.0100
+Steps: 41600 | Opt Step: 4875 | Reward 0.8492 | Action Var 0.0100
+Steps: 41700 | Opt Step: 4875 | Reward 0.8537 | Action Var 0.0100
+Steps: 41800 | Opt Step: 4875 | Reward 0.8540 | Action Var 0.0100
+Steps: 41900 | Opt Step: 4875 | Reward 0.8519 | Action Var 0.0100
+Steps: 42000 | Opt Step: 4875 | Reward 0.8496 | Action Var 0.0100
+Steps: 42100 | Opt Step: 4875 | Reward 0.8516 | Action Var 0.0100
+Steps: 42200 | Opt Step: 4875 | Reward 0.8528 | Action Var 0.0100
 Training
-We end the simulation !!!
-Steps: 39700 | Opt Step: 4650 | Reward 0.8371 | Action Var 0.0100
+Steps: 42300 | Opt Step: 4950 | Reward 0.8562 | Action Var 0.0100
+Steps: 42400 | Opt Step: 4950 | Reward 0.8586 | Action Var 0.0100
+Steps: 42500 | Opt Step: 4950 | Reward 0.8592 | Action Var 0.0100
+Steps: 42600 | Opt Step: 4950 | Reward 0.8583 | Action Var 0.0100
+Steps: 42700 | Opt Step: 4950 | Reward 0.8598 | Action Var 0.0100
+Steps: 42800 | Opt Step: 4950 | Reward 0.8589 | Action Var 0.0100
+Training
+Steps: 42900 | Opt Step: 5025 | Reward 0.8581 | Action Var 0.0100
+Steps: 43000 | Opt Step: 5025 | Reward 0.8609 | Action Var 0.0100
+Steps: 43100 | Opt Step: 5025 | Reward 0.8603 | Action Var 0.0100
+Steps: 43200 | Opt Step: 5025 | Reward 0.8600 | Action Var 0.0100
+Steps: 43300 | Opt Step: 5025 | Reward 0.8602 | Action Var 0.0100
+Steps: 43400 | Opt Step: 5025 | Reward 0.8607 | Action Var 0.0100
+Steps: 43500 | Opt Step: 5025 | Reward 0.8608 | Action Var 0.0100
+Training
+Steps: 43600 | Opt Step: 5100 | Reward 0.8614 | Action Var 0.0100
+Steps: 43700 | Opt Step: 5100 | Reward 0.8580 | Action Var 0.0100
+Steps: 43800 | Opt Step: 5100 | Reward 0.8561 | Action Var 0.0100
+Steps: 43900 | Opt Step: 5100 | Reward 0.8559 | Action Var 0.0100
+Steps: 44000 | Opt Step: 5100 | Reward 0.8553 | Action Var 0.0100
+Steps: 44100 | Opt Step: 5100 | Reward 0.8565 | Action Var 0.0100
+Training
+Steps: 44200 | Opt Step: 5175 | Reward 0.8578 | Action Var 0.0100
+Steps: 44300 | Opt Step: 5175 | Reward 0.8570 | Action Var 0.0100
+Steps: 44400 | Opt Step: 5175 | Reward 0.8571 | Action Var 0.0100
+Steps: 44500 | Opt Step: 5175 | Reward 0.8593 | Action Var 0.0100
+Steps: 44600 | Opt Step: 5175 | Reward 0.8583 | Action Var 0.0100
+Steps: 44700 | Opt Step: 5175 | Reward 0.8582 | Action Var 0.0100
+Training
+Steps: 44800 | Opt Step: 5250 | Reward 0.8605 | Action Var 0.0100
+Steps: 44900 | Opt Step: 5250 | Reward 0.8609 | Action Var 0.0100
+Steps: 45000 | Opt Step: 5250 | Reward 0.8593 | Action Var 0.0100
+Steps: 45100 | Opt Step: 5250 | Reward 0.8596 | Action Var 0.0100
+Steps: 45200 | Opt Step: 5250 | Reward 0.8619 | Action Var 0.0100
+Steps: 45300 | Opt Step: 5250 | Reward 0.8624 | Action Var 0.0100
+Steps: 45400 | Opt Step: 5250 | Reward 0.8613 | Action Var 0.0100
+Training
+Steps: 45500 | Opt Step: 5325 | Reward 0.8617 | Action Var 0.0100
+Steps: 45600 | Opt Step: 5325 | Reward 0.8646 | Action Var 0.0100
+Steps: 45700 | Opt Step: 5325 | Reward 0.8626 | Action Var 0.0100
+Steps: 45800 | Opt Step: 5325 | Reward 0.8631 | Action Var 0.0100
+Steps: 45900 | Opt Step: 5325 | Reward 0.8642 | Action Var 0.0100
+Steps: 46000 | Opt Step: 5325 | Reward 0.8649 | Action Var 0.0100
+Training
+saving...
+saved!
+Steps: 46100 | Opt Step: 5400 | Reward 0.8641 | Action Var 0.0100
+Steps: 46200 | Opt Step: 5400 | Reward 0.8631 | Action Var 0.0100
+Steps: 46300 | Opt Step: 5400 | Reward 0.8632 | Action Var 0.0100
+Steps: 46400 | Opt Step: 5400 | Reward 0.8636 | Action Var 0.0100
+Steps: 46500 | Opt Step: 5400 | Reward 0.8626 | Action Var 0.0100
+Steps: 46600 | Opt Step: 5400 | Reward 0.8642 | Action Var 0.0100
+Steps: 46700 | Opt Step: 5400 | Reward 0.8630 | Action Var 0.0100
+Training
+Steps: 46800 | Opt Step: 5475 | Reward 0.8638 | Action Var 0.0100
+Steps: 46900 | Opt Step: 5475 | Reward 0.8655 | Action Var 0.0100
+Steps: 47000 | Opt Step: 5475 | Reward 0.8681 | Action Var 0.0100
+Steps: 47100 | Opt Step: 5475 | Reward 0.8661 | Action Var 0.0100
+Steps: 47200 | Opt Step: 5475 | Reward 0.8659 | Action Var 0.0100
+Steps: 47300 | Opt Step: 5475 | Reward 0.8644 | Action Var 0.0100
+Training
+Steps: 47400 | Opt Step: 5550 | Reward 0.8622 | Action Var 0.0100
+Steps: 47500 | Opt Step: 5550 | Reward 0.8655 | Action Var 0.0100
+Steps: 47600 | Opt Step: 5550 | Reward 0.8675 | Action Var 0.0100
+Steps: 47700 | Opt Step: 5550 | Reward 0.8655 | Action Var 0.0100
+Steps: 47800 | Opt Step: 5550 | Reward 0.8695 | Action Var 0.0100
+Steps: 47900 | Opt Step: 5550 | Reward 0.8671 | Action Var 0.0100
+Training
+Steps: 48000 | Opt Step: 5625 | Reward 0.8686 | Action Var 0.0100
+Steps: 48100 | Opt Step: 5625 | Reward 0.8695 | Action Var 0.0100
+Steps: 48200 | Opt Step: 5625 | Reward 0.8699 | Action Var 0.0100
+Steps: 48300 | Opt Step: 5625 | Reward 0.8711 | Action Var 0.0100
+Steps: 48400 | Opt Step: 5625 | Reward 0.8707 | Action Var 0.0100
+Steps: 48500 | Opt Step: 5625 | Reward 0.8686 | Action Var 0.0100
+Steps: 48600 | Opt Step: 5625 | Reward 0.8688 | Action Var 0.0100
+Training
+Steps: 48700 | Opt Step: 5700 | Reward 0.8671 | Action Var 0.0100
+Steps: 48800 | Opt Step: 5700 | Reward 0.8657 | Action Var 0.0100
+Steps: 48900 | Opt Step: 5700 | Reward 0.8625 | Action Var 0.0100
+Steps: 49000 | Opt Step: 5700 | Reward 0.8626 | Action Var 0.0100
+Steps: 49100 | Opt Step: 5700 | Reward 0.8657 | Action Var 0.0100
+Steps: 49200 | Opt Step: 5700 | Reward 0.8654 | Action Var 0.0100
+Training
+Steps: 49300 | Opt Step: 5775 | Reward 0.8654 | Action Var 0.0100
+Steps: 49400 | Opt Step: 5775 | Reward 0.8677 | Action Var 0.0100
+Steps: 49500 | Opt Step: 5775 | Reward 0.8664 | Action Var 0.0100
+Steps: 49600 | Opt Step: 5775 | Reward 0.8657 | Action Var 0.0100
+Steps: 49700 | Opt Step: 5775 | Reward 0.8673 | Action Var 0.0100
+Steps: 49800 | Opt Step: 5775 | Reward 0.8678 | Action Var 0.0100
+Steps: 49900 | Opt Step: 5775 | Reward 0.8681 | Action Var 0.0100
+Training
+Steps: 50000 | Opt Step: 5850 | Reward 0.8690 | Action Var 0.0100
+Steps: 50100 | Opt Step: 5850 | Reward 0.8696 | Action Var 0.0100
+Steps: 50200 | Opt Step: 5850 | Reward 0.8693 | Action Var 0.0100
+Steps: 50300 | Opt Step: 5850 | Reward 0.8710 | Action Var 0.0100
+Steps: 50400 | Opt Step: 5850 | Reward 0.8706 | Action Var 0.0100
+Steps: 50500 | Opt Step: 5850 | Reward 0.8694 | Action Var 0.0100
+Training
+Steps: 50600 | Opt Step: 5925 | Reward 0.8692 | Action Var 0.0100
+Steps: 50700 | Opt Step: 5925 | Reward 0.8729 | Action Var 0.0100
+Steps: 50800 | Opt Step: 5925 | Reward 0.8709 | Action Var 0.0100
+Steps: 50900 | Opt Step: 5925 | Reward 0.8709 | Action Var 0.0100
+Steps: 51000 | Opt Step: 5925 | Reward 0.8721 | Action Var 0.0100
+Steps: 51100 | Opt Step: 5925 | Reward 0.8695 | Action Var 0.0100
+Training
+saving...
+saved!
+Steps: 51200 | Opt Step: 6000 | Reward 0.8708 | Action Var 0.0100
+Steps: 51300 | Opt Step: 6000 | Reward 0.8693 | Action Var 0.0100
+Steps: 51400 | Opt Step: 6000 | Reward 0.8704 | Action Var 0.0100
+Steps: 51500 | Opt Step: 6000 | Reward 0.8708 | Action Var 0.0100
+Steps: 51600 | Opt Step: 6000 | Reward 0.8701 | Action Var 0.0100
+Steps: 51700 | Opt Step: 6000 | Reward 0.8702 | Action Var 0.0100
+Steps: 51800 | Opt Step: 6000 | Reward 0.8693 | Action Var 0.0100
+Training
+Steps: 51900 | Opt Step: 6075 | Reward 0.8716 | Action Var 0.0100
+Steps: 52000 | Opt Step: 6075 | Reward 0.8727 | Action Var 0.0100
+Steps: 52100 | Opt Step: 6075 | Reward 0.8730 | Action Var 0.0100
+Steps: 52200 | Opt Step: 6075 | Reward 0.8708 | Action Var 0.0100
+Steps: 52300 | Opt Step: 6075 | Reward 0.8716 | Action Var 0.0100
+Steps: 52400 | Opt Step: 6075 | Reward 0.8742 | Action Var 0.0100
+Training
+Steps: 52500 | Opt Step: 6150 | Reward 0.8725 | Action Var 0.0100
+Steps: 52600 | Opt Step: 6150 | Reward 0.8714 | Action Var 0.0100
+Steps: 52700 | Opt Step: 6150 | Reward 0.8711 | Action Var 0.0100
+Steps: 52800 | Opt Step: 6150 | Reward 0.8700 | Action Var 0.0100
+Steps: 52900 | Opt Step: 6150 | Reward 0.8720 | Action Var 0.0100
+Steps: 53000 | Opt Step: 6150 | Reward 0.8715 | Action Var 0.0100
+Steps: 53100 | Opt Step: 6150 | Reward 0.8713 | Action Var 0.0100
+Training
+Steps: 53200 | Opt Step: 6225 | Reward 0.8701 | Action Var 0.0100
+Steps: 53300 | Opt Step: 6225 | Reward 0.8716 | Action Var 0.0100
+Steps: 53400 | Opt Step: 6225 | Reward 0.8709 | Action Var 0.0100
+Steps: 53500 | Opt Step: 6225 | Reward 0.8717 | Action Var 0.0100
+Steps: 53600 | Opt Step: 6225 | Reward 0.8708 | Action Var 0.0100
+Steps: 53700 | Opt Step: 6225 | Reward 0.8720 | Action Var 0.0100
+Training
+Steps: 53800 | Opt Step: 6300 | Reward 0.8716 | Action Var 0.0100
+Steps: 53900 | Opt Step: 6300 | Reward 0.8770 | Action Var 0.0100
+Steps: 54000 | Opt Step: 6300 | Reward 0.8752 | Action Var 0.0100
+Steps: 54100 | Opt Step: 6300 | Reward 0.8749 | Action Var 0.0100
+Steps: 54200 | Opt Step: 6300 | Reward 0.8734 | Action Var 0.0100
+Steps: 54300 | Opt Step: 6300 | Reward 0.8745 | Action Var 0.0100
+Training
+Steps: 54400 | Opt Step: 6375 | Reward 0.8751 | Action Var 0.0100
+Steps: 54500 | Opt Step: 6375 | Reward 0.8731 | Action Var 0.0100
+Steps: 54600 | Opt Step: 6375 | Reward 0.8725 | Action Var 0.0100
+Steps: 54700 | Opt Step: 6375 | Reward 0.8728 | Action Var 0.0100
+Steps: 54800 | Opt Step: 6375 | Reward 0.8738 | Action Var 0.0100
+Steps: 54900 | Opt Step: 6375 | Reward 0.8738 | Action Var 0.0100
+Steps: 55000 | Opt Step: 6375 | Reward 0.8733 | Action Var 0.0100
+Training
+Steps: 55100 | Opt Step: 6450 | Reward 0.8719 | Action Var 0.0100
+Steps: 55200 | Opt Step: 6450 | Reward 0.8768 | Action Var 0.0100
+Steps: 55300 | Opt Step: 6450 | Reward 0.8761 | Action Var 0.0100
+Steps: 55400 | Opt Step: 6450 | Reward 0.8747 | Action Var 0.0100
+Steps: 55500 | Opt Step: 6450 | Reward 0.8755 | Action Var 0.0100
+Steps: 55600 | Opt Step: 6450 | Reward 0.8754 | Action Var 0.0100
+Training
+Steps: 55700 | Opt Step: 6525 | Reward 0.8766 | Action Var 0.0100
+Steps: 55800 | Opt Step: 6525 | Reward 0.8760 | Action Var 0.0100
+Steps: 55900 | Opt Step: 6525 | Reward 0.8778 | Action Var 0.0100
+Steps: 56000 | Opt Step: 6525 | Reward 0.8787 | Action Var 0.0100
+Steps: 56100 | Opt Step: 6525 | Reward 0.8770 | Action Var 0.0100
+Steps: 56200 | Opt Step: 6525 | Reward 0.8783 | Action Var 0.0100
+Steps: 56300 | Opt Step: 6525 | Reward 0.8768 | Action Var 0.0100
+Training
+saving...
+saved!
+Steps: 56400 | Opt Step: 6600 | Reward 0.8781 | Action Var 0.0100
+Steps: 56500 | Opt Step: 6600 | Reward 0.8774 | Action Var 0.0100
+Steps: 56600 | Opt Step: 6600 | Reward 0.8778 | Action Var 0.0100
+Steps: 56700 | Opt Step: 6600 | Reward 0.8777 | Action Var 0.0100
+Steps: 56800 | Opt Step: 6600 | Reward 0.8768 | Action Var 0.0100
+Steps: 56900 | Opt Step: 6600 | Reward 0.8778 | Action Var 0.0100
+Training
+Steps: 57000 | Opt Step: 6675 | Reward 0.8794 | Action Var 0.0100
+Steps: 57100 | Opt Step: 6675 | Reward 0.8822 | Action Var 0.0100
+Steps: 57200 | Opt Step: 6675 | Reward 0.8808 | Action Var 0.0100
+Steps: 57300 | Opt Step: 6675 | Reward 0.8808 | Action Var 0.0100
+Steps: 57400 | Opt Step: 6675 | Reward 0.8810 | Action Var 0.0100
+Steps: 57500 | Opt Step: 6675 | Reward 0.8828 | Action Var 0.0100
+Training
+Steps: 57600 | Opt Step: 6750 | Reward 0.8797 | Action Var 0.0100
+Steps: 57700 | Opt Step: 6750 | Reward 0.8760 | Action Var 0.0100
+Steps: 57800 | Opt Step: 6750 | Reward 0.8773 | Action Var 0.0100
+Steps: 57900 | Opt Step: 6750 | Reward 0.8801 | Action Var 0.0100
+Steps: 58000 | Opt Step: 6750 | Reward 0.8791 | Action Var 0.0100
+Steps: 58100 | Opt Step: 6750 | Reward 0.8803 | Action Var 0.0100
+Steps: 58200 | Opt Step: 6750 | Reward 0.8779 | Action Var 0.0100
+Training
+Steps: 58300 | Opt Step: 6825 | Reward 0.8799 | Action Var 0.0100
+Steps: 58400 | Opt Step: 6825 | Reward 0.8807 | Action Var 0.0100
+Steps: 58500 | Opt Step: 6825 | Reward 0.8793 | Action Var 0.0100
+Steps: 58600 | Opt Step: 6825 | Reward 0.8804 | Action Var 0.0100
+Steps: 58700 | Opt Step: 6825 | Reward 0.8810 | Action Var 0.0100
+Steps: 58800 | Opt Step: 6825 | Reward 0.8807 | Action Var 0.0100
+Training
+Steps: 58900 | Opt Step: 6900 | Reward 0.8827 | Action Var 0.0100
+Steps: 59000 | Opt Step: 6900 | Reward 0.8817 | Action Var 0.0100
+Steps: 59100 | Opt Step: 6900 | Reward 0.8796 | Action Var 0.0100
+Steps: 59200 | Opt Step: 6900 | Reward 0.8813 | Action Var 0.0100
+Steps: 59300 | Opt Step: 6900 | Reward 0.8802 | Action Var 0.0100
+Steps: 59400 | Opt Step: 6900 | Reward 0.8807 | Action Var 0.0100
+Steps: 59500 | Opt Step: 6900 | Reward 0.8805 | Action Var 0.0100
+Training
+Steps: 59600 | Opt Step: 6975 | Reward 0.8836 | Action Var 0.0100
+Steps: 59700 | Opt Step: 6975 | Reward 0.8848 | Action Var 0.0100
+Steps: 59800 | Opt Step: 6975 | Reward 0.8833 | Action Var 0.0100
+Steps: 59900 | Opt Step: 6975 | Reward 0.8825 | Action Var 0.0100
+Steps: 60000 | Opt Step: 6975 | Reward 0.8829 | Action Var 0.0100
+Steps: 60100 | Opt Step: 6975 | Reward 0.8834 | Action Var 0.0100
+Training
+Steps: 60200 | Opt Step: 7050 | Reward 0.8838 | Action Var 0.0100
+Steps: 60300 | Opt Step: 7050 | Reward 0.8827 | Action Var 0.0100
+Steps: 60400 | Opt Step: 7050 | Reward 0.8838 | Action Var 0.0100
+Steps: 60500 | Opt Step: 7050 | Reward 0.8837 | Action Var 0.0100
+Steps: 60600 | Opt Step: 7050 | Reward 0.8823 | Action Var 0.0100
+Steps: 60700 | Opt Step: 7050 | Reward 0.8831 | Action Var 0.0100
+Training
+Steps: 60800 | Opt Step: 7125 | Reward 0.8813 | Action Var 0.0100
+Steps: 60900 | Opt Step: 7125 | Reward 0.8857 | Action Var 0.0100
+Steps: 61000 | Opt Step: 7125 | Reward 0.8839 | Action Var 0.0100
+Steps: 61100 | Opt Step: 7125 | Reward 0.8836 | Action Var 0.0100
+Steps: 61200 | Opt Step: 7125 | Reward 0.8858 | Action Var 0.0100
+Steps: 61300 | Opt Step: 7125 | Reward 0.8847 | Action Var 0.0100
+Steps: 61400 | Opt Step: 7125 | Reward 0.8848 | Action Var 0.0100
+Training
+saving...
+saved!
+Steps: 61500 | Opt Step: 7200 | Reward 0.8847 | Action Var 0.0100
+Steps: 61600 | Opt Step: 7200 | Reward 0.8829 | Action Var 0.0100
+Steps: 61700 | Opt Step: 7200 | Reward 0.8844 | Action Var 0.0100
+Steps: 61800 | Opt Step: 7200 | Reward 0.8830 | Action Var 0.0100
+Steps: 61900 | Opt Step: 7200 | Reward 0.8829 | Action Var 0.0100
+Steps: 62000 | Opt Step: 7200 | Reward 0.8808 | Action Var 0.0100
+Training
+Steps: 62100 | Opt Step: 7275 | Reward 0.8828 | Action Var 0.0100
+Steps: 62200 | Opt Step: 7275 | Reward 0.8858 | Action Var 0.0100
+Steps: 62300 | Opt Step: 7275 | Reward 0.8884 | Action Var 0.0100
+Steps: 62400 | Opt Step: 7275 | Reward 0.8861 | Action Var 0.0100
+Steps: 62500 | Opt Step: 7275 | Reward 0.8835 | Action Var 0.0100
+Steps: 62600 | Opt Step: 7275 | Reward 0.8879 | Action Var 0.0100
+Steps: 62700 | Opt Step: 7275 | Reward 0.8869 | Action Var 0.0100
+Training
+Steps: 62800 | Opt Step: 7350 | Reward 0.8864 | Action Var 0.0100
+Steps: 62900 | Opt Step: 7350 | Reward 0.8878 | Action Var 0.0100
+Steps: 63000 | Opt Step: 7350 | Reward 0.8869 | Action Var 0.0100
+Steps: 63100 | Opt Step: 7350 | Reward 0.8860 | Action Var 0.0100
+Steps: 63200 | Opt Step: 7350 | Reward 0.8846 | Action Var 0.0100
+Steps: 63300 | Opt Step: 7350 | Reward 0.8871 | Action Var 0.0100
+Training
+Steps: 63400 | Opt Step: 7425 | Reward 0.8880 | Action Var 0.0100
+Steps: 63500 | Opt Step: 7425 | Reward 0.8885 | Action Var 0.0100
+Steps: 63600 | Opt Step: 7425 | Reward 0.8863 | Action Var 0.0100
+Steps: 63700 | Opt Step: 7425 | Reward 0.8860 | Action Var 0.0100
+Steps: 63800 | Opt Step: 7425 | Reward 0.8880 | Action Var 0.0100
+Steps: 63900 | Opt Step: 7425 | Reward 0.8870 | Action Var 0.0100
+Training
+Steps: 64000 | Opt Step: 7500 | Reward 0.8883 | Action Var 0.0100
+Steps: 64100 | Opt Step: 7500 | Reward 0.8887 | Action Var 0.0100
+Steps: 64200 | Opt Step: 7500 | Reward 0.8880 | Action Var 0.0100
+Steps: 64300 | Opt Step: 7500 | Reward 0.8894 | Action Var 0.0100
+Steps: 64400 | Opt Step: 7500 | Reward 0.8876 | Action Var 0.0100
+Steps: 64500 | Opt Step: 7500 | Reward 0.8885 | Action Var 0.0100
+Steps: 64600 | Opt Step: 7500 | Reward 0.8868 | Action Var 0.0100
+Training
+Steps: 64700 | Opt Step: 7575 | Reward 0.8859 | Action Var 0.0100
+Steps: 64800 | Opt Step: 7575 | Reward 0.8829 | Action Var 0.0100
+Steps: 64900 | Opt Step: 7575 | Reward 0.8844 | Action Var 0.0100
+Steps: 65000 | Opt Step: 7575 | Reward 0.8805 | Action Var 0.0100
+Steps: 65100 | Opt Step: 7575 | Reward 0.8830 | Action Var 0.0100
+Steps: 65200 | Opt Step: 7575 | Reward 0.8839 | Action Var 0.0100
+Training
+Steps: 65300 | Opt Step: 7650 | Reward 0.8824 | Action Var 0.0100
+Steps: 65400 | Opt Step: 7650 | Reward 0.8803 | Action Var 0.0100
+Steps: 65500 | Opt Step: 7650 | Reward 0.8797 | Action Var 0.0100
+Steps: 65600 | Opt Step: 7650 | Reward 0.8781 | Action Var 0.0100
+Steps: 65700 | Opt Step: 7650 | Reward 0.8791 | Action Var 0.0100
+Steps: 65800 | Opt Step: 7650 | Reward 0.8800 | Action Var 0.0100
+Steps: 65900 | Opt Step: 7650 | Reward 0.8785 | Action Var 0.0100
+Training
+Steps: 66000 | Opt Step: 7725 | Reward 0.8831 | Action Var 0.0100
+Steps: 66100 | Opt Step: 7725 | Reward 0.8816 | Action Var 0.0100
+Steps: 66200 | Opt Step: 7725 | Reward 0.8831 | Action Var 0.0100
+Steps: 66300 | Opt Step: 7725 | Reward 0.8802 | Action Var 0.0100
+Steps: 66400 | Opt Step: 7725 | Reward 0.8822 | Action Var 0.0100
+Steps: 66500 | Opt Step: 7725 | Reward 0.8834 | Action Var 0.0100
+Training
+saving...
+saved!
+Steps: 66600 | Opt Step: 7800 | Reward 0.8841 | Action Var 0.0100
+Steps: 66700 | Opt Step: 7800 | Reward 0.8866 | Action Var 0.0100
+Steps: 66800 | Opt Step: 7800 | Reward 0.8860 | Action Var 0.0100
+Steps: 66900 | Opt Step: 7800 | Reward 0.8877 | Action Var 0.0100
+Steps: 67000 | Opt Step: 7800 | Reward 0.8876 | Action Var 0.0100
+Steps: 67100 | Opt Step: 7800 | Reward 0.8888 | Action Var 0.0100
+Training
+Steps: 67200 | Opt Step: 7875 | Reward 0.8876 | Action Var 0.0100
+Steps: 67300 | Opt Step: 7875 | Reward 0.8883 | Action Var 0.0100
+Steps: 67400 | Opt Step: 7875 | Reward 0.8859 | Action Var 0.0100
+Steps: 67500 | Opt Step: 7875 | Reward 0.8889 | Action Var 0.0100
+Steps: 67600 | Opt Step: 7875 | Reward 0.8885 | Action Var 0.0100
+Steps: 67700 | Opt Step: 7875 | Reward 0.8864 | Action Var 0.0100
+Steps: 67800 | Opt Step: 7875 | Reward 0.8887 | Action Var 0.0100
+Training
+Steps: 67900 | Opt Step: 7950 | Reward 0.8887 | Action Var 0.0100
+Steps: 68000 | Opt Step: 7950 | Reward 0.8907 | Action Var 0.0100
+Steps: 68100 | Opt Step: 7950 | Reward 0.8927 | Action Var 0.0100
+Steps: 68200 | Opt Step: 7950 | Reward 0.8923 | Action Var 0.0100
+Steps: 68300 | Opt Step: 7950 | Reward 0.8904 | Action Var 0.0100
+Steps: 68400 | Opt Step: 7950 | Reward 0.8912 | Action Var 0.0100
+Training
+Steps: 68500 | Opt Step: 8025 | Reward 0.8894 | Action Var 0.0100
+Steps: 68600 | Opt Step: 8025 | Reward 0.8920 | Action Var 0.0100
+Steps: 68700 | Opt Step: 8025 | Reward 0.8917 | Action Var 0.0100
+Steps: 68800 | Opt Step: 8025 | Reward 0.8932 | Action Var 0.0100
+Steps: 68900 | Opt Step: 8025 | Reward 0.8927 | Action Var 0.0100
+Steps: 69000 | Opt Step: 8025 | Reward 0.8934 | Action Var 0.0100
+Steps: 69100 | Opt Step: 8025 | Reward 0.8948 | Action Var 0.0100
+Training
+Steps: 69200 | Opt Step: 8100 | Reward 0.8940 | Action Var 0.0100
+Steps: 69300 | Opt Step: 8100 | Reward 0.8936 | Action Var 0.0100
+Steps: 69400 | Opt Step: 8100 | Reward 0.8941 | Action Var 0.0100
+Steps: 69500 | Opt Step: 8100 | Reward 0.8933 | Action Var 0.0100
+Steps: 69600 | Opt Step: 8100 | Reward 0.8935 | Action Var 0.0100
+Steps: 69700 | Opt Step: 8100 | Reward 0.8925 | Action Var 0.0100
+Training
+Steps: 69800 | Opt Step: 8175 | Reward 0.8947 | Action Var 0.0100
+Steps: 69900 | Opt Step: 8175 | Reward 0.8962 | Action Var 0.0100
+Steps: 70000 | Opt Step: 8175 | Reward 0.8958 | Action Var 0.0100
+Steps: 70100 | Opt Step: 8175 | Reward 0.8948 | Action Var 0.0100
+Steps: 70200 | Opt Step: 8175 | Reward 0.8954 | Action Var 0.0100
+Steps: 70300 | Opt Step: 8175 | Reward 0.8953 | Action Var 0.0100
+Training
+Steps: 70400 | Opt Step: 8250 | Reward 0.8954 | Action Var 0.0100
+Steps: 70500 | Opt Step: 8250 | Reward 0.8949 | Action Var 0.0100
+Steps: 70600 | Opt Step: 8250 | Reward 0.8935 | Action Var 0.0100
+Steps: 70700 | Opt Step: 8250 | Reward 0.8928 | Action Var 0.0100
+Steps: 70800 | Opt Step: 8250 | Reward 0.8950 | Action Var 0.0100
+Steps: 70900 | Opt Step: 8250 | Reward 0.8949 | Action Var 0.0100
+Steps: 71000 | Opt Step: 8250 | Reward 0.8944 | Action Var 0.0100
+Training
+Steps: 71100 | Opt Step: 8325 | Reward 0.8963 | Action Var 0.0100
+Steps: 71200 | Opt Step: 8325 | Reward 0.8942 | Action Var 0.0100
+Steps: 71300 | Opt Step: 8325 | Reward 0.8957 | Action Var 0.0100
+Steps: 71400 | Opt Step: 8325 | Reward 0.8940 | Action Var 0.0100
+Steps: 71500 | Opt Step: 8325 | Reward 0.8957 | Action Var 0.0100
+Steps: 71600 | Opt Step: 8325 | Reward 0.8942 | Action Var 0.0100
+Training
+saving...
+saved!
+Steps: 71700 | Opt Step: 8400 | Reward 0.8938 | Action Var 0.0100
+Steps: 71800 | Opt Step: 8400 | Reward 0.8968 | Action Var 0.0100
+Steps: 71900 | Opt Step: 8400 | Reward 0.8968 | Action Var 0.0100
+Steps: 72000 | Opt Step: 8400 | Reward 0.8954 | Action Var 0.0100
+Steps: 72100 | Opt Step: 8400 | Reward 0.8959 | Action Var 0.0100
+We reset everyone !
+Steps: 72200 | Opt Step: 8400 | Reward 0.8673 | Action Var 0.0100
+We end the simulation
+[Error] [carb.dictionary.plugin] getItemChildByIndexImpl: internal error
