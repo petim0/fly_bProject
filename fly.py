@@ -32,8 +32,8 @@ class Fly:
          #           "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
           #          "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
 
-        self.plane_static_friction = 3.0 #was 1.0
-        self.plane_dynamic_friction = 3.0 #was 1.0
+        self.plane_static_friction = 10.0 #was 1.0
+        self.plane_dynamic_friction = 10.0 #was 1.0
 
         # constants for the reward function
         self.dof_vel_scale = 0.2
@@ -144,9 +144,9 @@ class Fly:
         # configure sim (gravity is pointing down)
         sim_params = gymapi.SimParams()
         sim_params.up_axis = gymapi.UP_AXIS_Z
-        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81) #should be *1000
+        sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*1000) #should be *1000
         sim_params.dt = self.dt
-        sim_params.substeps = 2
+        sim_params.substeps = 10
         sim_params.use_gpu_pipeline = True
 
         # set simulation parameters (we use PhysX engine by default, these parameters are from the example file)
@@ -217,9 +217,10 @@ class Fly:
         # Those cannot be over certain values otherwise the position controler doesn't work anymore !! Those values depend on the gravity and other
         # unknown parameters. Be careful with it a do tests when changing it. Example: see if the limbs are reseted correctly when calling self.Reset()
         dof_props['driveMode'] = gymapi.DOF_MODE_POS
-        dof_props['stiffness'].fill(1.3) 
+        dof_props['stiffness'].fill(70) 
         dof_props['damping'].fill(0.1)
         dof_props['velocity'].fill(1)
+        dof_props["effort"].fill(30)
 
         # Generate environments
         envs = []
@@ -611,7 +612,7 @@ class Fly:
     
     def step(self, actions):
         # apply action
-
+        print(actions[:self.num_act])
         # Clone the initial position of the fly
         actions_tensor = torch.clone(self.initial_dofs).detach()
         
@@ -643,11 +644,14 @@ class Fly:
         # Wraps the torch tensor in an IsaacGym tensor
         positions = gymtorch.unwrap_tensor(actions_pos_only)
 
-        # Sets the target position dicted by the actions 
-        self.gym.set_dof_position_target_tensor(self.sim, positions)
 
         # Reset the environements 
-        self.reset()
+        reset = self.reset()
+        if not reset:
+            # Sets the target position dicted by the actions 
+            self.gym.set_dof_position_target_tensor(self.sim, positions)
+
+        
 
         # Simulate: !! You need a simulate between a 
         self.simulate()
@@ -734,10 +738,10 @@ def compute_fly_reward2(
     leg_ground_reward = torch.sum((torch.sum(force_tensor[index_legs_tip, :], dim=1).view(num_env, -1) > 0).long(), dim=1) * 0.1 ##TODO 0.1 maybe too high 
 
 
-    total_reward = progress_reward * 2 + alive_reward + up_reward * orient_reward + heading_reward - \
-        actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale #+ leg_ground_reward 
+    #total_reward = progress_reward * 2 + alive_reward + up_reward * orient_reward + heading_reward - \
+     #   actions_cost_scale * actions_cost - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale #+ leg_ground_reward 
     
-    #total_reward = alive_reward + up_reward * orient_reward - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + leg_ground_reward 
+    total_reward = alive_reward + up_reward * orient_reward - energy_cost_scale * electricity_cost - dof_at_limit_cost * joints_at_limit_cost_scale + leg_ground_reward 
 
     # adjust reward for fallen agents, see below for more info. This is double. It could me made better maybe. 
     total_reward = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(total_reward) * death_cost, total_reward)

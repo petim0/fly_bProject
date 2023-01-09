@@ -11,7 +11,7 @@ parser.add_argument('--num_envs', default=1000, type=int)
 parser.add_argument('--headless', default=False)
 parser.add_argument('--save', type=bool, default=False)
 parser.add_argument('--save_path', type=str, default=None)
-parser.add_argument('--save_freq', type=int, default=200)
+parser.add_argument('--save_freq', type=int, default=100)
 parser.add_argument('--load', type=bool, default=False) ##Quand ça load ça devrai pas commencer à 0 mais bon osef 
 parser.add_argument('--load_path', type=str, default=None)
 parser.add_argument('--record', type=bool, default=False) 

@@ -136,7 +136,7 @@ class PPO:
             print("loaded from: ", str(self.args.load_path))
             self.net.load_state_dict(torch.load(self.args.load_path))
 
-        action_var = 0.01 if self.args.testing else 0.05 #was 0.1
+        action_var = 0.01 if self.args.testing else 0.1 #was 0.1
         self.action_var = torch.full((self.env.num_act,), action_var).to(args.sim_device) 
         self.optim = torch.optim.Adam(self.net.parameters(), lr=self.lr)
 
@@ -213,7 +213,7 @@ class PPO:
         self.score += torch.mean(self.all_reward[self.mini_batch_number].float()).item() / self.num_eval_freq 
         
         if not self.args.testing:
-            self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.000003) # was 0.00001
+            self.action_var = torch.max(0.01 * torch.ones_like(self.action_var), self.action_var - 0.00001) # was 0.00002
 
         # training mode
         if self.mini_batch_number+1 == self.rollout_size:
