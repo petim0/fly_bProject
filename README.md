@@ -3,9 +3,9 @@
 This repository is an implementation of the NeuroMechFly model in an RL environement using NVIDIA's physics simulation environment[Isaac Gym](https://developer.nvidia.com/isaac-gym). This implementation is a fork of Shikun Liu's [minimal-isaac-gym repository](https://github.com/lorenmt/minimal-isaac-gym) adapted and improved upon coupled with the work of [Ramdya Lab](https://www.epfl.ch/labs/ramdya-lab/) at epfl which released a very accurate model of the drosofilia Melanogaster called [NeuroMechFly](https://www.nature.com/articles/s41592-022-01466-7) 
 
 
-**Disclaimer**:This implementation is still not perfectly accurate regarding the coherance of the units used and so the results found using it a promising but not perfect. I highly recomend to read my project repport, especially the part 4.5 talking about the hyperparameters where I explain a big parts of the problems I encountered and how could one resolve them. 
+**Disclaimer**:This implementation is still not perfectly accurate regarding the coherance of the units used and so the results found using it a promising but not perfect. I highly recomend to read my project report, especially the part 4.5 talking about the hyperparameters where I explain a big parts of the problems I encountered and how could one resolve them. 
 
-**Note**: The current implementation supports only one RL algorithms, *PPO continuous*. The interfacing between the environement and the NN  is really simple as I am not using any third-party RL frameworks like the examples of IsaacGymEnvs do. One could easely change it at will and is encourage to do so as I think my NN is not strong enough to learn such a complex environement. But again I recommend to read my project repport to have more info on the subject. 
+**Note**: The current implementation supports only one RL algorithms, *PPO continuous*. The interfacing between the environement and the NN  is really simple as I am not using any third-party RL frameworks like the examples of IsaacGymEnvs do. One could easely change it at will and is encourage to do so as I think my NN is not strong enough to learn such a complex environement. But again I recommend to read my project report to have more info on the subject. 
 
 ## Usage
 
