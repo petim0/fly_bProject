@@ -13,7 +13,7 @@ class Fly:
         self.print_once = True #TODO
         self.args = args
         self.end = False
-        self.dt = 1 / 60 #was 1000.
+        self.dt = 1 / 600 #was 1000.
         self.up_axis_idx = 2 # index of up axis: X= 0, Y=1, Z=2
         self.i = 0
         # task-specific parameters
@@ -146,7 +146,7 @@ class Fly:
         sim_params.up_axis = gymapi.UP_AXIS_Z
         sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81*1000) #should be *1000
         sim_params.dt = self.dt
-        sim_params.substeps = 10
+        sim_params.substeps = 2
         sim_params.use_gpu_pipeline = True
 
         # set simulation parameters (we use PhysX engine by default, these parameters are from the example file)
@@ -461,6 +461,12 @@ class Fly:
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_states),
                                               gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
+
+        to_target = self.targets[env_ids] - self.origin_root_tensor[env_ids, 0:3]
+        to_target[:, 2] = 0.0
+        self.prev_potentials[env_ids] = -torch.norm(to_target, p=2, dim=-1) / self.dt
+        self.potentials[env_ids] = self.prev_potentials[env_ids].clone()
+
         # clear up desired buffer states
         self.reset_buf[env_ids] = 0
         self.progress_buf[env_ids] = 0
@@ -611,8 +617,6 @@ class Fly:
         
     
     def step(self, actions):
-        # apply action
-        print(actions[:self.num_act])
         # Clone the initial position of the fly
         actions_tensor = torch.clone(self.initial_dofs).detach()
         
@@ -643,18 +647,15 @@ class Fly:
         
         # Wraps the torch tensor in an IsaacGym tensor
         positions = gymtorch.unwrap_tensor(actions_pos_only)
-
-
-        # Reset the environements 
-        reset = self.reset()
-        if not reset:
-            # Sets the target position dicted by the actions 
-            self.gym.set_dof_position_target_tensor(self.sim, positions)
-
         
+        # Sets the target position dicted by the actions 
+        self.gym.set_dof_position_target_tensor(self.sim, positions)
 
         # Simulate: !! You need a simulate between a 
         self.simulate()
+
+        # Reset the environements 
+        self.reset()
         
         # Renders 
         if not self.args.headless :
