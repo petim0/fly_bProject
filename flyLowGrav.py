@@ -17,13 +17,8 @@ class Fly:
         self.up_axis_idx = 2 # index of up axis: X= 0, Y=1, Z=2
         self.i = 0
         # task-specific parameters
-        self.num_act = 18 #(3 DoFs * 6 legs)
-        self.num_obs = 19 + 3*self.num_act  # See compute_fly_observations
-        self.starting_height = 2
-        self.max_episode_length = 1500  # maximum episode length
-        self.render_count = 0
-        
-        
+        # Self.names contains the names of all the joints we want to apply an action on, currently these are the names
+        # of all the dofs we can have an action on as I changed the urdf file. This can be changed by changing again the urdf file 
         self.names = ["joint_LHCoxa_roll", "joint_RHCoxa_roll", "joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
@@ -31,6 +26,12 @@ class Fly:
         #self.names = ["joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
          #           "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
           #          "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
+
+        self.num_act = len(self.names) #(3 DoFs * 6 legs)
+        self.num_obs = 19 + 3*self.num_act  # See compute_fly_observations
+        self.starting_height = 2
+        self.max_episode_length = 1500  # maximum episode length
+        self.render_count = 0
 
         self.plane_static_friction = 3.0 #was 1.0
         self.plane_dynamic_friction = 3.0 #was 1.0
@@ -146,6 +147,7 @@ class Fly:
         sim_params.up_axis = gymapi.UP_AXIS_Z
         sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81) #should be *1000
         sim_params.dt = self.dt
+        # Number of physic steps in a step 
         sim_params.substeps = 2
         sim_params.use_gpu_pipeline = True
 
