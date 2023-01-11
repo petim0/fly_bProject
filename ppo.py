@@ -1,4 +1,4 @@
-from flyLowGrav import Fly
+from fly import Fly
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

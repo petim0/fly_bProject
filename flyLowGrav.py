@@ -23,9 +23,9 @@ class Fly:
                     "joint_LMCoxa_roll", "joint_RMCoxa_roll", "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
                      "joint_LFCoxa", "joint_RFCoxa", "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
         
-        self.names = ["joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
-                    "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
-                    "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
+        #self.names = ["joint_LHFemur", "joint_RHFemur", "joint_LHTibia", "joint_RHTibia",
+        #            "joint_LMFemur", "joint_RMFemur", "joint_LMTibia", "joint_RMTibia",
+        #            "joint_LFFemur", "joint_RFFemur", "joint_LFTibia", "joint_RFTibia"]
 
         self.num_act = len(self.names) #(3 DoFs * 6 legs)
         self.num_obs = 19 + 3*self.num_act  # See compute_fly_observations

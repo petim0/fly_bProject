@@ -46,6 +46,10 @@ If not None, the weights of the NN will be loaded from this path at the start of
 `--testing`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type= bool&nbsp;&nbsp;default= False
 <Br>If set to True, the variance of the action will be set to a small value and no training will take place. Use this to test your NN by loading the weights in with the command `--load_path` described before.
 
+Complex run commands could look something like that:
+
+`python3 trainer.py --load True --load_path ~/isaacgym/python/isaacGymEnvs/isaacgymenvs/minimal-isaacgym/fly_bProject/save7_1_23/save1_standing_18dofs_.pth --save_path ~/isaacgym/python/isaacGymEnvs/isaacgymenvs/minimal-isaacgym/fly_bProject/save7_1_23/save2_walk_18dofs_ --num_envs 1000`
+
 ## Useful keys
 
 If you are not in headless mode you can use the following keys:

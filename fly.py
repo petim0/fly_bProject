@@ -13,7 +13,7 @@ class Fly:
         self.print_once = True #TODO
         self.args = args
         self.end = False
-        self.dt = 1 / 60 #was 1000.
+        self.dt = 1 / 60
         self.up_axis_idx = 2 # index of up axis: X= 0, Y=1, Z=2
         self.i = 0
         # task-specific parameters
